@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <data xmlns="http://www.netbeans.org/ns/make-project-private/1">
+        <activeConfTypeElem>1</activeConfTypeElem>
+        <activeConfIndexElem>3</activeConfIndexElem>
+    </data>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/ReactorMonteCarlo.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/MicroCell.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/InfiniteCompositeReactor.cpp</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/MicroCellBoundaryCondition.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/ReactorKinetics.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/ExplicitSolverSettings.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/MicroSolution.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/main.cpp</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/PythonPlot.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/InfiniteCompositeReactor.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/DelayedNeutronSet.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/MaterialDataPacket.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/ReactorMonteCarlo.cpp</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/MicroGeometry.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/MaterialLibrary.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/InputDataFunctions.h</file>
+        </group>
+    </open-files>
+</project-private>
