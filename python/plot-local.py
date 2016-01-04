@@ -1,3 +1,4 @@
+import matplotlib
 import sys, getopt
 from pylab import *
 import matplotlib.pyplot  as pyplot

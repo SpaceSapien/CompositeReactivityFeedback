@@ -193,7 +193,12 @@ std::string PythonPlot::commandLinePlotData(const std::vector<Real> &data_set)
  */
 void PythonPlot::plot()
 {
-    std::string program = "python/CommandLinePlot.py ";    
+    
+#ifdef LAPTOP
+    std::string program = "python/plot-local.py ";   
+#elif
+    std::string program = "python/plot-remote.py ";  
+#endif
     std::string x_command = " --xdata=\"" + _x_data + "\" ";
     std::string y_command = " --ydata=\"" + _y_data + "\" ";
     std::string axis_labels = " --xlabel='" + _x_label + "' --ylabel='" + _y_label + "' ";
