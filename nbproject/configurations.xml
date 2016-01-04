@@ -52,6 +52,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>composite-fuel-submission-script.sh</itemPath>
     <itemPath>python/plot-local.py</itemPath>
   </logicalFolder>
   <sourceRootList>
@@ -70,6 +71,11 @@
           <commandLine>-std=c++11</commandLine>
         </ccTool>
       </compileType>
+      <item path="composite-fuel-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
@@ -159,6 +165,11 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="composite-fuel-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
@@ -241,6 +252,11 @@
           </preprocessorList>
         </ccTool>
       </compileType>
+      <item path="composite-fuel-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
@@ -327,6 +343,11 @@
           <commandlineTool>g++</commandlineTool>
         </linkerTool>
       </compileType>
+      <item path="composite-fuel-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
