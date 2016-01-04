@@ -79,8 +79,17 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &prompt_r
     this->createMCNPOutputFile(input_file_name);
    
     //Run the file
+    #ifdef LAPTOP
+    
     std::string mcnp_path = "/media/chris/DoubleSpace/MCNP/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
-    std::string command = "cd " + this->_run_directory + "; mpirun -np  7 " + mcnp_path + " i=" + input_file_name + " o=" + output_file_name;
+    
+    #elif PRACTICE_CLUSTER
+    
+    std::string mcnp_path = "/share/apps/mcnp/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
+    
+    #endif
+    
+    std::string command = "cd " + this->_run_directory + "; mpirun -np  7 " + mcnp_path + " i=" + input_file_name + " o=" + output_file_name + " | tee mcnp_run_log.txt";
     exec(command);
     
     //Read the output file

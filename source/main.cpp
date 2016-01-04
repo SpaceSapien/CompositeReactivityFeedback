@@ -100,13 +100,15 @@ std::string exec(const std::string command, const bool &print_command,const bool
         if (fgets(buffer, 128, pipe.get()) != NULL)
         {
             result += buffer;
+            
+            if(print_output)
+            {
+                std::cout<<buffer<<std::endl;
+            }
         }
     }
     
-    if(print_output)
-    {
-        std::cout<<result<<std::endl;
-    }
+    
     
     
     return result;
