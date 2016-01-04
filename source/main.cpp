@@ -103,12 +103,15 @@ std::string exec(const std::string command, const bool &print_command,const bool
             
             if(print_output)
             {
-                std::cout<<buffer<<std::endl;
+                std::cout<<buffer;
             }
         }
     }
     
-    
+    if(print_output)
+    {
+        std::cout<<std::endl;
+    }
     
     
     return result;

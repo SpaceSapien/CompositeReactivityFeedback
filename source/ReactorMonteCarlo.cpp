@@ -15,6 +15,8 @@
 #include "MicroGeometry.h"
 #include <sstream>
 #include "InputDataFunctions.h"
+#include <chrono>
+#include <thread>
 
 
 ReactorMonteCarlo::ReactorMonteCarlo() {}
@@ -78,52 +80,42 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &prompt_r
     std::string output_file_name =  file_root + ".out";
     this->createMCNPOutputFile(input_file_name);
    
+    std::string command_line_log_file = "mcnp_run_log.txt";
+    
     //Run the file
     #ifdef LAPTOP
     
+    //We are just running MPI here
     std::string mcnp_path = "/media/chris/DoubleSpace/MCNP/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
+    std::string command = "cd " + this->_run_directory + "; mpirun -np  7 " + mcnp_path + " i=" + input_file_name + " o=" + output_file_name + " | tee " + command_line_log_file;
+    exec(command);
     
     #elif PRACTICE_CLUSTER
     
     std::string mcnp_path = "/share/apps/mcnp/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
     
+    //Delete the old log output (we are using the log to check to see if the qsub is done)
+    std::string remove_command = "cd " + this->_run_directory + "; rm log";
+    exec(remove_command);
+
+    //Run Submission Script with the created MCNP file
+    std::string qsub_command = "cd " + this->_run_directory + ";qsub -pe orte 24 ../../../composite-fuel-submission-script.sh corefixed.inp " + command_line_log_file;
+    exec(qsub_command);
+    //Constantly read the output file until it says mcrun done 
+    std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";
+    
+    do
+    {   
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::string is_done = exec(search_lock);
+    }while(is_done == "");
+    
     #endif
     
-    std::string command = "cd " + this->_run_directory + "; mpirun -np  7 " + mcnp_path + " i=" + input_file_name + " o=" + output_file_name + " | tee mcnp_run_log.txt";
-    exec(command);
-    
+
     //Read the output file
-     this->readOutputFile(output_file_name, k_eff, prompt_removal_lifetime);
-}
-
-
-void executeMonteCarlo(const std::string execution_string)
-{
-   // #ifdef LAPTOP
-    
-        exec(execution_string);        
-    
-    /*#elif PRACTICE_CLUSTER
-
+    this->readOutputFile(output_file_name, k_eff, prompt_removal_lifetime);
         
-        //Delete the old log output
-        std::string remove_command = "cd " + this->_run_directory "; rm log";
-        std::
-        
-        //Run Submission Script with the created MCNP file
-        //qsub -pe orte 24 composite-fuel-submission-script.sh corefixed.inp log1
-        
-        //Constantly read the output file until it says mcrun done 
-        //std::string mcrun[ ]+is[ ]+done
-        
-        //Read the output log for the values
-        
-    
-    #endif*/
-    
-    
-    
-    
 }
 
 void ReactorMonteCarlo::readOutputFile(const std::string &file_name, Real &k_eff, Real &prompt_removal_lifetime)
