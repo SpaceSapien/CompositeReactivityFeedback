@@ -38,7 +38,7 @@ InfiniteCompositeReactor::InfiniteCompositeReactor()
     time_t run_identification_number = std::time(nullptr);
     _results_directory =  "results/" + std::to_string(run_identification_number) + "/";    
     std::string folder_command = "mkdir -p " + _results_directory;
-    system( folder_command.c_str());
+    exec( folder_command );
     
     initializeInifiniteCompositeReactorProblem();
 }

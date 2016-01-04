@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include "PythonPlot.h"
+#include "InputDataFunctions.h"
 
 PythonPlot::PythonPlot()
 {
@@ -195,9 +196,13 @@ void PythonPlot::plot()
 {
     
 #ifdef LAPTOP
-    std::string program = "python/plot-local.py ";   
-#elif
+    
+    std::string program = "python/plot-local.py "; 
+    
+#elif PRACTICE_CLUSTER
+    
     std::string program = "python/plot-remote.py ";  
+    
 #endif
     std::string x_command = " --xdata=\"" + _x_data + "\" ";
     std::string y_command = " --ydata=\"" + _y_data + "\" ";
@@ -207,9 +212,8 @@ void PythonPlot::plot()
     std::string legend = " --legend=\"" + _legend + "\" ";
     std::string command_line_plot = program + x_command + y_command  + axis_labels + legend + title + save_file;
 
-    std::cout<<"\n\n"<<command_line_plot<<"\n\n";
     
-    system( command_line_plot.c_str() );
+    exec( command_line_plot );
 }
 
 

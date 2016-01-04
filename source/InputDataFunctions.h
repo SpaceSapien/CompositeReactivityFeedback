@@ -24,9 +24,7 @@
 
 std::vector<Real> getInitialTemperatures(std::vector<Dimension> radial_points);
 std::vector<Real> getPowerDistribution(std::vector<Dimension> radial_points,const Real kernel_radius,const Real total_power_density);
-void plotDelayedPrecursors(const std::vector<Real> &time_record,const std::vector<std::vector<Real>> &delayed_record);
-std::string exec(const char* cmd);
-
+std::string exec(const std::string command, const bool &print_command = true,const bool &print_output = true);
 
 #endif /* INPUTDATAFUNCTIONS_H */
 

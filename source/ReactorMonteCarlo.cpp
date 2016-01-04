@@ -27,7 +27,7 @@ ReactorMonteCarlo::ReactorMonteCarlo(MicroCell* &micro_cell_ptr,const Real &star
     _run_directory = run_directory;
     
     std::string run_command = "mkdir -p " + _run_directory;
-    system(run_command.c_str());
+    exec(run_command);
     
     _micro_cell_ptr = micro_cell_ptr;
     getRawCriticalityParameters(k_eff,prompt_removal_lifetime);
@@ -66,13 +66,11 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &prompt_r
 
     //clean up the previous MCNP data files
     std::string clean_mcnp_command = "rm " + this->_run_directory + "mcnp-composite-fue[l-z].out " + this->_run_directory + "runtp[e-z] " + this->_run_directory + "srct[p-z]";
-    std::cout<<clean_mcnp_command;
-    system(clean_mcnp_command.c_str());
+    exec(clean_mcnp_command);
     
     //create a symbolic link to the Doppler broadened cross sections
     std::string symbolic_link_command = "cd " + this->_run_directory + "; ln -s ../../../doppler-broadened-cs/otf*txt .";
-    std::cout<<symbolic_link_command;
-    system(symbolic_link_command.c_str());
+    exec(symbolic_link_command);
     
     //create the MCNP input file
     std::string file_root = "mcnp-composite-fuel";
@@ -83,7 +81,7 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &prompt_r
     //Run the file
     std::string mcnp_path = "/media/chris/DoubleSpace/MCNP/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
     std::string command = "cd " + this->_run_directory + "; mpirun -np  7 " + mcnp_path + " i=" + input_file_name + " o=" + output_file_name;
-    system(command.c_str());
+    exec(command);
     
     //Read the output file
      this->readOutputFile(output_file_name, k_eff, prompt_removal_lifetime);
@@ -92,12 +90,11 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &prompt_r
 
 void executeMonteCarlo(const std::string execution_string)
 {
-    #ifdef LAPTOP
+   // #ifdef LAPTOP
     
-        std::cout<<execution_string;
-        system(execution_string.c_str());        
+        exec(execution_string);        
     
-    #elif PRACTICE_CLUSTER
+    /*#elif PRACTICE_CLUSTER
 
         
         //Delete the old log output
@@ -113,7 +110,7 @@ void executeMonteCarlo(const std::string execution_string)
         //Read the output log for the values
         
     
-    #endif
+    #endif*/
     
     
     
@@ -127,13 +124,11 @@ void ReactorMonteCarlo::readOutputFile(const std::string &file_name, Real &k_eff
     
     std::string k_eff_regex = "'/estimated combined collision\\/absorption\\/track-length keff = ([0-9]\\.[0-9]+) with an estimated standard deviation of/ && print $1'";
     std::string k_eff_command = base_command + k_eff_regex;
-    std::cout<< k_eff_command;
-    std::string k_eff_str = exec(k_eff_command.c_str());
+    std::string k_eff_str = exec(k_eff_command);
     
     std::string prompt_lifetime_regex = "'/the final combined \\(col\\/abs\\/tl\\) prompt removal lifetime = ([0-9]+\\.[0-9]+E-?[0-9]+) seconds with an estimated standard deviation of/ && print $1'";
     std::string prompt_lifetime_command = base_command + prompt_lifetime_regex;
-    std::cout<< prompt_lifetime_command;
-    std::string prompt_removal_lifetime_str = exec(prompt_lifetime_command.c_str());
+    std::string prompt_removal_lifetime_str = exec(prompt_lifetime_command);
     
     k_eff = std::stod(k_eff_str);
     prompt_removal_lifetime = std::stod(prompt_removal_lifetime_str);

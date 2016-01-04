@@ -52,7 +52,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
-    <itemPath>python/CommandLinePlot.py</itemPath>
+    <itemPath>python/plot-local.py</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>source</Elem>
@@ -70,7 +70,7 @@
           <commandLine>-std=c++11</commandLine>
         </ccTool>
       </compileType>
-      <item path="python/CommandLinePlot.py" ex="false" tool="3" flavor2="0">
+      <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -159,7 +159,7 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
-      <item path="python/CommandLinePlot.py" ex="false" tool="3" flavor2="0">
+      <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -241,7 +241,7 @@
           </preprocessorList>
         </ccTool>
       </compileType>
-      <item path="python/CommandLinePlot.py" ex="false" tool="3" flavor2="0">
+      <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -327,7 +327,7 @@
           <commandlineTool>g++</commandlineTool>
         </linkerTool>
       </compileType>
-      <item path="python/CommandLinePlot.py" ex="false" tool="3" flavor2="0">
+      <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>

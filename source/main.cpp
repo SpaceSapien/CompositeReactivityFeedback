@@ -73,8 +73,17 @@ std::vector<Real> getPowerDistribution(std::vector<Dimension> radial_points, Rea
 
 
 
-std::string exec(const char* cmd) 
+
+std::string exec(const std::string command, const bool &print_command,const bool &print_output) 
 {
+    if(print_command)
+    {
+        std::cout<<command<<std::endl;
+    }
+    
+    
+    const char* cmd = command.c_str();
+    
     std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
     
     if (!pipe) 
@@ -93,5 +102,12 @@ std::string exec(const char* cmd)
             result += buffer;
         }
     }
+    
+    if(print_output)
+    {
+        std::cout<<result<<std::endl;
+    }
+    
+    
     return result;
 }
