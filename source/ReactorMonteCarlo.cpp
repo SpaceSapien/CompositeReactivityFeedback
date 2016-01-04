@@ -94,8 +94,8 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &prompt_r
     
     std::string mcnp_path = "/share/apps/mcnp/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
     
-    //Delete the old log output (we are using the log to check to see if the qsub is done)
-    std::string remove_command = "cd " + this->_run_directory + "; rm " + command_line_log_file;
+    //Delete the old log output by overwriting it with a blank string (we are using the log to check to see if the qsub is done)
+    std::string remove_command = "cd " + this->_run_directory + "; echo \"\" > " + command_line_log_file;
     exec(remove_command);
 
     //Run Submission Script with the created MCNP file
