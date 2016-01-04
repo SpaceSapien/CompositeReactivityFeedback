@@ -103,11 +103,12 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &prompt_r
     exec(qsub_command);
     //Constantly read the output file until it says mcrun done 
     std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";
+    std::string is_done;
     
     do
     {   
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        std::string is_done = exec(search_lock);
+        is_done = exec(search_lock);
     }while(is_done == "");
     
     #endif
