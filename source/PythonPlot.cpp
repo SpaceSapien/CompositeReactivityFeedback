@@ -197,11 +197,11 @@ void PythonPlot::plot()
     
 #ifdef LAPTOP
     
-    std::string program = "python/plot-local.py "; 
+    std::string program = "python python/plot-local.py "; 
     
 #elif PRACTICE_CLUSTER
     
-    std::string program = "python/plot-remote.py ";  
+    std::string program = "python python/plot-remote.py ";  
     
 #endif
     std::string x_command = " --xdata=\"" + _x_data + "\" ";
