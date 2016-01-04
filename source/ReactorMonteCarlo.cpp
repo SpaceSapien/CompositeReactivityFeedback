@@ -82,7 +82,7 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &prompt_r
    
     //Run the file
     std::string mcnp_path = "/media/chris/DoubleSpace/MCNP/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
-    std::string command = "cd " + this->_run_directory + ";pwd; mpirun -np  7 " + mcnp_path + " i=" + input_file_name + " o=" + output_file_name;
+    std::string command = "cd " + this->_run_directory + "; mpirun -np  7 " + mcnp_path + " i=" + input_file_name + " o=" + output_file_name;
     system(command.c_str());
     
     //Read the output file
@@ -101,14 +101,14 @@ void executeMonteCarlo(const std::string execution_string)
 
         
         //Delete the old log output
-        rm log
-        
+        std::string remove_command = "cd " + this->_run_directory "; rm log";
+        std::
         
         //Run Submission Script with the created MCNP file
-        qsub -pe orte 24 composite-fuel-submission-script.sh corefixed.inp log1
+        //qsub -pe orte 24 composite-fuel-submission-script.sh corefixed.inp log1
         
         //Constantly read the output file until it says mcrun done 
-        std::string mcrun[ ]+is[ ]+done
+        //std::string mcrun[ ]+is[ ]+done
         
         //Read the output log for the values
         

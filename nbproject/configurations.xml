@@ -52,6 +52,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>python/CommandLinePlot.py</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>source</Elem>
@@ -69,6 +70,8 @@
           <commandLine>-std=c++11</commandLine>
         </ccTool>
       </compileType>
+      <item path="python/CommandLinePlot.py" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
@@ -156,6 +159,8 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="python/CommandLinePlot.py" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
@@ -230,11 +235,14 @@
       </toolsSet>
       <compileType>
         <ccTool>
+          <standard>8</standard>
           <preprocessorList>
             <Elem>PRACTICE_CLUSTER</Elem>
           </preprocessorList>
         </ccTool>
       </compileType>
+      <item path="python/CommandLinePlot.py" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
@@ -310,7 +318,6 @@
       <compileType>
         <ccTool>
           <standard>8</standard>
-          <commandLine>-std=c++11</commandLine>
           <preprocessorList>
             <Elem>LAPTOP</Elem>
           </preprocessorList>
@@ -320,6 +327,8 @@
           <commandlineTool>g++</commandlineTool>
         </linkerTool>
       </compileType>
+      <item path="python/CommandLinePlot.py" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
