@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import sys, getopt
 from pylab import *
 import matplotlib.pyplot  as pyplot
