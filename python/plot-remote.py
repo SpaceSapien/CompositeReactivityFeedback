@@ -89,7 +89,7 @@ def plot(x_data, y_data,x_label, y_label, legend, title, save_plot_file):
 
 
     font = {'size'   : standard_font_size}
-    #matplotlib.rc('font', **font)
+    matplotlib.rc('font', **font)
 
     fig = pyplot.figure(figsize=(standard_figure_size_width, standard_figure_size_height))
     ax1 = fig.add_subplot(1,1,1)
