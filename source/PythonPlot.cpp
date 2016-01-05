@@ -87,7 +87,7 @@ void PythonPlot::plotData(const std::vector<std::pair<Real, std::vector<Real> > 
     std::vector< std::vector<Real> > y_data;
     std::vector< std::vector<Real> >x_data;
     std::vector<Real> temp_x_data;
-    std::string legend_string = "";
+    std::vector<std::string> legend_data_passing;
     
     //If there is no legend data passed in
     if(legend_data.size() == 0)
@@ -95,8 +95,13 @@ void PythonPlot::plotData(const std::vector<std::pair<Real, std::vector<Real> > 
         //create the legend and the vector<vector<Real>> of times
         for( size_t group_index = 0; group_index < data[0].second.size(); group_index++)
         {
-            legend_string += "Group-" + std::to_string(group_index + 1) + " ";
+            std::string legend_string = "Group-" + std::to_string(group_index + 1);
+            legend_data_passing.push_back(legend_string);
         }
+    }
+    else
+    {
+        legend_data_passing = legend_data;
     }
     
     
@@ -125,7 +130,7 @@ void PythonPlot::plotData(const std::vector<std::pair<Real, std::vector<Real> > 
     }
     
     
-    PythonPlot::plotData(x_data, y_data,x_label,y_label,legend_data,title_data,save_file_name);
+    PythonPlot::plotData(x_data, y_data,x_label,y_label,legend_data_passing,title_data,save_file_name);
 }
 
 void PythonPlot::plotData(const std::vector<Real> &x_data, const std::vector<Real> &y_data, const std::string &x_label, const std::string &y_label,const std::string &legend_data, const std::string &title_data, const std::string &save_file_name)
@@ -204,6 +209,7 @@ void PythonPlot::plot()
     std::string program = "python python/plot-remote.py ";  
     
 #endif
+    
     std::string x_command = " --xdata=\"" + _x_data + "\" ";
     std::string y_command = " --ydata=\"" + _y_data + "\" ";
     std::string axis_labels = " --xlabel='" + _x_label + "' --ylabel='" + _y_label + "' ";
