@@ -97,7 +97,7 @@ void InfiniteCompositeReactor::simulate()
     PythonPlot::plotData( _power_record, "Time [s]", "Power Density [W/m^3]","","Power vs. Time", this->_results_directory + "power-graph.png");
     PythonPlot::plotData( _prompt_life_time_record, "Time [s]", "Prompt Neutron Lifetime [s]","","Prompt Neutron Lifetime vs. Time", this->_results_directory + "prompt-neutron-lifetime-graph.png");
     PythonPlot::plotData( _reactivity_record, "Time [s]", "Excess Reactivity [pcm]","","Excess Reactivity vs. Time", this->_results_directory + "excess-reactivity-graph.png");
-    PythonPlot::plotData( _delayed_record, "Time [s]", "Delayed Precursors", {} , "Keff vs. Delayed Precursors", "delayed-precursors.png");
+    PythonPlot::plotData( _delayed_record, "Time [s]", "Delayed Precursors", {} , "Keff vs. Delayed Precursors", this->_results_directory + "delayed-precursors.png");
 }
 
 InfiniteCompositeReactor::~InfiniteCompositeReactor()
@@ -142,6 +142,6 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     //Time stepping parameters
     _monte_carlo_time_iteration = 0.01;  //How often to calculate keff and the prompt neutron lifetime
     _kinetics_time_iteration = 0.0002;   //How often to couple the kinetics and heat transfer routines    
-    _end_time = 0.05;                    //How many seconds should the simulation last 
+    _end_time = 1.0;                    //How many seconds should the simulation last 
     
 }

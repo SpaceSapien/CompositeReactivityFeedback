@@ -99,7 +99,7 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &prompt_r
     exec(remove_command);
 
     //Run Submission Script with the created MCNP file
-    std::string qsub_command = "cd " + this->_run_directory + ";qsub -pe orte 24 ../../../composite-fuel-submission-script.sh " + input_file_name + " " + output_file_name + " " + command_line_log_file;
+    std::string qsub_command = "cd " + this->_run_directory + ";qsub -pe orte 32 ../../../composite-fuel-submission-script.sh " + input_file_name + " " + output_file_name + " " + command_line_log_file;
     exec(qsub_command);
     //Constantly read the output file until it says mcrun done 
     std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";
@@ -107,7 +107,7 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &prompt_r
     
     do
     {   
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         is_done = exec(search_lock);
     }while(is_done == "");
     
@@ -199,7 +199,7 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &file_name)
     mcnp_file << "       " << U235_cs << std::endl;
     mcnp_file << "       8016.60c" << std::endl;
     mcnp_file << "       6000.60c" << std::endl;
-    mcnp_file << " KCODE 20000 1.2 3 33  $need at least 30 active cycles to print results" << std::endl;
+    mcnp_file << " KCODE 20000 1.5 3 53  $need at least 30 active cycles to print results" << std::endl;
     mcnp_file << " KSRC 0 0 0" << std::endl;
     mcnp_file << " print" << std::endl;
     mcnp_file << "c end data" << std::endl;
