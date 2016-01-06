@@ -169,8 +169,7 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &file_name)
     #elif  PRACTICE_CLUSTER 
     
     std::string U238_cs = "92238.80c";
-    std::string U235_cs = "92235.80c";
-    
+    std::string U235_cs = "92235.80c";    
     
     #endif
      
@@ -199,7 +198,7 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &file_name)
     mcnp_file << "       " << U235_cs << std::endl;
     mcnp_file << "       8016.60c" << std::endl;
     mcnp_file << "       6000.60c" << std::endl;
-    mcnp_file << " KCODE 10000 1.5 3 53  $need at least 30 active cycles to print results" << std::endl;
+    mcnp_file << " KCODE 20000 1.5 3 83  $need at least 30 active cycles to print results" << std::endl;
     mcnp_file << " KSRC 0 0 0" << std::endl;
     mcnp_file << " print" << std::endl;
     mcnp_file << "c end data" << std::endl;
