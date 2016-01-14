@@ -57,7 +57,7 @@ void InfiniteCompositeReactor::simulate()
     //Simulate the transient the outer loop is the monte carlo simulation
     for( Real transient_time = 0; transient_time < _end_time; transient_time+= inner_time_step)
     {
-        Real current_power;
+        Real current_power = this->_kinetics_model->_current_power;
         //Gather the parameters from the monte carlo model 
         //The Monte Carlo model is run on the outer loop
         Real prompt_removal_lifetime = _monte_carlo_model->_current_prompt_neutron_lifetime;
@@ -76,6 +76,7 @@ void InfiniteCompositeReactor::simulate()
         std::tuple<Real,Real,Real> prompt_removal_lifetime_pair = std::make_tuple(transient_time, lambda, lambda_sigma);
         _prompt_life_time_record.push_back(prompt_removal_lifetime_pair);
        
+        this->saveCurrentData(transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma);
          
         for( inner_time_step = 0 ; inner_time_step < _monte_carlo_time_iteration ; inner_time_step += _kinetics_time_iteration)
         {
@@ -97,7 +98,7 @@ void InfiniteCompositeReactor::simulate()
             _monte_carlo_model->updateAdjustedCriticalityParameters();
         }
          
-        this->saveCurrentData(transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma);
+        
     }
     
     MicroSolution::saveSolutions( _plot_solutions, this->_results_directory );
