@@ -116,3 +116,11 @@ std::string exec(const std::string command, const bool &print_command,const bool
     
     return result;
 }
+
+std::string doubleToScientificString(double value)
+{
+    std::stringstream output_file_stream;
+    output_file_stream << std::scientific << value;
+    return output_file_stream.str();
+    
+}

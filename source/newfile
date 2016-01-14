@@ -1,0 +1,13 @@
+
+Traceback (most recent call last):
+  File "python/plot-local.py", line 237, in <module>
+    main(sys.argv[1:])
+  File "python/plot-local.py", line 78, in main
+    error_plot(x_data,y_data,error_data,x_label,y_label, legend, title, save_plot_file)
+  File "python/plot-local.py", line 140, in error_plot
+    line, = ax1.errorbar( x_coordinates, y_coordinates, yerr=error_data_sets, color=colors[ i_index % len(colors)  ], lw=standard_line_width, label=legend_name)
+  File "/usr/lib/pymodules/python2.7/matplotlib/axes.py", line 5758, in errorbar
+    in cbook.safezip(y, yerr)]
+  File "/usr/lib/pymodules/python2.7/matplotlib/cbook.py", line 1439, in safezip
+    raise ValueError(_safezip_msg % (Nx, i + 1, len(arg)))
+ValueError: In safezip, len(args[0])=101 but len(args[1])=0

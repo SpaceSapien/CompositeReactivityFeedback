@@ -128,8 +128,7 @@ void PythonPlot::plotData(const std::vector<std::pair<Real, std::vector<Real> > 
     {
         x_data.push_back(temp_x_data);
     }
-    
-    
+        
     PythonPlot::plotData(x_data, y_data,x_label,y_label,legend_data_passing,title_data,save_file_name);
 }
 
@@ -188,7 +187,7 @@ std::string PythonPlot::commandLinePlotData(const std::vector<Real> &data_set)
     //print the data
     for( int index = 0; index < data_set.size(); index++ )
     {
-        data_string += std::to_string( data_set[index] ) + " ";
+        data_string += doubleToScientificString( data_set[index] ) + " ";
     }  
 
     return data_string;
@@ -200,15 +199,8 @@ std::string PythonPlot::commandLinePlotData(const std::vector<Real> &data_set)
 void PythonPlot::plot()
 {
     
-#ifdef LAPTOP
+    std::string program = PYTHON_PLOT_SCRIPT;  
     
-    std::string program = "python python/plot-local.py "; 
-    
-#elif PRACTICE_CLUSTER
-    
-    std::string program = "python python/plot-remote.py ";  
-    
-#endif
     
     std::string x_command = " --xdata=\"" + _x_data + "\" ";
     std::string y_command = " --ydata=\"" + _y_data + "\" ";
@@ -222,4 +214,63 @@ void PythonPlot::plot()
     exec( command_line_plot );
 }
 
+void PythonErrorPlot::plotData(const std::vector<std::tuple<Real,Real,Real> > &data, const std::string &x_label, const std::string &y_label,const std::string &legend_data, const std::string &title_data, const std::string &save_file_name)
+{
+    std::vector<Real> x_data;
+    std::vector<Real> y_data;
+    std::vector<Real> error_data;
+    
+    for(int x=0; x < data.size(); x++ )
+    {
+        x_data.push_back(std::get<0>(data[x]));
+        y_data.push_back(std::get<1>(data[x]));
+        error_data.push_back(std::get<2>(data[x]));
+    }
+    PythonErrorPlot::plotData(x_data,y_data,error_data,x_label,y_label,legend_data,title_data,save_file_name);    
+}
 
+void PythonErrorPlot::plotData(const std::vector<Real> &x_data,const std::vector<Real> &y_data,const std::vector<Real> &error_data, const std::string &x_label, const std::string &y_label,const std::string &legend_data, const std::string &title_data, const std::string &save_file_name)
+{
+    
+    if( x_data.size() == y_data.size() && x_data.size() == error_data.size() )
+    {
+        std::string x_data_string = PythonErrorPlot::commandLinePlotData(x_data);
+        std::string y_data_string = PythonErrorPlot::commandLinePlotData(y_data);
+        std::string error_data_string = PythonErrorPlot::commandLinePlotData(error_data);
+        
+        PythonErrorPlot plot = PythonErrorPlot(x_data_string,y_data_string,error_data_string, x_label,y_label,legend_data,title_data,save_file_name);
+        plot.plot();
+    }
+    else
+    {
+        throw Error::XYDataVectorsNotSameSize;
+    }
+    
+    
+    
+    
+}
+
+PythonErrorPlot::PythonErrorPlot(const std::string &x_data, const std::string &y_data,  const std::string &error_data, const std::string &x_label, const std::string &y_label, const std::string &legend_data, const std::string &title_data, const std::string &save_file_name) :
+PythonPlot(x_data, y_data, x_label, y_label, legend_data, title_data, save_file_name)
+{
+    _error_data = error_data;
+}
+
+void PythonErrorPlot::plot()
+{
+    std::string program = PYTHON_PLOT_SCRIPT;  
+    
+    
+    std::string x_command = " --xdata=\"" + _x_data + "\" ";
+    std::string y_command = " --ydata=\"" + _y_data + "\" ";
+    std::string error_command = " --errordata=\"" + _error_data + "\" ";
+    std::string axis_labels = " --xlabel='" + _x_label + "' --ylabel='" + _y_label + "' ";
+    std::string title = " --title='" + _title + "' ";
+    std::string save_file = " --saveplot='" + _save_file + "' ";
+    std::string legend = " --legend=\"" + _legend + "\" ";
+    std::string command_line_plot = program + x_command + y_command + error_command  + axis_labels + legend + title + save_file;
+
+    
+    exec( command_line_plot );
+}

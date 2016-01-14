@@ -28,7 +28,10 @@ public:
      */
     Real _virtual_k_eff_multiplier;
     Real _current_k_eff;
+    Real _current_k_eff_sigma;
     Real _current_prompt_neutron_lifetime;
+    Real _current_prompt_neutron_lifetime_sigma;
+    
     std::string _run_directory;
     std::vector<std::pair<FissionableIsotope,Real> > _fission_tally_listing;
     
@@ -36,8 +39,8 @@ public:
     ReactorMonteCarlo(MicroCell* &micro_cell_ptr,const Real &starting_k_effective,const std::string &run_directory);
     void createMCNPOutputFile(const std::string &file_name);
     void updateAdjustedCriticalityParameters();
-    void getRawCriticalityParameters( Real &k_eff, Real &prompt_removal_lifetime);    
-    void readOutputFile(const std::string &file_name,Real &k_eff, Real &prompt_removal_lifetime);
+    void getRawCriticalityParameters( Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma);   
+    void readOutputFile(const std::string &file_name, Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma);
     
     
 private:

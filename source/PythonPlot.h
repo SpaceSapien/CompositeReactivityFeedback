@@ -15,7 +15,20 @@
 #define PYTHONPLOT_H
 #include <string>
 #include <vector>
+#include <tuple>
 #include "EnumsAndFunctions.h"
+
+#ifdef LAPTOP
+    
+    #define PYTHON_PLOT_SCRIPT "python python/plot-local.py " 
+    
+#elif PRACTICE_CLUSTER
+    
+    #define PYTHON_PLOT_SCRIPT "python python/plot-remote.py " 
+    
+#endif
+
+
 
 class PythonPlot 
 {
@@ -43,13 +56,28 @@ public:
     void static plotData(const std::vector<std::pair<Real,Real> > &data,                                             const std::string &x_label="", const std::string &y_label="", const std::string &legend_data="",              const std::string &title_data="", const std::string &save_file_name="");
     void static plotData(const std::vector<std::pair<Real, std::vector<Real> > > &data,                              const std::string &x_label="", const std::string &y_label="", const std::vector<std::string> &legend_data={}, const std::string &title_data="", const std::string &save_file_name="");
 
-    void plot();
+    virtual void plot();
     
-private:
+protected:
     
     std::string static commandLinePlotData(const std::vector<std::vector<Real>> &data_set);
     std::string static commandLinePlotData(const std::vector<Real> &data_set);
 
+};
+
+
+class PythonErrorPlot : PythonPlot
+{
+public:
+    
+    std::string _error_data;
+    
+    PythonErrorPlot(const std::string &x_data, const std::string &y_data,  const std::string &error_data, const std::string &x_label="", const std::string &y_label="", const std::string &legend_data="",              const std::string &title_data="", const std::string &save_file_name="");   
+    
+    void static plotData(const std::vector<std::tuple<Real,Real,Real> > &data, const std::string &x_label="", const std::string &y_label="", const std::string &legend_data="", const std::string &title_data="", const std::string &save_file_name="");
+    void static plotData(const std::vector<Real> &x_data, const std::vector<Real> &y_data, const std::vector<Real> &error_data, const std::string &x_label="", const std::string &y_label="", const std::string &legend_data="", const std::string &title_data="", const std::string &save_file_name="");
+    
+    virtual void plot();
 };
 
 #endif /* PYTHONPLOT_H */

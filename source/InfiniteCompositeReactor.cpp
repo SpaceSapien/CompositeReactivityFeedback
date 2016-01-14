@@ -12,6 +12,7 @@
  */
 
 #include <string>
+#include <tuple>
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
@@ -37,9 +38,10 @@ InfiniteCompositeReactor::InfiniteCompositeReactor()
     //Create the Results Folder
     time_t run_identification_number = std::time(nullptr);
     _results_directory =  "results/" + std::to_string(run_identification_number) + "/";    
+    _data_file = "datafile.csv";
     std::string folder_command = "mkdir -p " + _results_directory;
     exec( folder_command );
-    
+    createOutputFile();
     initializeInifiniteCompositeReactorProblem();
 }
 
@@ -55,24 +57,30 @@ void InfiniteCompositeReactor::simulate()
     //Simulate the transient the outer loop is the monte carlo simulation
     for( Real transient_time = 0; transient_time < _end_time; transient_time+= inner_time_step)
     {
+        Real current_power;
         //Gather the parameters from the monte carlo model 
         //The Monte Carlo model is run on the outer loop
         Real prompt_removal_lifetime = _monte_carlo_model->_current_prompt_neutron_lifetime;
         Real k_eff = _monte_carlo_model->_current_k_eff; 
+        Real k_eff_sigma = _monte_carlo_model->_current_k_eff_sigma;
+        
         Real lambda = prompt_removal_lifetime/k_eff;
+        Real lambda_sigma = _monte_carlo_model->_current_prompt_neutron_lifetime_sigma/k_eff;
+        
         std::vector<std::pair<FissionableIsotope,Real> > fission_listing = _monte_carlo_model->_fission_tally_listing;
         Real reactivity = 10000.0*(k_eff - 1.0)/k_eff;
         
-        std::pair<Real,Real> reactivity_pair = { transient_time , reactivity };
-        _reactivity_record.push_back( reactivity_pair );
-        std::pair<Real,Real> prompt_removal_lifetime_pair = { transient_time, prompt_removal_lifetime };
+        std::tuple<Real,Real,Real> _k_effective_data = std::make_tuple( transient_time , k_eff, k_eff_sigma );
+        _k_eff_record.push_back( _k_effective_data );
+        
+        std::tuple<Real,Real,Real> prompt_removal_lifetime_pair = std::make_tuple(transient_time, lambda, lambda_sigma);
         _prompt_life_time_record.push_back(prompt_removal_lifetime_pair);
        
          
         for( inner_time_step = 0 ; inner_time_step < _monte_carlo_time_iteration ; inner_time_step += _kinetics_time_iteration)
         {
             //Solve the kinetics model
-            Real current_power = _kinetics_model->solveForPower(_kinetics_time_iteration, k_eff,lambda,fission_listing, _power_record, _delayed_record);
+            current_power = _kinetics_model->solveForPower(_kinetics_time_iteration, k_eff,lambda,fission_listing, _power_record, _delayed_record);
             std::vector<Real> power_distribition = getPowerDistribution(_thermal_solver->_solver_settings._radial_mesh,_micro_sphere_geometry->getFuelKernelRadius(), current_power);
 
             //Get the thermal solution
@@ -89,14 +97,14 @@ void InfiniteCompositeReactor::simulate()
             _monte_carlo_model->updateAdjustedCriticalityParameters();
         }
          
-        
+        this->saveCurrentData(transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma);
     }
     
     MicroSolution::saveSolutions( _plot_solutions, this->_results_directory );
     MicroSolution::plotSolutions( _plot_solutions,8 , this->_results_directory + "solutions-graph.png");
     PythonPlot::plotData( _power_record, "Time [s]", "Power Density [W/m^3]","","Power vs. Time", this->_results_directory + "power-graph.png");
-    PythonPlot::plotData( _prompt_life_time_record, "Time [s]", "Prompt Neutron Lifetime [s]","","Prompt Neutron Lifetime vs. Time", this->_results_directory + "prompt-neutron-lifetime-graph.png");
-    PythonPlot::plotData( _reactivity_record, "Time [s]", "Excess Reactivity [pcm]","","Excess Reactivity vs. Time", this->_results_directory + "excess-reactivity-graph.png");
+    PythonErrorPlot::plotData( _prompt_life_time_record, "Time [s]", "Prompt Neutron Lifetime [s]","","Prompt Neutron Lifetime vs. Time", this->_results_directory + "prompt-neutron-lifetime-graph.png");
+    PythonErrorPlot::plotData( _k_eff_record, "Time [s]", "Excess Reactivity [pcm]","","Excess Reactivity vs. Time", this->_results_directory + "excess-reactivity-graph.png");
     PythonPlot::plotData( _delayed_record, "Time [s]", "Delayed Precursors", {} , "Keff vs. Delayed Precursors", this->_results_directory + "delayed-precursors.png");
 }
 
@@ -142,6 +150,42 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     //Time stepping parameters
     _monte_carlo_time_iteration = 0.01;  //How often to calculate keff and the prompt neutron lifetime
     _kinetics_time_iteration = 0.0002;   //How often to couple the kinetics and heat transfer routines    
-    _end_time = 1.0;                    //How many seconds should the simulation last 
+    _end_time = 0.03;                    //How many seconds should the simulation last 
     
+}
+
+void InfiniteCompositeReactor::createOutputFile()
+{
+    std::ofstream output_file;
+    output_file.open( this->_results_directory + this->_data_file, std::ios::out);
+    
+    output_file << "Time [s], Power [W/m^3], k_eff, k_eff_sigma, neutron_lifetime [s], neutron_lifetime_sigma [s]";
+    
+    for(size_t index = 1; index <= 6; index++ )
+    {
+        output_file << ", Group " << index;
+    }
+    
+    output_file << std::endl;    
+    output_file.close();
+}
+
+void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma)
+{
+    std::ofstream output_file;
+    output_file.open( this->_results_directory + this->_data_file, std::ios::app);
+    
+    output_file << time << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma;
+    
+    size_t delayed_size = _delayed_record.size();
+    
+    auto delayed_precursors = _delayed_record[delayed_size -1].second;
+    
+    for(size_t index = 0; index < delayed_precursors.size(); index++ )
+    {
+        output_file << ", " << delayed_precursors[index];
+    }
+    
+    output_file << std::endl;    
+    output_file.close();
 }

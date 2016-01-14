@@ -25,6 +25,8 @@ ReactorMonteCarlo::ReactorMonteCarlo(MicroCell* &micro_cell_ptr,const Real &star
 {
     Real k_eff;
     Real prompt_removal_lifetime;
+    Real k_eff_sigma;
+    Real prompt_removal_lifetime_sigma;
     
     _run_directory = run_directory;
     
@@ -32,11 +34,12 @@ ReactorMonteCarlo::ReactorMonteCarlo(MicroCell* &micro_cell_ptr,const Real &star
     exec(run_command);
     
     _micro_cell_ptr = micro_cell_ptr;
-    getRawCriticalityParameters(k_eff,prompt_removal_lifetime);
+    getRawCriticalityParameters(k_eff,k_eff_sigma,prompt_removal_lifetime,prompt_removal_lifetime_sigma);
     _virtual_k_eff_multiplier = starting_k_eff / k_eff;  
     _current_k_eff = starting_k_eff;
     _current_prompt_neutron_lifetime = prompt_removal_lifetime;
-    
+    _current_k_eff_sigma = k_eff_sigma * _virtual_k_eff_multiplier;
+    _current_prompt_neutron_lifetime_sigma = prompt_removal_lifetime_sigma;
     
     //Parameters that will come from the Monte Carlo Simulation
     std::pair<FissionableIsotope,Real> U235 = { FissionableIsotope::U235, 1 };
@@ -50,12 +53,14 @@ ReactorMonteCarlo::ReactorMonteCarlo(MicroCell* &micro_cell_ptr,const Real &star
  */
 void ReactorMonteCarlo::updateAdjustedCriticalityParameters()
 {
-    Real raw_k_effective, prompt_removal_lifetime;
+    Real raw_k_effective, raw_k_effective_sigma, prompt_removal_lifetime, prompt_removal_lifetime_sigma;
     
-    getRawCriticalityParameters(raw_k_effective, prompt_removal_lifetime);    
+    getRawCriticalityParameters(raw_k_effective,raw_k_effective_sigma, prompt_removal_lifetime, prompt_removal_lifetime_sigma);    
     
-    this->_current_k_eff = raw_k_effective * _virtual_k_eff_multiplier;
-    this->_current_prompt_neutron_lifetime = prompt_removal_lifetime;
+    _current_k_eff = raw_k_effective * _virtual_k_eff_multiplier;
+    _current_prompt_neutron_lifetime = prompt_removal_lifetime;
+    _current_k_eff_sigma = raw_k_effective_sigma * _virtual_k_eff_multiplier;
+    _current_prompt_neutron_lifetime_sigma = prompt_removal_lifetime_sigma;
 }
 
 /**
@@ -63,7 +68,7 @@ void ReactorMonteCarlo::updateAdjustedCriticalityParameters()
  * @param k_eff
  * @param prompt_removal_lifetime
  */
-void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &prompt_removal_lifetime)
+void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma)
 {
 
     //clean up the previous MCNP data files
@@ -115,25 +120,36 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &prompt_r
     
 
     //Read the output file
-    this->readOutputFile(output_file_name, k_eff, prompt_removal_lifetime);
+    this->readOutputFile(output_file_name, k_eff, k_eff_sigma, prompt_removal_lifetime, prompt_removal_lifetime_sigma);
         
 }
 
-void ReactorMonteCarlo::readOutputFile(const std::string &file_name, Real &k_eff, Real &prompt_removal_lifetime)
+void ReactorMonteCarlo::readOutputFile(const std::string &file_name, Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma)
 {
     
     std::string base_command = "cd " + this->_run_directory + ";cat " + file_name + " | perl -ne ";   
     
-    std::string k_eff_regex = "'/estimated combined collision\\/absorption\\/track-length keff = ([0-9]\\.[0-9]+) with an estimated standard deviation of/ && print $1'";
+    std::string k_eff_regex = "'/estimated combined collision\\/absorption\\/track-length keff = ([0-9]\\.[0-9]+) with an estimated standard deviation of ([0-9]\\.[0-9]+)/ && print $1'";
     std::string k_eff_command = base_command + k_eff_regex;
     std::string k_eff_str = exec(k_eff_command);
-    
-    std::string prompt_lifetime_regex = "'/the final combined \\(col\\/abs\\/tl\\) prompt removal lifetime = ([0-9]+\\.[0-9]+E-?[0-9]+) seconds with an estimated standard deviation of/ && print $1'";
-    std::string prompt_lifetime_command = base_command + prompt_lifetime_regex;
-    std::string prompt_removal_lifetime_str = exec(prompt_lifetime_command);
-    
     k_eff = std::stod(k_eff_str);
+        
+    std::string k_eff_sigma_regex = "'/estimated combined collision\\/absorption\\/track-length keff = ([0-9]\\.[0-9]+) with an estimated standard deviation of ([0-9]\\.[0-9]+)/ && print $2'";
+    std::string k_eff_sigma_command = base_command + k_eff_sigma_regex;
+    std::string k_eff_sigma_str = exec(k_eff_sigma_command);
+    k_eff_sigma = std::stod(k_eff_sigma_str);
+    
+    std::string prompt_lifetime_regex = "'/the final combined \\(col\\/abs\\/tl\\) prompt removal lifetime = ([0-9]+\\.[0-9]+E-?[0-9]+) seconds with an estimated standard deviation of ([0-9]+\\.[0-9]+E-?[0-9]+)/ && print $1'";
+    std::string prompt_lifetime_command = base_command + prompt_lifetime_regex;
+    std::string prompt_removal_lifetime_str = exec(prompt_lifetime_command);    
     prompt_removal_lifetime = std::stod(prompt_removal_lifetime_str);
+        
+    std::string prompt_lifetime_sigma_regex = "'/the final combined \\(col\\/abs\\/tl\\) prompt removal lifetime = ([0-9]+\\.[0-9]+E-?[0-9]+) seconds with an estimated standard deviation of ([0-9]+\\.[0-9]+E-?[0-9]+)/ && print $2'";
+    std::string prompt_lifetime_sigma_command = base_command + prompt_lifetime_sigma_regex;
+    std::string prompt_removal_lifetime_sigma_str = exec(prompt_lifetime_sigma_command);
+    prompt_removal_lifetime_sigma = std::stod(prompt_removal_lifetime_sigma_str);
+    
+    
     /*std::ifstream mcnp_output_file;
     mcnp_output_file.open(file_name);
     
@@ -153,7 +169,6 @@ void ReactorMonteCarlo::readOutputFile(const std::string &file_name, Real &k_eff
 
 void ReactorMonteCarlo::createMCNPOutputFile(const std::string &file_name)
 {
-    
     const Real MeVperK = 8.617e-11;
     Real matrix_temperature = _micro_cell_ptr->getAverageTemperature(1);
     Real fuel_kernel_temperature = _micro_cell_ptr->getAverageTemperature(0);
@@ -198,7 +213,7 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &file_name)
     mcnp_file << "       " << U235_cs << std::endl;
     mcnp_file << "       8016.60c" << std::endl;
     mcnp_file << "       6000.60c" << std::endl;
-    mcnp_file << " KCODE 20000 1.5 3 83  $need at least 30 active cycles to print results" << std::endl;
+    mcnp_file << " KCODE 10000 1.5 3 33  $need at least 30 active cycles to print results" << std::endl;
     mcnp_file << " KSRC 0 0 0" << std::endl;
     mcnp_file << " print" << std::endl;
     mcnp_file << "c end data" << std::endl;
