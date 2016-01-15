@@ -149,7 +149,7 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     
     
     //Time stepping parameters
-    _monte_carlo_time_iteration = 0.01;  //How often to calculate keff and the prompt neutron lifetime
+    _monte_carlo_time_iteration = 1.5;  //How often to calculate keff and the prompt neutron lifetime
     _kinetics_time_iteration = 0.0002;   //How often to couple the kinetics and heat transfer routines    
     _end_time = 0.03;                    //How many seconds should the simulation last 
     
