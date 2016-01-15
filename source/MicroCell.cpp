@@ -279,7 +279,7 @@ std::vector<MicroSolution> MicroCell::iterateInitialConditions(const Real &initi
     Real max_residual = 1;
     Real index = 0;
     
-    while( max_residual > 0.1 )
+    while( max_residual > 0.01 )
     {
        MicroSolution solution = MicroCell::solve(solution_time_step,power_distribution); 
        
