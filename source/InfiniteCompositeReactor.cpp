@@ -87,6 +87,8 @@ void InfiniteCompositeReactor::simulate()
             //Get the thermal solution
             solution =  _thermal_solver->solve( _kinetics_time_iteration, power_distribition); 
             //Add the current time steps solution to the mix
+            
+            
         }
         
         solution.plot( this->_results_directory + "solution-" + std::to_string(_thermal_solver->_current_time)  + ".png");
@@ -149,9 +151,9 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     
     
     //Time stepping parameters
-    _monte_carlo_time_iteration = 1.5;  //How often to calculate keff and the prompt neutron lifetime
+    _monte_carlo_time_iteration = 0.01;  //How often to calculate keff and the prompt neutron lifetime
     _kinetics_time_iteration = 0.0002;   //How often to couple the kinetics and heat transfer routines    
-    _end_time = 0.03;                    //How many seconds should the simulation last 
+    _end_time = 1.00;                    //How many seconds should the simulation last 
     
 }
 
@@ -180,13 +182,16 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
     
     size_t delayed_size = _delayed_record.size();
     
-    auto delayed_precursors = _delayed_record[delayed_size -1].second;
-    
-    for(size_t index = 0; index < delayed_precursors.size(); index++ )
+    if(delayed_size > 0 )
     {
-        output_file << ", " << delayed_precursors[index];
-    }
     
+        auto delayed_precursors = _delayed_record[delayed_size -1].second;
+
+        for(size_t index = 0; index < delayed_precursors.size(); index++ )
+        {
+            output_file << ", " << delayed_precursors[index];
+        }
+    }
     output_file << std::endl;    
     output_file.close();
 }
