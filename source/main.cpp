@@ -42,37 +42,6 @@ int main(int argc, char** argv)
 
 }
 
-std::vector<Real> getPowerDistribution(std::vector<Dimension> radial_points, Real kernel_radius, Real total_power_density)
-{
-    auto number_points = radial_points.size();
-    
-    std::vector<Real> power_distribution = std::vector<Real>();
-    power_distribution.reserve( number_points);
-    Real large_radius = radial_points.back();
-    Real kernel_power = total_power_density * pow(large_radius,3)/pow(kernel_radius,3);
-    
-    for( long index = 0; index < number_points; ++index)
-    {
-        Dimension radial_point = radial_points[index];
-        Real power;
-        
-        if(radial_point < kernel_radius )
-        {
-            power = kernel_power;           
-        }
-        else
-        {
-            power = 0;           
-        }
-        
-        power_distribution.push_back( power );
-    }
-    
-    return power_distribution;
-}
-
-
-
 
 std::string exec(const std::string command, const bool &print_command,const bool &print_output) 
 {

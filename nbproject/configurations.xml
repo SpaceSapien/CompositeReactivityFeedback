@@ -53,6 +53,7 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
     <itemPath>composite-fuel-submission-script.sh</itemPath>
+    <itemPath>input/default-input-file.inp</itemPath>
     <itemPath>source/newfile</itemPath>
     <itemPath>python/plot-local.py</itemPath>
   </logicalFolder>
@@ -76,6 +77,8 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
@@ -173,6 +176,8 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
@@ -261,6 +266,8 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
@@ -354,6 +361,8 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>

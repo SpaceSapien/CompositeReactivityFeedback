@@ -2,21 +2,15 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <data xmlns="http://www.netbeans.org/ns/make-project-private/1">
         <activeConfTypeElem>1</activeConfTypeElem>
-        <activeConfIndexElem>2</activeConfIndexElem>
+        <activeConfIndexElem>3</activeConfIndexElem>
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/main.cpp</file>
-            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/ReactorMonteCarlo.h</file>
-            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/MicroCellBoundaryCondition.cpp</file>
-            <file>file:/home/chris/NetBeansProjects/FiniteDifference/python/plot-local.py</file>
-            <file>file:/home/chris/NetBeansProjects/FiniteDifference/composite-fuel-submission-script.sh</file>
-            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/PythonPlot.cpp</file>
             <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/ReactorMonteCarlo.cpp</file>
             <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/InfiniteCompositeReactor.cpp</file>
-            <file>file:/home/chris/NetBeansProjects/FiniteDifference/python/plot-remote.py</file>
-            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/InputDataFunctions.h</file>
+            <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/MicroSolution.cpp</file>
             <file>file:/home/chris/NetBeansProjects/FiniteDifference/source/MicroCell.cpp</file>
         </group>
     </open-files>

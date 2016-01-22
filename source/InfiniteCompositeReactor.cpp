@@ -82,8 +82,17 @@ void InfiniteCompositeReactor::simulate()
         {
             //Solve the kinetics model
             current_power = _kinetics_model->solveForPower(_kinetics_time_iteration, k_eff,lambda,fission_listing, _power_record, _delayed_record);
-            std::vector<Real> power_distribition = getPowerDistribution(_thermal_solver->_solver_settings._radial_mesh,_micro_sphere_geometry->getFuelKernelRadius(), current_power);
+            
+            #ifdef HOMOGENIZE_POWER
 
+                std::vector<Real> power_distribition = getHomogenizedPowerDistribution(_thermal_solver->_solver_settings._radial_mesh,_micro_sphere_geometry->getFuelKernelRadius(), current_power);
+            
+            #else
+            
+                std::vector<Real> power_distribition = getKernelPowerDistribution(_thermal_solver->_solver_settings._radial_mesh,_micro_sphere_geometry->getFuelKernelRadius(), current_power);
+
+            #endif
+            
             //Get the thermal solution
             solution =  _thermal_solver->solve( _kinetics_time_iteration, power_distribition); 
             //Add the current time steps solution to the mix
@@ -111,6 +120,51 @@ void InfiniteCompositeReactor::simulate()
     PythonPlot::plotData( _delayed_record, "Time [s]", "Delayed Precursors", {} , "Keff vs. Delayed Precursors", this->_results_directory + "delayed-precursors.png");
 }
 
+
+std::vector<Real> InfiniteCompositeReactor::getHomogenizedPowerDistribution(std::vector<Dimension> radial_points, Real kernel_radius, Real total_power_density)
+{
+    auto number_points = radial_points.size();
+    
+    std::vector<Real> power_distribution = std::vector<Real>();
+    power_distribution.reserve( number_points);
+    
+    for( long index = 0; index < number_points; ++index)
+    {
+        power_distribution.push_back( total_power_density );
+    }
+    
+    return power_distribution;
+}
+
+std::vector<Real> InfiniteCompositeReactor::getKernelPowerDistribution(std::vector<Dimension> radial_points, Real kernel_radius, Real total_power_density)
+{
+    auto number_points = radial_points.size();
+    
+    std::vector<Real> power_distribution = std::vector<Real>();
+    power_distribution.reserve( number_points);
+    Real large_radius = radial_points.back();
+    Real kernel_power = total_power_density * pow(large_radius,3)/pow(kernel_radius,3);
+    
+    for( long index = 0; index < number_points; ++index)
+    {
+        Dimension radial_point = radial_points[index];
+        Real power;
+        
+        if(radial_point < kernel_radius )
+        {
+            power = kernel_power;           
+        }
+        else
+        {
+            power = 0;           
+        }
+        
+        power_distribution.push_back( power );
+    }
+    
+    return power_distribution;
+}
+
 InfiniteCompositeReactor::~InfiniteCompositeReactor()
 {
     delete _micro_sphere_geometry;
@@ -119,14 +173,25 @@ InfiniteCompositeReactor::~InfiniteCompositeReactor()
     delete _monte_carlo_model;
 }
     
+
+
+
 void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
 {
+    
+    Real sphere_outer_radius, fuel_kernel_outer_radius; 
+    
+    
     //Define our geometry
-    Real sphere_outer_radius = 2e-3;  //meters
-    Real fuel_kernel_outer_radius = 4e-4;
+    sphere_outer_radius = 2e-3;  //meters
+    fuel_kernel_outer_radius = 4e-4;
     std::vector<Dimension> dimensions = { fuel_kernel_outer_radius, sphere_outer_radius };
     std::vector<Materials> materials = { Materials::UO2, Materials::C }; 
     this->_micro_sphere_geometry = new MicroGeometry(materials, dimensions);    
+    
+    
+    
+    
     
     //Define the heat transfer settings
     Real initial_power_density = 200e6; // W/m^3 averaged over the entire micro sphere
@@ -152,7 +217,7 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     
     //Time stepping parameters
     _monte_carlo_time_iteration = 0.01;  //How often to calculate keff and the prompt neutron lifetime
-    _kinetics_time_iteration = 0.0002;   //How often to couple the kinetics and heat transfer routines    
+    _kinetics_time_iteration = 0.00002;   //How often to couple the kinetics and heat transfer routines    
     _end_time = 1.00;                    //How many seconds should the simulation last 
     
 }
