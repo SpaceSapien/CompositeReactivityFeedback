@@ -38,7 +38,11 @@ public:
     std::vector<Real> _power_distribution; 
     MicroCellBoundaryCondition _outer_boundary_condition;
     std::vector<MicroSolution> iterateInitialConditions(const Real &initial_average_power_density);
-    std::vector<Real> getKernelPowerDistribution(const Real &average_power_density);
+    
+    std::vector<Real> getRespresentativePowerDistribution(const Real &average_power_density);
+    std::vector<Real> getRespresentativeHomogenizedPowerDistribution(const Real &average_power_density);
+    std::vector<Real> getRepresentativeKernelPowerDistribution(const Real &average_power_density);
+
     void setBoundaryCondition(const MicroCellBoundaryCondition &boundary_condition);
     Real getOuterDerivative();
     Real getAverageTemperature(const int &zone);

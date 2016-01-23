@@ -273,7 +273,7 @@ MicroSolution MicroCell::getInitialConditions()
 
 std::vector<MicroSolution> MicroCell::iterateInitialConditions(const Real &initial_average_power_density)
 {
-    std::vector<Real> power_distribution =  this->getKernelPowerDistribution(initial_average_power_density);    
+    std::vector<Real> power_distribution =  this->getRespresentativePowerDistribution(initial_average_power_density);    
     std::vector<MicroSolution> solutions = std::vector<MicroSolution>();
     Real solution_time_step = 0.05;
     Real max_residual = 1;
@@ -366,13 +366,24 @@ Real MicroCell::getAverageTemperature(const int &zone)
     return volume_weighted_temperature/total_volume;    
 }
 
+std::vector<Real> MicroCell::getRespresentativePowerDistribution(const Real &average_power_density)
+{
+    #ifdef HOMOGENIZE_POWER
 
+    return this->getRespresentativeHomogenizedPowerDistribution(average_power_density);
+    
+    #else
 
-std::vector<Real> MicroCell::getKernelPowerDistribution(const Real &average_power_density)
+    return this->getRepresentativeKernelPowerDistribution(average_power_density);
+    
+    #endif
+}
+
+std::vector<Real> MicroCell::getRepresentativeKernelPowerDistribution(const Real &average_power_density)
 {
     //Get the radial mesh
     std::vector<Real> radial_mesh = _solver_settings._radial_mesh;
-    int number_points = radial_mesh.size();
+    size_t number_points = radial_mesh.size();
     //Allocate the space for the power distribution
     std::vector<Real> power_distribution = std::vector<Real>();
     power_distribution.reserve( number_points);
@@ -382,7 +393,7 @@ std::vector<Real> MicroCell::getKernelPowerDistribution(const Real &average_powe
     
     Real kernel_power = average_power_density * pow(outer_radius,3)/pow(fuel_kernel_radius,3);
     
-    for( long index = 0; index < number_points; ++index)
+    for( size_t index = 0; index < number_points; ++index)
     {
         Dimension radial_point = radial_mesh[index];
         Real power;
@@ -397,6 +408,25 @@ std::vector<Real> MicroCell::getKernelPowerDistribution(const Real &average_powe
         }
         
         power_distribution.push_back( power );
+    }
+    
+    return power_distribution;
+}
+
+
+std::vector<Real> MicroCell::getRespresentativeHomogenizedPowerDistribution(const Real &average_power_density)
+{
+    //Get the radial mesh
+    std::vector<Real> radial_mesh = _solver_settings._radial_mesh;
+    size_t number_points = radial_mesh.size();
+    
+    //Allocate the space for the power distribution
+    std::vector<Real> power_distribution = std::vector<Real>();
+    power_distribution.reserve( number_points);
+    
+    for( size_t index = 0; index < number_points; ++index)
+    {
+        power_distribution.push_back( average_power_density );
     }
     
     return power_distribution;

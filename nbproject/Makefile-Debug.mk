@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/source/DelayedNeutronSet.o \
 	${OBJECTDIR}/source/ExplicitSolverSettings.o \
 	${OBJECTDIR}/source/InfiniteCompositeReactor.o \
+	${OBJECTDIR}/source/InputFileParser.o \
 	${OBJECTDIR}/source/MaterialDataPacket.o \
 	${OBJECTDIR}/source/MaterialEnum.o \
 	${OBJECTDIR}/source/MaterialLibrary.o \
@@ -89,6 +90,11 @@ ${OBJECTDIR}/source/InfiniteCompositeReactor.o: source/InfiniteCompositeReactor.
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/InfiniteCompositeReactor.o source/InfiniteCompositeReactor.cpp
+
+${OBJECTDIR}/source/InputFileParser.o: source/InputFileParser.cpp 
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/InputFileParser.o source/InputFileParser.cpp
 
 ${OBJECTDIR}/source/MaterialDataPacket.o: source/MaterialDataPacket.cpp 
 	${MKDIR} -p ${OBJECTDIR}/source

@@ -72,9 +72,7 @@ class InfiniteCompositeReactor
     void plotDelayedPrecursors();
     void saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma);
     void createOutputFile();
-    std::vector<Real> getKernelPowerDistribution(std::vector<Dimension> radial_points, Real kernel_radius, Real total_power_density);
-    std::vector<Real> getHomogenizedPowerDistribution(std::vector<Dimension> radial_points, Real kernel_radius, Real total_power_density);
-
+    
     
 private:
     

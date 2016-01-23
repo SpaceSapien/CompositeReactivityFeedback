@@ -17,6 +17,11 @@ Thermal Mesh Size: 100
 # Thermal Solver Order: Second | Fourth
 Thermal Solver Order: Second 
 
+#Before the program starts iterating the transient, it looks for the 
+#Steady State Transient
+Initial Solve Convergence Fraction: 0.01
+
+
 #Timer iteration data
 Monte Carlo Recalculation Timestep: 0.01 s
 Kinetics Time Iteration: 10e-9
