@@ -32,7 +32,11 @@
 #include "InputDataFunctions.h"
 #include "ReactorKinetics.h"
 #include "PythonPlot.h"
+#include "InputFileParser.h"
 
+class MicroCell;
+class ReactorKinetics;
+class ReactorMonteCarlo;
 
 
 class InfiniteCompositeReactor
@@ -47,6 +51,8 @@ class InfiniteCompositeReactor
     ReactorKinetics* _kinetics_model;
     //Gather the monte carlo object
     ReactorMonteCarlo* _monte_carlo_model;
+    //Read the input file
+    InputFileParser* _input_file_reader;
     
     //Data Storage for various data
     std::vector<MicroSolution> _plot_solutions;    
@@ -58,14 +64,16 @@ class InfiniteCompositeReactor
     
     //Time stepping parameters
     Real _monte_carlo_time_iteration;  //How often to calculate keff and the prompt neutron lifetime
-    Real _kinetics_time_iteration;     //How often to couple the kinetics and heat transfer routines    
+    Real _kinetics_thermal_sync_time_step;     //How often to couple the kinetics and heat transfer routines    
     Real _end_time;                    //How many seconds should the simulation last?
     std::string _data_file;            //Data file
     
-    InfiniteCompositeReactor();
+    InfiniteCompositeReactor(const std::string &input_file);
     virtual ~InfiniteCompositeReactor();
     std::string getSaveDirectory();
     std::string _results_directory;
+    
+    
     
     void simulate();
     void initializeInifiniteCompositeReactorProblem();

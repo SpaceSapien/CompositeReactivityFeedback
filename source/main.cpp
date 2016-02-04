@@ -8,6 +8,7 @@
 #include <math.h>
 #include <iomanip>
 #include <ctime>
+#include <sstream>
 #include "MicroSolution.h"
 #include "MaterialLibrary.h"
 #include "EnumsAndFunctions.h"
@@ -37,8 +38,29 @@ int main(int argc, char** argv)
    //   MPI_Finalize();     
 //}
     
-    InfiniteCompositeReactor reactor = InfiniteCompositeReactor();
-    reactor.simulate();
+    //No Input File
+    if( argc == 1 )
+    {
+        //char[] input_file = argv[1]
+        std::string input_file_name = "input/default-input-file.inp";
+        InfiniteCompositeReactor reactor = InfiniteCompositeReactor(input_file_name);
+        reactor.simulate();
+    }
+    //Input File Specified
+    else if( argc == 2)
+    {
+        std::string input_file_name = std::string(argv[2]);
+        
+        if( ! file_exists(input_file_name) )
+        {
+            std::cerr << "input_file_name: " + input_file_name + " Doesn't exist";
+            input_file_name = "input/default-input-file.inp";
+            
+        }
+        
+        InfiniteCompositeReactor reactor = InfiniteCompositeReactor(input_file_name);
+        reactor.simulate();
+    }
 
 }
 
@@ -85,6 +107,20 @@ std::string exec(const std::string command, const bool &print_command,const bool
     
     return result;
 }
+
+bool file_exists (const std::string &name) 
+{
+    if (FILE *file = fopen(name.c_str(), "r")) 
+    {
+        fclose(file);
+        return true;
+    } 
+    else 
+    {
+        return false;
+    }   
+}
+
 
 std::string doubleToScientificString(double value)
 {

@@ -17,11 +17,12 @@
 #include "InputDataFunctions.h"
 #include <chrono>
 #include <thread>
+#include "InfiniteCompositeReactor.h"
 
 
 ReactorMonteCarlo::ReactorMonteCarlo() {}
 
-ReactorMonteCarlo::ReactorMonteCarlo(MicroCell* &micro_cell_ptr,const Real &starting_k_eff, const  std::string &run_directory)
+ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Real &starting_k_eff, const  std::string &run_directory)
 {
     Real k_eff;
     Real prompt_removal_lifetime;
@@ -33,7 +34,8 @@ ReactorMonteCarlo::ReactorMonteCarlo(MicroCell* &micro_cell_ptr,const Real &star
     std::string run_command = "mkdir -p " + _run_directory;
     exec(run_command);
     
-    _micro_cell_ptr = micro_cell_ptr;
+    _reactor = reactor;
+    
     getRawCriticalityParameters(k_eff,k_eff_sigma,prompt_removal_lifetime,prompt_removal_lifetime_sigma);
     _virtual_k_eff_multiplier = starting_k_eff / k_eff;  
     _current_k_eff = starting_k_eff;
@@ -167,14 +169,9 @@ void ReactorMonteCarlo::readOutputFile(const std::string &file_name, Real &k_eff
     //the final combined (col/abs/tl) prompt removal lifetime = 2.6650E-04 seconds with an estimated standard deviation of 4.6932E-07 */
 }
 
-void ReactorMonteCarlo::createMCNPOutputFile(const std::string &file_name)
+std::string ReactorMonteCarlo::getMaterialCards()
 {
-    const Real MeVperK = 8.617e-11;
-    Real matrix_temperature = _micro_cell_ptr->getAverageTemperature(1);
-    Real fuel_kernel_temperature = _micro_cell_ptr->getAverageTemperature(0);
-    std::stringstream mcnp_file;
-    Dimension kernel_radius = _micro_cell_ptr->_geometry.getFuelKernelRadius()*100.0; //Dimensions in cm
-    Dimension matrix_radius = _micro_cell_ptr->_geometry.getOuterRadius()*100.0;
+    std::stringstream material_cards;
     
     #ifdef LAPTOP
     
@@ -187,32 +184,85 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &file_name)
     std::string U235_cs = "92235.80c";    
     
     #endif
+
+    
+    material_cards << " m1  8016        2          $UO2" << std::endl;
+    material_cards << "     " << U235_cs << "   0.2" << std::endl;
+    material_cards << "     " << U238_cs << "   0.8" << std::endl;
+    material_cards << " mt1 o2-u.27t           $S(a,b) UO2 @ 1200 K" << std::endl;
+    material_cards << "     u-o2.27t" << std::endl;
+    material_cards << " m2  6000    1          $Graphite" << std::endl;
+    material_cards << " mt2 grph.22t           $Graphite S(a,b) treatment @ 500 K" << std::endl;
+    material_cards << " OTFDB " << U238_cs << std::endl;
+    material_cards << "       " << U235_cs << std::endl;
+    material_cards << "       8016.60c" << std::endl;
+    material_cards << "       6000.60c" << std::endl;    
+    
+    return material_cards.str();
+}
+
+std::string ReactorMonteCarlo::getCellCards()
+{
+    std::stringstream cell_cards;
+    
+    const Real MeVperK = 8.617e-11;
+    Real matrix_temperature = _reactor->_thermal_solver->getAverageTemperature(1);
+    Real fuel_kernel_temperature = _reactor->_thermal_solver->getAverageTemperature(0);
+    
+    cell_cards << " 1 1  -10.96  -1      imp:n=1 TMP=" << fuel_kernel_temperature*MeVperK  << " $fuel T = " << fuel_kernel_temperature << " K" << std::endl;
+    cell_cards << " 2 2  -1.78    1 -2   imp:n=1 TMP=" << matrix_temperature*MeVperK <<" $matrix T = " << matrix_temperature << " K" << std::endl;
+    
+    return cell_cards.str();
+}
+
+std::string ReactorMonteCarlo::getSurfaceCards()
+{
+    std::stringstream surface_cards;
+    
+    std::vector<std::pair<Materials, Dimension> > geometry_data = _reactor->_micro_sphere_geometry->_geometry;
+    size_t number_zones = geometry_data.size();   
+       
+    for( size_t index = 0; index < number_zones  ; index++ )
+    {
+        size_t current_zone = index + 1;
+    
+        //we want to put our reflecting boundary condition here
+        if( current_zone == number_zones)
+        {
+            surface_cards << "*";
+        }
+        
+        surface_cards << current_zone << " SPH 0 0 0 " << geometry_data[index].second << std::endl;
+        
+    }
+    
+    return surface_cards.str();
+}
+
+
+void ReactorMonteCarlo::createMCNPOutputFile(const std::string &file_name)
+{
+    
+    std::stringstream mcnp_file;
+   
      
+    std::string cell_cards = this->getCellCards();
+    std::string surface_cards = this->getSurfaceCards();
+    std::string material_cards = this->getMaterialCards();
+    
     mcnp_file << "Composite Fuel Kernel Scale" << std::endl;
     mcnp_file << "c Simulating a small UO2 fuel kernel inside a graphite matrix" << std::endl;
     mcnp_file << "c TMP [MeV] = 8.617e-11 [MeV/K] * T [K]   " << std::endl;
     mcnp_file << "c ----------------------CELL CARDS----------------------------" << std::endl;
-    mcnp_file << " 1 1  -10.96  -1      imp:n=1 TMP=" << fuel_kernel_temperature*MeVperK  << " $fuel T = " << fuel_kernel_temperature << " K" << std::endl;
-    mcnp_file << " 2 2  -1.78    1 -2   imp:n=1 TMP=" << matrix_temperature*MeVperK <<" $matrix T = " << matrix_temperature << " K" << std::endl;
+    mcnp_file << cell_cards;
     mcnp_file << "c end cell cards" << std::endl;
     mcnp_file << std::endl;
     mcnp_file << "c ----------------------SURFACE CARDS---------------------" << std::endl;
-    mcnp_file << " 1 SPH 0 0 0 " << kernel_radius << std::endl;
-    mcnp_file << "*2 SPH 0 0 0 " << matrix_radius << std::endl;
+    mcnp_file << surface_cards;
     mcnp_file << "c end surface cards" << std::endl;
     mcnp_file << std::endl;
     mcnp_file << "c ------------------MATERIAL AND DATA CARDS--------------------" << std::endl;
-    mcnp_file << " m1  8016        2          $UO2" << std::endl;
-    mcnp_file << "     " << U235_cs << "   0.2" << std::endl;
-    mcnp_file << "     " << U238_cs << "   0.8" << std::endl;
-    mcnp_file << " mt1 o2-u.27t           $S(a,b) UO2 @ 1200 K" << std::endl;
-    mcnp_file << "     u-o2.27t" << std::endl;
-    mcnp_file << " m2  6000    1          $Graphite" << std::endl;
-    mcnp_file << " mt2 grph.22t           $Graphite S(a,b) treatment @ 500 K" << std::endl;
-    mcnp_file << " OTFDB " << U238_cs << std::endl;
-    mcnp_file << "       " << U235_cs << std::endl;
-    mcnp_file << "       8016.60c" << std::endl;
-    mcnp_file << "       6000.60c" << std::endl;
+    mcnp_file << material_cards;
     mcnp_file << " KCODE 25000 1.5 3 53  $need at least 30 active cycles to print results" << std::endl;
     mcnp_file << " KSRC 0 0 0" << std::endl;
     mcnp_file << " print" << std::endl;

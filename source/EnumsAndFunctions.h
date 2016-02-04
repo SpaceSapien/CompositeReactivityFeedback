@@ -53,6 +53,7 @@ enum FissionableIsotope
 };
 
 std::string getMaterialName(const Materials &material);
+Materials getMaterialFromName(const std::string &material_name);
 
 #endif /* MATERIALENUM_H */
 

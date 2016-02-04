@@ -26,6 +26,7 @@ std::vector<Real> getInitialTemperatures(std::vector<Dimension> radial_points);
 std::vector<Real> getPowerDistribution(std::vector<Dimension> radial_points,const Real kernel_radius,const Real total_power_density);
 std::string exec(const std::string command, const bool &print_command = true,const bool &print_output = true);
 std::string doubleToScientificString(double value);
-        
+bool file_exists(const std::string &name);  
+
 #endif /* INPUTDATAFUNCTIONS_H */
 

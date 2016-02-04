@@ -17,6 +17,9 @@
 #include <iostream>
 #include <string>
 #include "MicroCell.h"
+#include "InfiniteCompositeReactor.h"
+
+class InfiniteCompositeReactor;
 
 class ReactorMonteCarlo 
 {
@@ -36,16 +39,20 @@ public:
     std::vector<std::pair<FissionableIsotope,Real> > _fission_tally_listing;
     
     ReactorMonteCarlo();
-    ReactorMonteCarlo(MicroCell* &micro_cell_ptr,const Real &starting_k_effective,const std::string &run_directory);
+    ReactorMonteCarlo(InfiniteCompositeReactor* reactor, const Real &starting_k_effective,const std::string &run_directory);
     void createMCNPOutputFile(const std::string &file_name);
     void updateAdjustedCriticalityParameters();
     void getRawCriticalityParameters( Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma);   
     void readOutputFile(const std::string &file_name, Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma);
     
+    std::string getMaterialCards();
+    std::string getCellCards();
+    std::string getSurfaceCards();
+    
     
 private:
     
-    MicroCell* _micro_cell_ptr;
+    InfiniteCompositeReactor* _reactor;
 
 };
 

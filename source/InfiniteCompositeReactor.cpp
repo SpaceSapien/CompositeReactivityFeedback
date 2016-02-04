@@ -31,9 +31,10 @@
 #include "InputDataFunctions.h"
 #include "ReactorKinetics.h"
 #include "PythonPlot.h"
+#include "InputFileParser.h"
 
 
-InfiniteCompositeReactor::InfiniteCompositeReactor() 
+InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file_name ) 
 {    
     //Create the Results Folder
     time_t run_identification_number = std::time(nullptr);
@@ -41,6 +42,7 @@ InfiniteCompositeReactor::InfiniteCompositeReactor()
     _data_file = "datafile.csv";
     std::string folder_command = "mkdir -p " + _results_directory;
     exec( folder_command );
+    this->_input_file_reader = new InputFileParser( input_file_name);
     createOutputFile();
     initializeInifiniteCompositeReactorProblem();
 }
@@ -78,17 +80,17 @@ void InfiniteCompositeReactor::simulate()
        
         this->saveCurrentData(transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma);
          
-        for( inner_time_step = 0 ; inner_time_step < _monte_carlo_time_iteration ; inner_time_step += _kinetics_time_iteration)
+        for( inner_time_step = 0 ; inner_time_step < _monte_carlo_time_iteration ; inner_time_step += _kinetics_thermal_sync_time_step)
         {
             //Solve the kinetics model
-            current_power = _kinetics_model->solveForPower(_kinetics_time_iteration, k_eff,lambda,fission_listing, _power_record, _delayed_record);
+            current_power = _kinetics_model->solveForPower(_kinetics_thermal_sync_time_step, k_eff,lambda,fission_listing, _power_record, _delayed_record);
             
             //
             std::vector<Real> power_distribition = _thermal_solver->getRespresentativePowerDistribution( current_power);
             
             
             //Get the thermal solution
-            solution =  _thermal_solver->solve( _kinetics_time_iteration, power_distribition); 
+            solution =  _thermal_solver->solve( _kinetics_thermal_sync_time_step, power_distribition); 
             //Add the current time steps solution to the mix
             
             
@@ -120,6 +122,7 @@ InfiniteCompositeReactor::~InfiniteCompositeReactor()
     delete _thermal_solver;
     delete _kinetics_model;
     delete _monte_carlo_model;
+    delete _input_file_reader;
 }
     
 void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
@@ -127,23 +130,26 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     
     Real sphere_outer_radius, fuel_kernel_outer_radius; 
     
-    
     //Define our geometry
     sphere_outer_radius = 2e-3;  //meters
     fuel_kernel_outer_radius = 4e-4;
-    std::vector<Dimension> dimensions = { fuel_kernel_outer_radius, sphere_outer_radius };
-    std::vector<Materials> materials = { Materials::UO2, Materials::C }; 
+    std::vector<Real> default_dimensions =  { fuel_kernel_outer_radius, sphere_outer_radius };
+    std::vector<Materials> default_materials = { Materials::UO2, Materials::C }; 
+    
+    std::vector<Dimension> dimensions = _input_file_reader->getInputFileParameter("Radaii", default_dimensions);
+    std::vector<Materials> materials =   _input_file_reader->getInputFileParameter("Materials", default_materials);
+    
     this->_micro_sphere_geometry = new MicroGeometry(materials, dimensions);    
     
     
     
-    
-    
     //Define the heat transfer settings
-    Real initial_power_density = 200e6; // W/m^3 averaged over the entire micro sphere
-    Real initial_outer_shell_temperature = 800;
+    Real initial_power_density =  _input_file_reader->getInputFileParameter("Starting Power Density",200e6); // W/m^3 averaged over the entire micro sphere
+    Real initial_outer_shell_temperature = 800;//_input_file.getInputFileParameter("Kernel Outer Temperature",800); // Kelvin
+    
     MicroCellBoundaryCondition fixed_temperature_boundary_condition = MicroCellBoundaryCondition::getFixedBoundaryCondition(initial_outer_shell_temperature);
-    this->_thermal_solver = new MicroCell(*this->_micro_sphere_geometry,initial_outer_shell_temperature);
+    
+    this->_thermal_solver = new MicroCell(this, initial_outer_shell_temperature);
     this->_thermal_solver->setBoundaryCondition(fixed_temperature_boundary_condition);
     std::vector<MicroSolution> plot =  this->_thermal_solver->iterateInitialConditions(initial_power_density);
     MicroSolution::plotSolutions(plot,0, this->_results_directory + "initial-solve.png");    
@@ -153,8 +159,8 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     this->_thermal_solver->setBoundaryCondition(reflected_boundary_condition);
     
     //Define the Monte Carlo Parameters
-    Real starting_k_eff = 1.01;    
-    this->_monte_carlo_model = new ReactorMonteCarlo(this->_thermal_solver, starting_k_eff, this->_results_directory + "run/");   
+    Real starting_k_eff =  _input_file_reader->getInputFileParameter("Starting K-eff",1.01);    
+    this->_monte_carlo_model = new ReactorMonteCarlo(this, starting_k_eff, this->_results_directory + "run/");   
     
     //Define the kinetics parameters
     std::vector<std::pair<FissionableIsotope,Real> > fission_listing = this->_monte_carlo_model->_fission_tally_listing;
@@ -162,9 +168,9 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     
     
     //Time stepping parameters
-    _monte_carlo_time_iteration = 0.01;  //How often to calculate keff and the prompt neutron lifetime
-    _kinetics_time_iteration = 0.00002;   //How often to couple the kinetics and heat transfer routines    
-    _end_time = 1.00;                    //How many seconds should the simulation last 
+    _monte_carlo_time_iteration =  _input_file_reader->getInputFileParameter("Monte Carlo Recalculation Timestep",0.01 );  //How often to calculate keff and the prompt neutron lifetime
+    _kinetics_thermal_sync_time_step = _input_file_reader->getInputFileParameter("Kinetics Thermal Data Sync",20e-6);      //How often to couple the kinetics and heat transfer routines    
+    _end_time = _input_file_reader->getInputFileParameter("Calculation End Time",1.00);                                    //How many seconds should the simulation last 
     
 }
 

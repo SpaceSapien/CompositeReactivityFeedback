@@ -19,7 +19,11 @@
 #include "ExplicitSolverSettings.h"
 #include "MicroSolution.h"
 #include "MicroCellBoundaryCondition.h"
+#include "InputFileParser.h"
+#include "InfiniteCompositeReactor.h"
 
+//forward declare
+class InfiniteCompositeReactor;
 
 class MicroCell
 {
@@ -27,11 +31,12 @@ class MicroCell
 public:
     
     MicroCell();
-    MicroCell(const MicroGeometry &geometry, const Real &intial_temperature);   
+    MicroCell(InfiniteCompositeReactor* reactor, const Real &intial_temperature);
+    InfiniteCompositeReactor* _reactor;
+    
     MicroSolution solve(const Real &simulation_time_step, const std::vector<Real> &power_distribution);
     MicroSolution getInitialConditions();
     MaterialDataPacket testMaterialProperties(const Real &radial_position);
-    MicroGeometry _geometry;    
     ExplicitSolverSettings _solver_settings;
     Real _current_time;
     std::vector<Real> _solution; 

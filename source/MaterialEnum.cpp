@@ -81,3 +81,68 @@ std::string getMaterialName(const Materials &material)
         }
     }
 };
+
+Materials getMaterialFromName(const std::string &material_name)
+{
+    if(material_name == "U")
+    {
+        return Materials::U;
+    }
+    if(material_name == "UO2")
+    {
+        return Materials::UO2;
+    }   
+    if(material_name == "UN")
+    {
+        return Materials::UN;
+    }
+    if(material_name == "UC")
+    {
+        return Materials::UC;
+    }
+    if( material_name == "U3Si" )
+    {
+        return Materials::U3Si;
+    }
+    if( material_name == "SiC" )
+    {
+        return Materials::SiC;
+    }
+    if( material_name == "C" )
+    {
+        return Materials::C;
+    }
+    if( material_name == "Be" )
+    {
+        return Materials::Be;
+    }
+    if( material_name == "BeO" )
+    {
+        return Materials::BeO;
+    }
+    if( material_name == "ZrB2" )
+    {
+        return Materials::ZrB2;
+    }
+    if( material_name == "W" )
+    {
+        return Materials::W;
+    }
+    if( material_name == "B4C" )
+    {
+        return Materials::B4C;
+    }    
+    if( material_name == "Mo" )
+    {
+        return Materials::Mo;
+    }
+    if( material_name == "Nb" )
+    {
+        return Materials::Nb;
+    }
+    if( material_name == "Zr" )
+    {
+        return Materials::Zr;
+    }
+    throw -1;
+};

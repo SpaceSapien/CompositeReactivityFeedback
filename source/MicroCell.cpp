@@ -22,15 +22,18 @@
 #include "InputDataFunctions.h"
 #include "MicroCellBoundaryCondition.h"
 #include "MicroCell.h"
+#include "InputFileParser.h"
+#include "InfiniteCompositeReactor.h"
 
 MicroCell::MicroCell() {}
 
-MicroCell::MicroCell(const MicroGeometry &geometry,const Real &initial_temperature) 
+MicroCell::MicroCell(InfiniteCompositeReactor* reactor,const Real &initial_temperature) 
 {
     
-    this->_geometry = geometry;    
-    Dimension max_radius = this->_geometry.getOuterRadius();
+    this->_reactor = reactor;
+    Dimension max_radius = _reactor->_micro_sphere_geometry->getOuterRadius();
     this->_solver_settings = ExplicitSolverSettings(ExplicitSolverSettings::SolverOrder::SECOND, max_radius );     
+    
     
     //Default initialization to 350 K
     this->_solution.resize( _solver_settings._radial_mesh.size(), initial_temperature );
@@ -79,7 +82,7 @@ MicroSolution MicroCell::solveFourthOrder(const Real &simulation_time_step, cons
             Real temperature = previous_solution[radial_index];
             Dimension radial_position = radial_mesh[radial_index]; 
             Real power = power_distribution[radial_index];
-            MaterialDataPacket material_data = _geometry.getMaterialProperties(radial_position,temperature);//testMaterialProperties(radial_position);//
+            MaterialDataPacket material_data = _reactor->_micro_sphere_geometry->getMaterialProperties(radial_position,temperature);//testMaterialProperties(radial_position);//
             
             
             
@@ -167,7 +170,7 @@ MicroSolution MicroCell::solveSecondOrder(const Real &simulation_time_step, cons
             Real temperature = previous_solution[radial_index];
             Dimension radial_position = radial_mesh[radial_index]; 
             Real power = power_distribution[radial_index];
-            MaterialDataPacket material_data = _geometry.getMaterialProperties(radial_position,temperature); //testMaterialProperties(radial_position);
+            MaterialDataPacket material_data = _reactor->_micro_sphere_geometry->getMaterialProperties(radial_position,temperature); //testMaterialProperties(radial_position);
             Real dSolution = 0;
             Real dTdr, d2Tdr2;
             
@@ -278,8 +281,10 @@ std::vector<MicroSolution> MicroCell::iterateInitialConditions(const Real &initi
     Real solution_time_step = 0.05;
     Real max_residual = 1;
     Real index = 0;
+    Real desired_residual = _reactor->_input_file_reader->getInputFileParameter("Steady State Temperature Solution Max Residual", 0.01 );
     
-    while( max_residual > 0.01 )
+    
+    while( max_residual > desired_residual )
     {
        MicroSolution solution = MicroCell::solve(solution_time_step,power_distribution); 
        
@@ -328,11 +333,11 @@ Real MicroCell::calculationMaximumResidual(const std::vector<Real> &vector_1, co
 Real MicroCell::getAverageTemperature(const int &zone)
 {
     Dimension inner_radius = 0.0;
-    Dimension outer_radius = _geometry._geometry[zone].second;
+    Dimension outer_radius = _reactor->_micro_sphere_geometry->_geometry[zone].second;
     
     if( zone > 0 )
     {
-        inner_radius = _geometry._geometry[zone-1].second;
+        inner_radius = _reactor->_micro_sphere_geometry->_geometry[zone-1].second;
     }
     
     Real element_size = _solver_settings._element_size;
@@ -388,8 +393,8 @@ std::vector<Real> MicroCell::getRepresentativeKernelPowerDistribution(const Real
     std::vector<Real> power_distribution = std::vector<Real>();
     power_distribution.reserve( number_points);
     //Get the boundary locations     
-    Real fuel_kernel_radius = _geometry.getFuelKernelRadius();
-    Real outer_radius = _geometry.getOuterRadius();
+    Real fuel_kernel_radius = _reactor->_micro_sphere_geometry->getFuelKernelRadius();
+    Real outer_radius = _reactor->_micro_sphere_geometry->getOuterRadius();
     
     Real kernel_power = average_power_density * pow(outer_radius,3)/pow(fuel_kernel_radius,3);
     
