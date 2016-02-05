@@ -5,10 +5,13 @@ from pylab import *
 import matplotlib.pyplot  as pyplot
 import os.path
 
+
 def main(argv):
 
     y_data = []
     x_data = []
+    x_limits = [0,0]
+    y_limits = [0,0]
     error_data = []
     x_label = "x data"
     y_label = "y data"
@@ -19,7 +22,7 @@ def main(argv):
 
     try:
 
-        opts, args = getopt.getopt(argv, "h", ["xdata=", "ydata=", "errordata=", "xlabel=","ylabel=", "legend=", "saveplot=", "title="])
+        opts, args = getopt.getopt(argv, "h", ["xdata=", "ydata=", "errordata=", "xlabel=","ylabel=", "legend=", "saveplot=", "title=", "ylimits=", "xlimits="])
 
     except getopt.GetoptError:
 
@@ -64,6 +67,14 @@ def main(argv):
         elif opt in "--title":
 
             title  = arg
+        
+        elif opt in "--ylimits":
+
+            y_limits  =  [ float(x) for x in arg.split() ]
+            
+        elif opt in "--xlimits":
+
+            x_limits  =  [ float(x) for x in arg.split() ]
 
     if len(y_data.split()) != len(x_data.split()) :
 
@@ -72,13 +83,13 @@ def main(argv):
 
     if( error_data == "" ):    
 
-        plot(x_data,y_data,x_label,y_label, legend, title, save_plot_file)
+        plot(x_data,y_data,x_label,y_label, legend, title, save_plot_file, x_limits, y_limits)
         
     else:
         
-        error_plot(x_data,y_data,error_data,x_label,y_label, legend, title, save_plot_file)
+        error_plot(x_data,y_data,error_data,x_label,y_label, legend, title, save_plot_file, x_limits, y_limits)
 
-def error_plot(x_data,y_data,error_data,x_label,y_label, legend, title, save_plot_file):
+def error_plot(x_data,y_data,error_data,x_label,y_label, legend, title, save_plot_file, xlimits, ylimits):
 
     colors = ['blue', 'red', 'green', 'purple', 'orange', 'black', '#ffff00', '#999999', '#ff00ff', '#00ffff', '#555555', '#ff9900']
 
@@ -150,6 +161,14 @@ def error_plot(x_data,y_data,error_data,x_label,y_label, legend, title, save_plo
     if title != "" :
 
         plt.suptitle(title, fontsize=standard_font_size)
+    
+    if xlimits[0] != xlimits[1] :
+    
+        ax1.set_xlim(xlimits)
+    
+    if ylimits[0] != ylimits[1] :
+
+        ax1.set_ylim(ylimits)
 
     if save_plot_file == "":
 
@@ -159,7 +178,7 @@ def error_plot(x_data,y_data,error_data,x_label,y_label, legend, title, save_plo
 
         plt.savefig(save_plot_file)
 
-def plot(x_data, y_data,x_label, y_label, legend, title, save_plot_file):
+def plot(x_data, y_data,x_label, y_label, legend, title, save_plot_file, xlimits, ylimits):
 
     colors = ['blue', 'red', 'green', 'purple', 'orange', 'black', '#ffff00', '#999999', '#ff00ff', '#00ffff', '#555555', '#ff9900']
 
@@ -226,6 +245,14 @@ def plot(x_data, y_data,x_label, y_label, legend, title, save_plot_file):
     if title != "" :
 
         plt.suptitle(title, fontsize=standard_font_size)
+        
+    if xlimits[0] != xlimits[1] :
+    
+        ax1.set_xlim(xlimits)
+    
+    if ylimits[0] != ylimits[1] :
+
+        ax1.set_ylim(ylimits)
 
     if save_plot_file == "":
 

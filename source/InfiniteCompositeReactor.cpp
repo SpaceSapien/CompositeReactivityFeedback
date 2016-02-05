@@ -35,14 +35,22 @@
 
 
 InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file_name ) 
-{    
+{   
+    //Initialize the input file reader
+    this->_input_file_reader = new InputFileParser( input_file_name);
+    
     //Create the Results Folder
     time_t run_identification_number = std::time(nullptr);
-    _results_directory =  "results/" + std::to_string(run_identification_number) + "/";    
+    
+    std::string default_run_name = "Unnamed-Run";
+    std::string results_folder_name = _input_file_reader->getInputFileParameter("Run Name", default_run_name);
+    
+    _results_directory =  "results/" + results_folder_name + "-" + std::to_string(run_identification_number) + "/";    
+    
+    
     _data_file = "datafile.csv";
     std::string folder_command = "mkdir -p " + _results_directory;
     exec( folder_command );
-    this->_input_file_reader = new InputFileParser( input_file_name);
     createOutputFile();
     initializeInifiniteCompositeReactorProblem();
 }
@@ -96,7 +104,7 @@ void InfiniteCompositeReactor::simulate()
             
         }
         
-        solution.plot( this->_results_directory + "solution-" + std::to_string(_thermal_solver->_current_time)  + ".png");
+        solution.plot( this->_results_directory + "solution-" + std::to_string(_thermal_solver->_current_time)  + ".png", 800, 3000);
         _plot_solutions.push_back(solution); 
         
         //if there is still enough time left to do another monte carlo time iteration

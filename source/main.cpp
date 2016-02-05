@@ -41,9 +41,8 @@ int main(int argc, char** argv)
     //No Input File
     if( argc == 1 )
     {
-        //char[] input_file = argv[1]
-        std::string input_file_name = "input/default-input-file.inp";
-        InfiniteCompositeReactor reactor = InfiniteCompositeReactor(input_file_name);
+        //If no input file
+        InfiniteCompositeReactor reactor = InfiniteCompositeReactor();
         reactor.simulate();
     }
     //Input File Specified

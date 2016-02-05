@@ -39,10 +39,12 @@ int MicroSolution::size()
     return this->_grid.size();
 }
 
-void MicroSolution::plot(const std::string &save_file_name)
+void MicroSolution::plot(const std::string &save_file_name,const Real &min_temperature, const Real &max_temperature)
 {
     std::string title = "Time = " + std::to_string(_time);    
-    PythonPlot::plotData(_grid,_solution,_x_label, _y_label,"", title, save_file_name);
+    std::pair<Real,Real> y_limits = { min_temperature, max_temperature };
+    std::pair<Real,Real> x_limits = { 0, 0 };
+    PythonPlot::plotData(_grid,_solution,_x_label, _y_label,"", title, save_file_name,x_limits, y_limits);
 }
 
 /**

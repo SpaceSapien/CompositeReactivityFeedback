@@ -21,7 +21,7 @@ PythonPlot::PythonPlot()
     
 }
 
-PythonPlot::PythonPlot(const std::string &x_data, const std::string &y_data, const std::string &x_label, const std::string &y_label,  const std::string &legend_data, const std::string &title_data, const std::string &save_file_name)
+PythonPlot::PythonPlot(const std::string &x_data, const std::string &y_data, const std::string &x_label, const std::string &y_label,  const std::string &legend_data, const std::string &title_data, const std::string &save_file_name, const std::pair<Real,Real> &x_limits, const std::pair<Real,Real> &y_limits )
 {
     _legend = legend_data;
     _save_file = save_file_name;
@@ -30,11 +30,15 @@ PythonPlot::PythonPlot(const std::string &x_data, const std::string &y_data, con
     _x_label = x_label;
     _y_data = y_data;
     _y_label = y_label;
-} 
+    _y_limits = y_limits;
+    _x_limits = x_limits;
+    
+}
 
-void PythonPlot::plotData(const std::string& x_data, const std::string& y_data, const std::string& x_label, const std::string& y_label, const std::string& legend_data, const std::string& title_data, const std::string& save_file_name)
+
+void PythonPlot::plotData(const std::string& x_data, const std::string& y_data, const std::string& x_label, const std::string& y_label, const std::string& legend_data, const std::string& title_data, const std::string& save_file_name, const std::pair<Real,Real> &x_limits, const std::pair<Real,Real> &y_limits)
 {
-    PythonPlot plot = PythonPlot(x_data,y_data,x_label,y_label,legend_data,title_data,save_file_name);
+    PythonPlot plot = PythonPlot(x_data,y_data,x_label,y_label,legend_data,title_data,save_file_name, x_limits, y_limits);
     plot.plot();
 }
 
@@ -132,13 +136,13 @@ void PythonPlot::plotData(const std::vector<std::pair<Real, std::vector<Real> > 
     PythonPlot::plotData(x_data, y_data,x_label,y_label,legend_data_passing,title_data,save_file_name);
 }
 
-void PythonPlot::plotData(const std::vector<Real> &x_data, const std::vector<Real> &y_data, const std::string &x_label, const std::string &y_label,const std::string &legend_data, const std::string &title_data, const std::string &save_file_name)
+void PythonPlot::plotData(const std::vector<Real> &x_data, const std::vector<Real> &y_data, const std::string &x_label, const std::string &y_label,const std::string &legend_data, const std::string &title_data, const std::string &save_file_name, const std::pair<Real,Real> &x_limits, const std::pair<Real,Real> &y_limits)
 {
     if( x_data.size() == y_data.size() )
     {
         std::string x_data_string = PythonPlot::commandLinePlotData(x_data);
         std::string y_data_string = PythonPlot::commandLinePlotData(y_data);
-        PythonPlot plot = PythonPlot(x_data_string,y_data_string,x_label,y_label,legend_data,title_data,save_file_name);
+        PythonPlot plot = PythonPlot(x_data_string,y_data_string,x_label,y_label,legend_data,title_data,save_file_name,x_limits,y_limits);
         plot.plot();
     }
     else
@@ -208,7 +212,20 @@ void PythonPlot::plot()
     std::string title = " --title='" + _title + "' ";
     std::string save_file = " --saveplot='" + _save_file + "' ";
     std::string legend = " --legend=\"" + _legend + "\" ";
-    std::string command_line_plot = program + x_command + y_command  + axis_labels + legend + title + save_file;
+    
+    std::string limits = "";
+    
+    if(_x_limits.first != _x_limits.second)
+    {
+        limits += " --xlimits='" + std::to_string(_x_limits.first ) + " " + std::to_string(_x_limits.second ) + "' ";
+    }
+    
+    if(_y_limits.first != _y_limits.second)
+    {
+        limits += " --ylimits='" + std::to_string(_y_limits.first ) + " " + std::to_string(_y_limits.second ) + "' ";
+    }
+    
+    std::string command_line_plot = program + x_command + y_command  + axis_labels + legend + title + save_file + limits;
 
     
     exec( command_line_plot );

@@ -288,6 +288,7 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &file_name)
     std::string cell_cards = this->getCellCards();
     std::string surface_cards = this->getSurfaceCards();
     std::string material_cards = this->getMaterialCards();
+    int number_of_cycles = this->_reactor->_input_file_reader->getInputFileParameter("Number of MCNP Cycles", 33);
     
     mcnp_file << "Composite Fuel Kernel Scale" << std::endl;
     mcnp_file << "c Simulating a small UO2 fuel kernel inside a graphite matrix" << std::endl;
@@ -302,7 +303,7 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &file_name)
     mcnp_file << std::endl;
     mcnp_file << "c ------------------MATERIAL AND DATA CARDS--------------------" << std::endl;
     mcnp_file << material_cards;
-    mcnp_file << " KCODE 25000 1.5 3 53  $need at least 30 active cycles to print results" << std::endl;
+    mcnp_file << " KCODE 10000 1.5 3 " << number_of_cycles << "  $need at least 30 active cycles to print results" << std::endl;
     mcnp_file << " KSRC 0 0 0" << std::endl;
     mcnp_file << " print" << std::endl;
     mcnp_file << "c end data" << std::endl;

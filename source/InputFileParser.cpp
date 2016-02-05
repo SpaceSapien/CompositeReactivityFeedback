@@ -58,6 +58,22 @@ Real InputFileParser::getInputFileParameter(const std::string &name, const Real 
         return std::stod(input_file_data);
     }
 }
+
+int InputFileParser::getInputFileParameter(const std::string &name, const int &default_value)
+{
+    std::string input_file_data = this->getInputFileTextEntry(name);
+    
+    if(input_file_data == "")
+    {
+        return default_value;
+    }
+    else
+    {
+        return std::stoul(input_file_data);
+    }
+}
+
+
 std::vector<Real> InputFileParser::getInputFileParameter(const std::string &name, const std::vector<Real> &default_value)
 {
     std::string input_file_data = this->getInputFileTextEntry(name);

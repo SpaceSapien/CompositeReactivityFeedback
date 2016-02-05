@@ -68,7 +68,7 @@ class InfiniteCompositeReactor
     Real _end_time;                    //How many seconds should the simulation last?
     std::string _data_file;            //Data file
     
-    InfiniteCompositeReactor(const std::string &input_file);
+    InfiniteCompositeReactor(const std::string &input_file = "");
     virtual ~InfiniteCompositeReactor();
     std::string getSaveDirectory();
     std::string _results_directory;
