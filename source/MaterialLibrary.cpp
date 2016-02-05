@@ -371,6 +371,147 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
     }
 }
 
+/**
+ * 
+ * @param material
+ * @param material_card_entry  
+ * @param doppler_card         The string text entry for the otfdb card entry. Net needed for every material 
+ * @param enrichment_fraction  Only needed for materials containing Uranium. Specifies enricment amount
+ */
+void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsigned int &zone, std::string &material_card_entry, std::string &doppler_card,const Real &enrichment_fraction)
+{
+    std::stringstream material_cards, db_cards;
+    
+    
+    
+    
+        
+    #ifdef LAPTOP
+
+    std::string U238_cs = "92238.66c";
+    std::string U235_cs = "92235.66c";
+
+    #elif  PRACTICE_CLUSTER 
+
+    std::string U238_cs = "92238.80c";
+    std::string U235_cs = "92235.80c";    
+
+    #endif
+        
+    Real U235_fraction = enrichment_fraction;
+    Real U238_fraction = (1 - enrichment_fraction);
+    
+    switch(material)
+    {
+        case Materials::U :
+        {
+            material_cards << " m" << zone << "  " << U235_cs << "   " << U235_fraction << std::endl;
+            material_cards << "     " << U238_cs << "   " << U238_fraction << std::endl;
+            break;
+           
+        }
+        case Materials::UO2 :
+        {
+            material_cards << " m" << zone << "  8016        2          $UO2" << std::endl;
+            material_cards << "     " << U235_cs << "   " << U235_fraction << std::endl;
+            material_cards << "     " << U238_cs << "   " << U238_fraction << std::endl;
+            material_cards << " mt" << zone << " o2-u.27t           $S(a,b) UO2 @ 1200 K" << std::endl;
+            material_cards << "     u-o2.27t" << std::endl;
+            break;
+                            
+        }
+        
+        case Materials::UN :
+        {
+            material_cards << " m" << zone << "  7014        1          $UN" << std::endl;
+            material_cards << "     " << U235_cs << "   " << U235_fraction << std::endl;
+            material_cards << "     " << U238_cs << "   " << U238_fraction << std::endl;
+            break;
+        }
+        
+        case Materials::UC :
+        {
+            material_cards << " m" << zone << "  6000        1          $UC" << std::endl;
+            material_cards << "     " << U235_cs << "   " << U235_fraction << std::endl;
+            material_cards << "     " << U238_cs << "   " << U238_fraction << std::endl;
+            break;
+        }
+        case Materials::C :
+        {
+            material_cards << " m" << zone << "  6000    1          $Graphite" << std::endl;
+            material_cards << " mt" << zone << " grph.22t           $Graphite S(a,b) treatment @ 500 K" << std::endl;
+            break;
+        }
+        case Materials::Be :
+        {
+            material_cards << " m" << zone << "  4009    1          $Beryllium" << std::endl;
+            material_cards << " mt" << zone << " be.25t             $Be S(a,b) treatment @ 800 K" << std::endl;
+            break;
+        }
+        case Materials::BeO :
+        {
+            material_cards << " m" << zone << "  4009    1          $Beryllium Oxide" << std::endl;
+            material_cards << "     8016        1          " << std::endl;
+            material_cards << " mt" << zone << " be-o.25t             $Be S(a,b) treatment @ 800 K" << std::endl;
+            material_cards << "     o-be.25t" << "             $Oxygen S(a,b) treatment @ 800 K " << std::endl;
+            break;        
+        }
+        
+        case Materials::SiC :
+        {
+            material_cards << " m" << zone << "  14000    1          $SiC" << std::endl;
+            material_cards << "     6000        1          " << std::endl;
+            break;    
+        }
+        
+        case Materials::W :
+        {
+            material_cards << " m" << zone << "  74000    1          $Tungsten" << std::endl;
+            break;                
+        }
+        
+        case Materials::B4C :
+        {
+            material_cards << " m" << zone << "  5011    1          $B4C" << std::endl;
+            material_cards << "     6000        4          " << std::endl;
+            break;
+        }
+        
+        case Materials::Mo :
+        {
+            material_cards << " m" << zone << "  42000    1          $Mo" << std::endl;
+            break;
+        }
+
+        case Materials::Nb :
+        {
+            material_cards << " m" << zone << "  41093    1          $Nb" << std::endl;
+            break;
+        }
+            
+        case Materials::Zr :
+        {
+            material_cards << " m" << zone << "  40000    1          $Zr" << std::endl;
+            break;
+        }
+
+        case Materials::ZrB2 :
+        {        
+            material_cards << " m" << zone << "  42000    1          $ZrB2" << std::endl;
+            material_cards << "     5011        2          " << std::endl;
+            break;
+        }
+        
+        default :
+        {
+            throw Errors::MaterialNotDefined;
+        }
+
+    }
+    material_card_entry = material_cards.str();
+}
+
+
 
 //Specific Heat - J/kg-K
 std::pair<Real,Real> MaterialLibrary::getSpecificHeatPair(const Materials &material,const Real &T,const Real &dpa)
@@ -636,14 +777,6 @@ Real MaterialLibrary::getMeltingPoint(const Materials &material)
     return melting_temperature;
  }
 
-//Copy Constructor
-MaterialLibrary::MaterialLibrary(const MaterialLibrary& orig) 
-{
-    
-}
-
-
-
 Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, const Real& T, const Real& dpa)
 {
     
@@ -786,6 +919,8 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
             throw Errors::MaterialNotDefined;
         }
     }
+    
+    
 }
 
 

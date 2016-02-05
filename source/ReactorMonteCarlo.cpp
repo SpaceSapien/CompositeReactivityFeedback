@@ -171,46 +171,79 @@ void ReactorMonteCarlo::readOutputFile(const std::string &file_name, Real &k_eff
 
 std::string ReactorMonteCarlo::getMaterialCards()
 {
-    std::stringstream material_cards;
+    std::stringstream material_cards, otfdb_card;
+        
+    Real enrichment_fraction = _reactor->_input_file_reader->getInputFileParameter("Uranium Enrichment Fraction", 0.2);
+
+    std::vector<std::pair<Materials, Dimension> > geometry_data = _reactor->_micro_sphere_geometry->_geometry;
+    size_t number_zones = geometry_data.size();   
+       
+    for( size_t index = 0; index < number_zones  ; index++ )
+    {
+        size_t current_zone = index + 1;
     
-    #ifdef LAPTOP
+        Materials material = geometry_data[index].first; 
+        std::string material_card_entry;
+        std::string doppler_card_entry;
+        _reactor->_micro_sphere_geometry->_material_library.getMcnpMaterialCard(material,current_zone,material_card_entry, doppler_card_entry, enrichment_fraction);
+        
+        material_cards << material_card_entry;
+        otfdb_card << doppler_card_entry;        
+    }       
     
+     #ifdef LAPTOP
+
     std::string U238_cs = "92238.66c";
     std::string U235_cs = "92235.66c";
-    
+
     #elif  PRACTICE_CLUSTER 
-    
+
     std::string U238_cs = "92238.80c";
     std::string U235_cs = "92235.80c";    
-    
-    #endif
 
+    #endif
     
-    material_cards << " m1  8016        2          $UO2" << std::endl;
-    material_cards << "     " << U235_cs << "   0.2" << std::endl;
-    material_cards << "     " << U238_cs << "   0.8" << std::endl;
-    material_cards << " mt1 o2-u.27t           $S(a,b) UO2 @ 1200 K" << std::endl;
-    material_cards << "     u-o2.27t" << std::endl;
-    material_cards << " m2  6000    1          $Graphite" << std::endl;
-    material_cards << " mt2 grph.22t           $Graphite S(a,b) treatment @ 500 K" << std::endl;
-    material_cards << " OTFDB " << U238_cs << std::endl;
-    material_cards << "       " << U235_cs << std::endl;
-    material_cards << "       8016.60c" << std::endl;
-    material_cards << "       6000.60c" << std::endl;    
+    otfdb_card << " OTFDB " << U238_cs << std::endl;
+    otfdb_card << "       " << U235_cs << std::endl;
+    //otfdb_card << "       8016.60c" << std::endl;
+    //otfdb_card << "       6000.60c" << std::endl;
     
-    return material_cards.str();
+    
+    return material_cards.str() + otfdb_card.str();
 }
 
 std::string ReactorMonteCarlo::getCellCards()
 {
     std::stringstream cell_cards;
     
+    //For now we will assume that the density stays constant regardless of temperature change to perserve conservation of mass
+    Real density_derived_temperature = 400;
     const Real MeVperK = 8.617e-11;
-    Real matrix_temperature = _reactor->_thermal_solver->getAverageTemperature(1);
-    Real fuel_kernel_temperature = _reactor->_thermal_solver->getAverageTemperature(0);
+    std::vector<std::pair<Materials, Dimension> > geometry_data = _reactor->_micro_sphere_geometry->_geometry;
+    size_t number_zones = geometry_data.size();   
+       
+    for( size_t index = 0; index < number_zones  ; index++ )
+    {
+        size_t current_zone = index + 1;
     
-    cell_cards << " 1 1  -10.96  -1      imp:n=1 TMP=" << fuel_kernel_temperature*MeVperK  << " $fuel T = " << fuel_kernel_temperature << " K" << std::endl;
-    cell_cards << " 2 2  -1.78    1 -2   imp:n=1 TMP=" << matrix_temperature*MeVperK <<" $matrix T = " << matrix_temperature << " K" << std::endl;
+        
+        Real temperature = _reactor->_thermal_solver->getAverageTemperature(index);
+        Materials material = geometry_data[index].first;
+        //First is the density, second is the density derivative which we don't need. Divide by 1000 to convert from kg/m^3 to g/cm^3
+        Real density = _reactor->_micro_sphere_geometry->_material_library.getDensityPair(material,density_derived_temperature,0).first/1000;
+        
+        
+        
+        //we want to put our reflecting boundary condition here
+        if( current_zone == 1 )
+        {
+            cell_cards << " " << current_zone << " " << current_zone << " -" << density << " -"  << current_zone << " imp:n=1 TMP=" << temperature*MeVperK  << " $fuel T = " << temperature << " K" << std::endl;
+        }
+        else
+        {
+            cell_cards << " " << current_zone << " " << current_zone << " -" << density << " " << ( current_zone -1 )  << " " << " -"  << current_zone << " imp:n=1 TMP=" << temperature*MeVperK <<" $matrix T = " << temperature << " K" << std::endl;
+        }
+    }
     
     return cell_cards.str();
 }
@@ -231,8 +264,14 @@ std::string ReactorMonteCarlo::getSurfaceCards()
         {
             surface_cards << "*";
         }
+        else
+        {
+            surface_cards << " ";
+        }
+        //cm sphere radius
+        Real shell_radius = geometry_data[index].second * 100; 
         
-        surface_cards << current_zone << " SPH 0 0 0 " << geometry_data[index].second << std::endl;
+        surface_cards << current_zone << " SPH 0 0 0 " << shell_radius << std::endl;
         
     }
     

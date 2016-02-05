@@ -26,11 +26,13 @@ public:
     };
     
     MaterialLibrary();
-    MaterialLibrary(const MaterialLibrary& orig);
     
     std::pair<Real,Real> getThermalConductivityPair(const Materials &material, const Real &T, const Real &dpa);
     std::pair<Real,Real> getDensityPair(const Materials &material,const Real &T,const Real &dpa);
     std::pair<Real,Real> getSpecificHeatPair(const Materials &material,const Real &T,const Real &dpa);
+    
+    void getMcnpMaterialCard(const Materials &material, const unsigned int &zone, std::string &material_card_entry, std::string &doppler_card,const Real &enrichment_fraction);
+ 
     
     Real getMeltingPoint(const Materials &material);
     Real getLinearExpansionCoeifficient(const Materials &material,const Real &T,const Real &dpa);

@@ -53,9 +53,11 @@ public:
     
     std::vector< std::pair<Materials,Dimension> > _geometry;
     
+    MaterialLibrary _material_library;
+    
 private:
     
-    MaterialLibrary _material_library;
+    
     
 
 };

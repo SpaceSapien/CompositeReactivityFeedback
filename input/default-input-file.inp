@@ -20,6 +20,8 @@ Thermal Solver Order: Second
 #Steady State Transient
 Steady State Temperature Solution Max Residual: 0.1
 
+Uranium Enrichment Fraction: 0.2 
+
 
 #Timer iteration data
 Monte Carlo Recalculation Timestep: 0.01 #s
@@ -27,3 +29,4 @@ Kinetics Time Iteration: 10e-9           #s
 Thermal Time Iteration: 100e-9           #s
 Kinetics Thermal Data Sync: 20e-6 s
 Calculation End Time: 1 s
+
