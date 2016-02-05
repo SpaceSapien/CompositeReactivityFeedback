@@ -1,0 +1,32 @@
+//Input File 
+# Materials and radaii mus have the same number of entries
+#Material options include
+# U, UO2, UN, UC, U3Si, SiC, C, Be, BeO, ZrB2, W, B4C, Mo, Nb, Zr, Graphene
+Materials: UO2 C
+Radaii: 4e-4 2e-3 #m
+
+#Starting Power Density 
+Starting Power Density: 200e6 # W/m^3
+Starting K-eff: 1.01
+Kernel Outer Temperature: 800 K
+
+#Generally 100 is a good size
+Thermal Mesh Size: 100 
+
+# Thermal Solver Order: Second | Fourth
+Thermal Solver Order: Second 
+
+#Before the program starts iterating the transient, it looks for the 
+#Steady State Transient
+Steady State Temperature Solution Max Residual: 0.1
+
+Uranium Enrichment Fraction: 0.99 
+
+
+#Timer iteration data
+Monte Carlo Recalculation Timestep: 0.01 #s
+Kinetics Time Iteration: 10e-9           #s
+Thermal Time Iteration: 100e-9           #s
+Kinetics Thermal Data Sync: 20e-6 s
+Calculation End Time: 1 s
+

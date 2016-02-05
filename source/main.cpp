@@ -49,7 +49,7 @@ int main(int argc, char** argv)
     //Input File Specified
     else if( argc == 2)
     {
-        std::string input_file_name = std::string(argv[2]);
+        std::string input_file_name = std::string(argv[1]);
         
         if( ! file_exists(input_file_name) )
         {
