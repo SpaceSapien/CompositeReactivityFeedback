@@ -119,8 +119,8 @@ Real ReactorKinetics::solveForPower
             _delayed_precursors[index] += dCkdt * simulation_time_step;
         }
         
-        //For every 1000 iterations capture the state of the differential equations for later plotting
-        if(iterations % 10000 == 0)
+        //For every 100000 iterations capture the state of the differential equations for later plotting
+        if(iterations % 1000000 == 0)
         {
             std::pair<Real,Real> power = { _current_time, _current_power };
             power_record.push_back(power);
