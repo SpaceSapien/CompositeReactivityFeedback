@@ -119,7 +119,7 @@ void InfiniteCompositeReactor::simulate()
     
     
     MicroSolution::saveSolutions( _plot_solutions, this->_results_directory );
-    MicroSolution::plotSolutions( _plot_solutions, 8 , this->_results_directory + "solutions-graph.png");
+    MicroSolution::plotSolutions( _plot_solutions, 4 , this->_results_directory + "solutions-graph.png");
     PythonPlot::plotData(      _power_record,            "Time [s]", "Power Density [W/m^3]",      "", "Power vs. Time",                   this->_results_directory + "power-graph.png");
     PythonErrorPlot::plotData( _prompt_life_time_record, "Time [s]", "Prompt Neutron Lifetime [s]","", "Prompt Neutron Lifetime vs. Time", this->_results_directory + "prompt-neutron-lifetime-graph.png");
     PythonErrorPlot::plotData( _k_eff_record,            "Time [s]", "Excess Reactivity [pcm]",    "", "K-eff vs. Time",                   this->_results_directory + "excess-reactivity-graph.png");
@@ -138,6 +138,8 @@ InfiniteCompositeReactor::~InfiniteCompositeReactor()
     
 void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
 {
+    //This command establishes the logging of python plot commands. Useful for debugging
+    PythonPlot::_log_file = this->_results_directory + "graph_log.log";
     
     Real sphere_outer_radius, fuel_kernel_outer_radius; 
     
@@ -182,7 +184,9 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     _monte_carlo_time_iteration =  _input_file_reader->getInputFileParameter("Monte Carlo Recalculation Timestep",0.01 );  //How often to calculate keff and the prompt neutron lifetime
     _kinetics_thermal_sync_time_step = _input_file_reader->getInputFileParameter("Kinetics Thermal Data Sync",20e-6);      //How often to couple the kinetics and heat transfer routines    
     _end_time = _input_file_reader->getInputFileParameter("Calculation End Time",1.00);                                    //How many seconds should the simulation last 
-     PythonPlot::_log_file = this->_results_directory + "graph_log.log";
+    
+    //Resetting the timer to zero so that the timer reads t = 0 when the transient starts
+    _kinetics_model->_current_time = 0;
 }
 
 void InfiniteCompositeReactor::createOutputFile()
