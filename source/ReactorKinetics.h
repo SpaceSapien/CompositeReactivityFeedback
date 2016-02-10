@@ -46,9 +46,7 @@ public:
         const Real &simulation_time, 
         const Real &k_effective, 
         const Real &neutron_generation_time, 
-        const std::vector< std::pair<FissionableIsotope,Real> > &fission_listing,
-        std::vector< std::pair<Real,Real>> &power_record,
-        std::vector<std::pair<Real,std::vector<Real>>> &delayed_record
+        const std::vector< std::pair<FissionableIsotope,Real> > &fission_listing       
     );
     
 private:

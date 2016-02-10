@@ -83,9 +83,7 @@ Real ReactorKinetics::solveForPower
     const Real &simulation_coupled_time_step, 
     const Real &k_effective, 
     const Real &neutron_generation_time, 
-    const std::vector< std::pair<FissionableIsotope,Real> > &fission_listing,
-    std::vector< std::pair<Real,Real>> &power_record,
-    std::vector<std::pair<Real,std::vector<Real>>> &delayed_record
+    const std::vector< std::pair<FissionableIsotope,Real> > &fission_listing
 )
 {
     //Get the proper beta based on the fissions
@@ -96,8 +94,6 @@ Real ReactorKinetics::solveForPower
     Real reactivity = ( k_effective - 1 )/k_effective;
     Real total_beta = _delayed_neutron_set.getTotalBeta();
     Real total_neutrons_per_fission = _delayed_neutron_set._neutrons_per_fission;
-    
-    long int iterations = 0;
     
     Real simulation_time_step = 10e-9;
     //Loop over a simulation coupled time step
@@ -119,21 +115,11 @@ Real ReactorKinetics::solveForPower
             _delayed_precursors[index] += dCkdt * simulation_time_step;
         }
         
-        //For every 100000 iterations capture the state of the differential equations for later plotting
-        if(iterations % 1000000 == 0)
-        {
-            std::pair<Real,Real> power = { _current_time, _current_power };
-            power_record.push_back(power);
-            std::pair<Real,std::vector<Real>> delayed = { _current_time, _delayed_precursors };
-            delayed_record.push_back(delayed);
-        }
-        //Ohhh variable time steps!!!!!!
-        
         //Calculate the current power
         Real dPdt = ( reactivity - total_beta )/neutron_generation_time * _current_power + _power_per_fission/(neutron_generation_time * total_neutrons_per_fission)*delayed_contributions;
         _current_power += simulation_time_step * dPdt;
         
-        iterations++;
+        
     }
     
     return _current_power;

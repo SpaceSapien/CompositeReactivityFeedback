@@ -92,7 +92,7 @@ void InfiniteCompositeReactor::simulate()
         for( inner_time_step = 0 ; inner_time_step < _monte_carlo_time_iteration ; inner_time_step += _kinetics_thermal_sync_time_step)
         {
             //Solve the kinetics model
-            current_power = _kinetics_model->solveForPower(_kinetics_thermal_sync_time_step, k_eff,lambda,fission_listing, _power_record, _delayed_record);
+            current_power = _kinetics_model->solveForPower(_kinetics_thermal_sync_time_step, k_eff,lambda,fission_listing);
             
             //
             std::vector<Real> power_distribition = _thermal_solver->getRespresentativePowerDistribution( current_power);
@@ -111,6 +111,13 @@ void InfiniteCompositeReactor::simulate()
         //if there is still enough time left to do another monte carlo time iteration
         if(transient_time + inner_time_step < _end_time)
         {
+            //Everytime the MC is recalculated store this data
+            std::pair<Real,Real> power_entry = { transient_time, current_power };
+            _power_record.push_back(power_entry);
+            
+            std::pair<Real,std::vector<Real>> delayed_entry = { transient_time, this->_kinetics_model->_delayed_precursors };
+            _delayed_record.push_back(delayed_entry);
+            
             _monte_carlo_model->updateAdjustedCriticalityParameters();
         }
          
