@@ -229,7 +229,7 @@ void PythonPlot::plot()
     std::string command_line_plot = program + x_command + y_command  + axis_labels + legend + title + save_file + limits;
 
     
-    
+    this->printToLogFile(command_line_plot);
     exec( command_line_plot );
 }
 
@@ -289,7 +289,8 @@ void PythonErrorPlot::plot()
     std::string save_file = " --saveplot='" + _save_file + "' ";
     std::string legend = " --legend=\"" + _legend + "\" ";
     std::string command_line_plot = program + x_command + y_command + error_command  + axis_labels + legend + title + save_file;
-
+    this->printToLogFile(command_line_plot);
+    
     
     exec( command_line_plot );
 }
@@ -299,7 +300,7 @@ void PythonPlot::printToLogFile(const std::string &command)
     if(PythonPlot::_log_file != "")
     {
         std::ofstream myfile;
-        myfile.open (PythonPlot::_log_file);
+        myfile.open (PythonPlot::_log_file, std::fstream::app);
         myfile << command << std::endl << std::endl;
         myfile.close();    
     }

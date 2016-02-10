@@ -58,7 +58,7 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
 
 void InfiniteCompositeReactor::simulate()
 {
-    PythonPlot::_log_file = this->_results_directory + "graph_log.log";
+   
     //Save the initial conditions in the plot_solutions array
     MicroSolution solution =  this->_thermal_solver->getInitialConditions();
     _plot_solutions.push_back(solution);
@@ -182,7 +182,7 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     _monte_carlo_time_iteration =  _input_file_reader->getInputFileParameter("Monte Carlo Recalculation Timestep",0.01 );  //How often to calculate keff and the prompt neutron lifetime
     _kinetics_thermal_sync_time_step = _input_file_reader->getInputFileParameter("Kinetics Thermal Data Sync",20e-6);      //How often to couple the kinetics and heat transfer routines    
     _end_time = _input_file_reader->getInputFileParameter("Calculation End Time",1.00);                                    //How many seconds should the simulation last 
-    
+     PythonPlot::_log_file = this->_results_directory + "graph_log.log";
 }
 
 void InfiniteCompositeReactor::createOutputFile()
