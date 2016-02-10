@@ -13,6 +13,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <iostream>
 #include "PythonPlot.h"
 #include "InputDataFunctions.h"
 
@@ -31,8 +33,7 @@ PythonPlot::PythonPlot(const std::string &x_data, const std::string &y_data, con
     _y_data = y_data;
     _y_label = y_label;
     _y_limits = y_limits;
-    _x_limits = x_limits;
-    
+    _x_limits = x_limits;    
 }
 
 
@@ -228,6 +229,7 @@ void PythonPlot::plot()
     std::string command_line_plot = program + x_command + y_command  + axis_labels + legend + title + save_file + limits;
 
     
+    
     exec( command_line_plot );
 }
 
@@ -291,3 +293,16 @@ void PythonErrorPlot::plot()
     
     exec( command_line_plot );
 }
+
+void PythonPlot::printToLogFile(const std::string &command)
+{
+    if(PythonPlot::_log_file != "")
+    {
+        std::ofstream myfile;
+        myfile.open (PythonPlot::_log_file);
+        myfile << command << std::endl << std::endl;
+        myfile.close();    
+    }
+}
+
+std::string PythonPlot::_log_file = "";

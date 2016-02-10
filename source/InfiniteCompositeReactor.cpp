@@ -58,6 +58,7 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
 
 void InfiniteCompositeReactor::simulate()
 {
+    PythonPlot::_log_file = this->_results_directory + "graph_log.log";
     //Save the initial conditions in the plot_solutions array
     MicroSolution solution =  this->_thermal_solver->getInitialConditions();
     _plot_solutions.push_back(solution);
@@ -116,12 +117,14 @@ void InfiniteCompositeReactor::simulate()
         
     }
     
+    
     MicroSolution::saveSolutions( _plot_solutions, this->_results_directory );
-    MicroSolution::plotSolutions( _plot_solutions,8 , this->_results_directory + "solutions-graph.png");
-    PythonPlot::plotData( _power_record, "Time [s]", "Power Density [W/m^3]","","Power vs. Time", this->_results_directory + "power-graph.png");
-    PythonErrorPlot::plotData( _prompt_life_time_record, "Time [s]", "Prompt Neutron Lifetime [s]","","Prompt Neutron Lifetime vs. Time", this->_results_directory + "prompt-neutron-lifetime-graph.png");
-    PythonErrorPlot::plotData( _k_eff_record, "Time [s]", "Excess Reactivity [pcm]","","Excess Reactivity vs. Time", this->_results_directory + "excess-reactivity-graph.png");
-    PythonPlot::plotData( _delayed_record, "Time [s]", "Delayed Precursors", {} , "Keff vs. Delayed Precursors", this->_results_directory + "delayed-precursors.png");
+    MicroSolution::plotSolutions( _plot_solutions, 8 , this->_results_directory + "solutions-graph.png");
+    PythonPlot::plotData(      _power_record,            "Time [s]", "Power Density [W/m^3]",      "", "Power vs. Time",                   this->_results_directory + "power-graph.png");
+    PythonErrorPlot::plotData( _prompt_life_time_record, "Time [s]", "Prompt Neutron Lifetime [s]","", "Prompt Neutron Lifetime vs. Time", this->_results_directory + "prompt-neutron-lifetime-graph.png");
+    PythonErrorPlot::plotData( _k_eff_record,            "Time [s]", "Excess Reactivity [pcm]",    "", "K-eff vs. Time",                   this->_results_directory + "excess-reactivity-graph.png");
+    //PythonPlot::plotData(      _k_eff_record,            "Time [s]", "Excess Reactivity [pcm]",    "", "K-eff vs. Time",                   this->_results_directory + "excess-reactivity-graph.png");
+    PythonPlot::plotData(      _delayed_record,          "Time [s]", "Delayed Precursors",         {}, "Keff vs. Delayed Precursors",      this->_results_directory + "delayed-precursors.png");
 }
 
 InfiniteCompositeReactor::~InfiniteCompositeReactor()

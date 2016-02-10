@@ -47,6 +47,7 @@ public:
     std::string _legend;
     std::string _title;
     std::string _save_file;
+    static std::string _log_file; 
     
     std::pair<Real, Real> _x_limits;
     std::pair<Real, Real> _y_limits;
@@ -65,6 +66,7 @@ protected:
     
     std::string static commandLinePlotData(const std::vector<std::vector<Real>> &data_set);
     std::string static commandLinePlotData(const std::vector<Real> &data_set);
+    void printToLogFile(const std::string &command);
 
 };
 
