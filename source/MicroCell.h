@@ -50,11 +50,12 @@ public:
 
     void setBoundaryCondition(const MicroCellBoundaryCondition &boundary_condition);
     Real getOuterDerivative();
-    Real getAverageTemperature(const int &zone);
+    void getAverageTemperature(const int &zone, Real &cell_temperature, Real &cell_volume);
+    void getCellTemperature(const int &zone, const int &zone_divisions, const int &current_division, Real &cell_temperature, Real &cell_volume );
     
 private:
     
-    
+    void getAverageTemperatureInRadaii(const Dimension &inner_radius, const Dimension &outer_radius, Real &cell_temperature, Real &cell_volume);
     Real calculationMaximumResidual(const std::vector<Real> &vector_1, const std::vector<Real> &vector_2, const Real &time_step);
     MicroSolution solveSecondOrder(const Real &simulation_time_step, const std::vector<Real> &power_distribution);
     MicroSolution solveFourthOrder(const Real &simulation_time_step, const std::vector<Real> &power_distribution);

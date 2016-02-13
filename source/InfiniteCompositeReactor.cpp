@@ -196,7 +196,7 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     
     
     //Time stepping parameters
-    _power_and_delayed_neutron_record_time_step =  _input_file_reader->getInputFileParameter("Power Record",0.001 );  //How often to calculate keff and the prompt neutron lifetime
+    _power_and_delayed_neutron_record_time_step =  _input_file_reader->getInputFileParameter("Power Record",0.0005 );  //How often to calculate keff and the prompt neutron lifetime
     _monte_carlo_time_iteration =  _input_file_reader->getInputFileParameter("Monte Carlo Recalculation Timestep",0.01 );  //How often to calculate keff and the prompt neutron lifetime
     _kinetics_thermal_sync_time_step = _input_file_reader->getInputFileParameter("Kinetics Thermal Data Sync",20e-6);      //How often to couple the kinetics and heat transfer routines    
     _end_time = _input_file_reader->getInputFileParameter("Calculation End Time",1.00);                                    //How many seconds should the simulation last 

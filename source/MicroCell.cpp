@@ -330,25 +330,34 @@ Real MicroCell::calculationMaximumResidual(const std::vector<Real> &vector_1, co
     }
 }
 
-Real MicroCell::getAverageTemperature(const int &zone)
+void MicroCell::getCellTemperature(const int &zone, const int &zone_divisions, const int &current_division, Real &cell_temperature, Real &cell_volume )
 {
-    Dimension inner_radius = 0.0;
-    Dimension outer_radius = _reactor->_micro_sphere_geometry->_geometry[zone].second;
+    Dimension material_inner_radius = 0.0;
+    Dimension material_outer_radius = _reactor->_micro_sphere_geometry->_geometry[zone].second;
     
     if( zone > 0 )
     {
-        inner_radius = _reactor->_micro_sphere_geometry->_geometry[zone-1].second;
+        material_inner_radius = _reactor->_micro_sphere_geometry->_geometry[zone-1].second;
     }
     
+    Dimension material_delta_radius = material_outer_radius - material_inner_radius;
+    Dimension inner_radius = material_inner_radius + material_delta_radius * ( static_cast<Real>(current_division - 1)/static_cast<Real>(zone_divisions) );
+    Dimension outer_radius = material_inner_radius + material_delta_radius * ( static_cast<Real>(current_division )/static_cast<Real>(zone_divisions) );
+    
+    this->getAverageTemperatureInRadaii(inner_radius, outer_radius, cell_temperature, cell_volume);
+}
+ 
+void MicroCell::getAverageTemperatureInRadaii(const Dimension &inner_radius, const Dimension &outer_radius, Real &cell_temperature, Real &cell_volume)
+{
     Real element_size = _solver_settings._element_size;
     Real volume_weighted_temperature = 0;
-    Real total_volume = 0;
-    
+    Real total_volume = 0;    
     std::vector<Real> radial_mesh = this->_solver_settings._radial_mesh;
     
     for(int index = 0; index < radial_mesh.size(); index++  )
     {
-        if( radial_mesh[index] < outer_radius && radial_mesh[index] >= inner_radius )
+        //If the grid point is fully within the cell
+        if( radial_mesh[index] < outer_radius - element_size/2 && radial_mesh[index] - element_size/2 > inner_radius )
         {
             Real volume_slice;
 
@@ -366,9 +375,47 @@ Real MicroCell::getAverageTemperature(const int &zone)
             Real temperature = _solution[index];
             volume_weighted_temperature += volume_slice * temperature;
         }        
+        //If the grid point is only partially in the cell on the outside
+        else if( (radial_mesh[index] > outer_radius && radial_mesh[index] - element_size/2 < outer_radius) || (radial_mesh[index] < outer_radius && radial_mesh[index] + element_size/2 > outer_radius) )
+        {
+            Real volume_slice;
+            Real smaller_element_size = outer_radius - ( radial_mesh[index] - element_size/2 );
+            
+            volume_slice = 4.0/3.0 * M_PI * ( pow( outer_radius  , 3) - pow( radial_mesh[index] - element_size/2 , 3) );
+                      
+            total_volume += volume_slice;
+            Real temperature = _solution[index];
+            volume_weighted_temperature += volume_slice * temperature;
+        }
+        //If the grid point is only partially in the cell on the inside
+        else if( ( radial_mesh[index] < inner_radius && radial_mesh[index] + element_size/2 > inner_radius ) || ( radial_mesh[index] > inner_radius && radial_mesh[index] - element_size / 2 < inner_radius ) )
+        {
+            Real volume_slice;
+            Real smaller_element_size = radial_mesh[index] + element_size/2 - inner_radius;
+            
+            volume_slice = 4.0/3.0 * M_PI * ( pow( radial_mesh[index] + element_size/2 , 3) - pow( inner_radius , 3) );
+            
+            total_volume += volume_slice;
+            Real temperature = _solution[index];
+            volume_weighted_temperature += volume_slice * temperature;
+        }
     }
     
-    return volume_weighted_temperature/total_volume;    
+    cell_temperature = volume_weighted_temperature/total_volume;
+    cell_volume = total_volume;
+}
+
+void MicroCell::getAverageTemperature(const int &zone, Real &cell_temperature, Real &cell_volume)
+{
+    Dimension inner_radius = 0.0;
+    Dimension outer_radius = _reactor->_micro_sphere_geometry->_geometry[zone].second;
+    
+    if( zone > 0 )
+    {
+        inner_radius = _reactor->_micro_sphere_geometry->_geometry[zone-1].second;
+    }
+    
+   return this->getAverageTemperatureInRadaii(inner_radius, outer_radius, cell_temperature,cell_volume);
 }
 
 std::vector<Real> MicroCell::getRespresentativePowerDistribution(const Real &average_power_density)

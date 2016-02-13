@@ -34,6 +34,7 @@ public:
     Real _current_k_eff_sigma;
     Real _current_prompt_neutron_lifetime;
     Real _current_prompt_neutron_lifetime_sigma;
+    int _cells_per_zone;
     
     std::string _run_directory;
     std::vector<std::pair<FissionableIsotope,Real> > _fission_tally_listing;
@@ -48,6 +49,7 @@ public:
     std::string getMaterialCards();
     std::string getCellCards();
     std::string getSurfaceCards();
+    std::string getSingleCellCard(const Materials &material, const int &current_zone, int &cell_number );
     
     
 private:

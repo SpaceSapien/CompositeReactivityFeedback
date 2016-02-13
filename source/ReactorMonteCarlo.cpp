@@ -29,12 +29,17 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
     Real k_eff_sigma;
     Real prompt_removal_lifetime_sigma;
     
+    
     _run_directory = run_directory;
     
     std::string run_command = "mkdir -p " + _run_directory;
     exec(run_command);
     
     _reactor = reactor;
+    
+    //Cells per zone splits each zone up into multiple cells
+    _cells_per_zone = this->_reactor->_input_file_reader->getInputFileParameter("Cells Per Zone", 1 );  
+    
     
     getRawCriticalityParameters(k_eff,k_eff_sigma,prompt_removal_lifetime,prompt_removal_lifetime_sigma);
     _virtual_k_eff_multiplier = starting_k_eff / k_eff;  
@@ -46,6 +51,9 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
     //Parameters that will come from the Monte Carlo Simulation
     std::pair<FissionableIsotope,Real> U235 = { FissionableIsotope::U235, 1 };
     _fission_tally_listing = { U235 };
+    
+     
+    
 }
 
 /**
@@ -212,37 +220,67 @@ std::string ReactorMonteCarlo::getMaterialCards()
     return material_cards.str() + otfdb_card.str();
 }
 
+std::string ReactorMonteCarlo::getSingleCellCard(const Materials &material, const int &current_zone, int &cell_number )
+{
+    std::stringstream cell_card; 
+    
+     
+    //MCNP reads temperature in MeV so we need a conversion factor for our programs K
+    const Real MeVperK = 8.617e-11;
+    //For now we will assume that the density stays constant regardless of temperature change to perserve conservation of mass
+    Real density_derived_temperature = 400;
+    //First is the density, second is the density derivative which we don't need. Divide by 1000 to convert from kg/m^3 to g/cm^3
+    Real density = _reactor->_micro_sphere_geometry->_material_library.getDensityPair(material,density_derived_temperature,0).first/1000;
+
+    for( int current_cell_in_zone = 1; current_cell_in_zone <= _cells_per_zone; current_cell_in_zone++)
+    {
+        
+        //Gather the temperature for the zone in this cell
+        Real temperature;
+        Real cell_volume;
+        
+        if( _cells_per_zone == 1) 
+        {
+            _reactor->_thermal_solver->getAverageTemperature(current_zone - 1, temperature, cell_volume);
+        }
+        else
+        {
+            _reactor->_thermal_solver->getCellTemperature(current_zone - 1, _cells_per_zone, current_cell_in_zone, temperature, cell_volume );
+        }
+    
+        cell_volume *= (100 * 100 * 100);
+        
+        //we want to put our reflecting boundary condition here
+        if( cell_number == 1 )
+        {
+            cell_card << " " << cell_number << " " << current_zone << " -" << density << " -"  << cell_number << " imp:n=1 TMP=" << temperature*MeVperK  << " $ " << getMaterialName(material) << " T = " << temperature << " K" << " Volume = " << cell_volume << " cm^3 " <<std::endl;
+        }
+        else
+        {
+            cell_card << " " << cell_number << " " << current_zone << " -" << density << " " << ( cell_number -1 )  << " " << " -"  << cell_number << " imp:n=1 TMP=" << temperature*MeVperK <<" $ " << getMaterialName(material) << " T = " << temperature << " K" << " Volume = " << cell_volume << " cm^3 " << std::endl;
+        }
+
+        cell_number++;
+    }
+    return cell_card.str();
+}
+
+
 std::string ReactorMonteCarlo::getCellCards()
 {
     std::stringstream cell_cards;
     
-    //For now we will assume that the density stays constant regardless of temperature change to perserve conservation of mass
-    Real density_derived_temperature = 400;
-    const Real MeVperK = 8.617e-11;
     std::vector<std::pair<Materials, Dimension> > geometry_data = _reactor->_micro_sphere_geometry->_geometry;
-    size_t number_zones = geometry_data.size();   
-       
-    for( size_t index = 0; index < number_zones  ; index++ )
-    {
-        size_t current_zone = index + 1;
+    int number_zones = geometry_data.size();   
+    int current_cell_number = 1;
     
-        
-        Real temperature = _reactor->_thermal_solver->getAverageTemperature(index);
+    //For each zone create a cell
+    for( int index = 0; index < number_zones  ; index++ )
+    {
         Materials material = geometry_data[index].first;
-        //First is the density, second is the density derivative which we don't need. Divide by 1000 to convert from kg/m^3 to g/cm^3
-        Real density = _reactor->_micro_sphere_geometry->_material_library.getDensityPair(material,density_derived_temperature,0).first/1000;
-        
-        
-        
-        //we want to put our reflecting boundary condition here
-        if( current_zone == 1 )
-        {
-            cell_cards << " " << current_zone << " " << current_zone << " -" << density << " -"  << current_zone << " imp:n=1 TMP=" << temperature*MeVperK  << " $fuel T = " << temperature << " K" << std::endl;
-        }
-        else
-        {
-            cell_cards << " " << current_zone << " " << current_zone << " -" << density << " " << ( current_zone -1 )  << " " << " -"  << current_zone << " imp:n=1 TMP=" << temperature*MeVperK <<" $matrix T = " << temperature << " K" << std::endl;
-        }
+        int current_zone = index + 1;        
+        //Note that the current_cell_number is passed by reference and its value is changed
+        cell_cards << this->getSingleCellCard(material,current_zone, current_cell_number);                    
     }
     
     return cell_cards.str();
@@ -252,26 +290,63 @@ std::string ReactorMonteCarlo::getSurfaceCards()
 {
     std::stringstream surface_cards;
     
+    int surface_card_number = 1;
     std::vector<std::pair<Materials, Dimension> > geometry_data = _reactor->_micro_sphere_geometry->_geometry;
-    size_t number_zones = geometry_data.size();   
-       
-    for( size_t index = 0; index < number_zones  ; index++ )
-    {
-        size_t current_zone = index + 1;
+    int number_zones = geometry_data.size();   
+            
     
-        //we want to put our reflecting boundary condition here
-        if( current_zone == number_zones)
-        {
-            surface_cards << "*";
+    for( int index = 0; index < number_zones  ; index++ )
+    {
+        int current_zone = index + 1;
+        
+        if(this->_cells_per_zone == 1)
+        {    
+            //we want to put our reflecting boundary condition here
+            if( current_zone == number_zones)
+            {
+                surface_cards << "*";
+            }
+            else
+            {
+                surface_cards << " ";
+            }
+            //cm sphere radius
+            Real shell_radius = geometry_data[index].second * 100; 
+
+            surface_cards << current_zone << " SPH 0 0 0 " << shell_radius << std::endl;
         }
         else
         {
-            surface_cards << " ";
+            Real last_zone_shell_radius = 0;
+            
+            if( index > 0)
+            {
+                last_zone_shell_radius = geometry_data[index -1 ].second * 100;
+            }
+            
+            Real zone_shell_radius = geometry_data[index].second * 100; 
+            
+            for( int current_surface = 1; current_surface <= _cells_per_zone; current_surface++ )
+            {
+                //we want to put our reflecting boundary condition here
+               if( current_zone == number_zones && current_surface == _cells_per_zone)
+               {
+                   surface_cards << "*";
+               }
+               else
+               {
+                   surface_cards << " ";
+               }
+               //cm sphere radius
+               
+               Real surface_radius = last_zone_shell_radius + (zone_shell_radius - last_zone_shell_radius ) * (static_cast<Real>(current_surface)/static_cast<Real>(_cells_per_zone));
+               
+               surface_cards << surface_card_number << " SPH 0 0 0 " << surface_radius << std::endl;
+               surface_card_number++;
+            }
+            
+            
         }
-        //cm sphere radius
-        Real shell_radius = geometry_data[index].second * 100; 
-        
-        surface_cards << current_zone << " SPH 0 0 0 " << shell_radius << std::endl;
         
     }
     
