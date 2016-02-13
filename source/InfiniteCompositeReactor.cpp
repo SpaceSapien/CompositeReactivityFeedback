@@ -66,7 +66,7 @@ void InfiniteCompositeReactor::simulate()
     Real inner_time_step = 0;
     
     //Simulate the transient the outer loop is the monte carlo simulation
-    for( Real transient_time = 0; transient_time < _end_time; transient_time+= inner_time_step)
+    for( Real transient_time = 0; transient_time < _end_time; transient_time += inner_time_step)
     {
         Real current_power = this->_kinetics_model->_current_power;
         //Gather the parameters from the monte carlo model 
@@ -89,19 +89,34 @@ void InfiniteCompositeReactor::simulate()
        
         this->saveCurrentData(transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma);
          
+        Real last_reported_time = 0;
+        
+        //This loop iterates the kinetics and thermal model data
         for( inner_time_step = 0 ; inner_time_step < _monte_carlo_time_iteration ; inner_time_step += _kinetics_thermal_sync_time_step)
         {
             //Solve the kinetics model
             current_power = _kinetics_model->solveForPower(_kinetics_thermal_sync_time_step, k_eff,lambda,fission_listing);
             
-            //
-            std::vector<Real> power_distribition = _thermal_solver->getRespresentativePowerDistribution( current_power);
-            
+            //Get a vector representation of the radial power distribution
+            std::vector<Real> power_distribition = _thermal_solver->getRespresentativePowerDistribution( current_power /* current shape */ );
             
             //Get the thermal solution
             solution =  _thermal_solver->solve( _kinetics_thermal_sync_time_step, power_distribition); 
-            //Add the current time steps solution to the mix
             
+            //Add the current time steps solution to the record (we can record all of them every 20 us let usually do every millisecond)            
+            if( ( inner_time_step - last_reported_time )  >= _power_and_delayed_neutron_record_time_step )
+            {
+                last_reported_time = inner_time_step;
+                
+                Real absolute_time = transient_time + inner_time_step;
+                
+                //Everytime the MC is recalculated store this data
+                std::pair<Real,Real> power_entry = { absolute_time, current_power };
+                _power_record.push_back(power_entry);
+
+                std::pair<Real,std::vector<Real>> delayed_entry = { absolute_time, this->_kinetics_model->_delayed_precursors };
+                _delayed_record.push_back(delayed_entry);
+            }
             
         }
         
@@ -111,13 +126,6 @@ void InfiniteCompositeReactor::simulate()
         //if there is still enough time left to do another monte carlo time iteration
         if(transient_time + inner_time_step < _end_time)
         {
-            //Everytime the MC is recalculated store this data
-            std::pair<Real,Real> power_entry = { transient_time, current_power };
-            _power_record.push_back(power_entry);
-            
-            std::pair<Real,std::vector<Real>> delayed_entry = { transient_time, this->_kinetics_model->_delayed_precursors };
-            _delayed_record.push_back(delayed_entry);
-            
             _monte_carlo_model->updateAdjustedCriticalityParameters();
         }
          
@@ -188,6 +196,7 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     
     
     //Time stepping parameters
+    _power_and_delayed_neutron_record_time_step =  _input_file_reader->getInputFileParameter("Power Record",0.001 );  //How often to calculate keff and the prompt neutron lifetime
     _monte_carlo_time_iteration =  _input_file_reader->getInputFileParameter("Monte Carlo Recalculation Timestep",0.01 );  //How often to calculate keff and the prompt neutron lifetime
     _kinetics_thermal_sync_time_step = _input_file_reader->getInputFileParameter("Kinetics Thermal Data Sync",20e-6);      //How often to couple the kinetics and heat transfer routines    
     _end_time = _input_file_reader->getInputFileParameter("Calculation End Time",1.00);                                    //How many seconds should the simulation last 
