@@ -146,7 +146,7 @@ void ReactorMonteCarlo::getRawCriticalityParameters(const std::string &file_root
     exec(remove_command);
 
     //Run Submission Script with the created MCNP file
-    std::string qsub_command = "cd " + this->_run_directory + ";qsub -n " + this->_reactor->_run_name + " -pe orte 32 ../../../composite-fuel-submission-script.sh " + file_root + " " + command_line_log_file;
+    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte 32 ../../../composite-fuel-submission-script.sh " + file_root + " " + command_line_log_file;
     exec(qsub_command);
     //Constantly read the output file until it says mcrun done 
     std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";
