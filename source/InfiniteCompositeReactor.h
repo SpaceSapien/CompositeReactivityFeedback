@@ -59,8 +59,10 @@ class InfiniteCompositeReactor
     std::vector<std::pair<Real,Real>> _power_record;
     std::vector< std::pair<Real,std::vector<Real>> > _delayed_record;
     std::vector<std::tuple<Real,Real,Real>> _k_eff_record;
+    std::vector<std::tuple<Real,Real,Real>> _beta_eff_record;
     std::vector<std::tuple<Real,Real,Real>> _prompt_life_time_record;
-    
+    std::vector<std::tuple<Real,Real,Real>> _reactivity_pcm_record;
+    std::vector<std::tuple<Real,Real,Real>> _reactivity_cents_record;
     
     //Time stepping parameters
     Real _monte_carlo_time_iteration;  //How often to calculate keff and the prompt neutron lifetime
@@ -73,13 +75,14 @@ class InfiniteCompositeReactor
     virtual ~InfiniteCompositeReactor();
     std::string getSaveDirectory();
     std::string _results_directory;
+    std::string _run_name;
     
     
     
     void simulate();
     void initializeInifiniteCompositeReactorProblem();
     void plotDelayedPrecursors();
-    void saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma);
+    void saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma);
     void createOutputFile();
     
     

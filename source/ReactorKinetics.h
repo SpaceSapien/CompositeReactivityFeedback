@@ -16,6 +16,8 @@
 #include "EnumsAndFunctions.h"
 #include "DelayedNeutronSet.h"
 
+class InfiniteCompositeReactor;
+
 class ReactorKinetics 
 {
 public:
@@ -31,22 +33,23 @@ public:
         EquilibriumPrecursors
     };
     
-    
+    InfiniteCompositeReactor* _reactor;
     std::vector<Real> _delayed_precursors;
     Real _initial_power;
     Real _current_power;
     DelayedNeutronSet _delayed_neutron_set;
     const Real _power_per_fission = 3.20435e-11; //Joules per fission
     Real _current_time = 0;
+    Real _kinetics_time_step;
     
     ReactorKinetics();
-    ReactorKinetics(const Real &initial_power, const DelayedPrecursorInitialState &state );
+    ReactorKinetics(InfiniteCompositeReactor* reactor,const Real &initial_power, const DelayedPrecursorInitialState &state );
     Real solveForPower
     (
         const Real &simulation_time, 
         const Real &k_effective, 
         const Real &neutron_generation_time, 
-        const std::vector< std::pair<FissionableIsotope,Real> > &fission_listing       
+        const Real &beta_effective      
     );
     
 private:

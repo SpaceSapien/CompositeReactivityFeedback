@@ -1,18 +1,20 @@
 import matplotlib
-matplotlib.use('Agg')
+#This allows us to create png files without a display object (for remote severs without displays)
+matplotlib.use('Agg') 
 import sys, getopt
 from pylab import *
 import matplotlib.pyplot  as pyplot
 import os.path
+import shlex
 
 
 def main(argv):
 
-    y_data = []
-    x_data = []
+    y_data = ""
+    x_data = ""
     x_limits = [0,0]
     y_limits = [0,0]
-    error_data = []
+    error_data = ""
     x_label = "x data"
     y_label = "y data"
     legend = ""
@@ -20,9 +22,12 @@ def main(argv):
     title = ""
     error_data = ""
 
+    #print(argv)
+
     try:
 
         opts, args = getopt.getopt(argv, "h", ["xdata=", "ydata=", "errordata=", "xlabel=","ylabel=", "legend=", "saveplot=", "title=", "ylimits=", "xlimits="])
+        
 
     except getopt.GetoptError:
 
@@ -31,11 +36,14 @@ def main(argv):
 
     for opt, arg in opts:
 
+        
+
         if opt == '-h':
 
             print 'test.py -i <inputfile> -o <outputfile>'
             sys.exit()
-
+            
+        
         elif opt in "--xdata":
 
             x_data = arg
@@ -83,6 +91,7 @@ def main(argv):
 
     if( error_data == "" ):    
 
+        print("plotting")
         plot(x_data,y_data,x_label,y_label, legend, title, save_plot_file, x_limits, y_limits)
         
     else:
@@ -107,9 +116,6 @@ def error_plot(x_data,y_data,error_data,x_label,y_label, legend, title, save_plo
         standard_figure_size_width = 50
         standard_figure_size_height = 30
         smaller_text = 55
-
-
-
 
     font = {'size'   : standard_font_size}
     matplotlib.rc('font', **font)
@@ -197,9 +203,6 @@ def plot(x_data, y_data,x_label, y_label, legend, title, save_plot_file, xlimits
         standard_figure_size_height = 30
         smaller_text = 55
 
-
-
-
     font = {'size'   : standard_font_size}
     matplotlib.rc('font', **font)
 
@@ -262,7 +265,38 @@ def plot(x_data, y_data,x_label, y_label, legend, title, save_plot_file, xlimits
 
         plt.savefig(save_plot_file)
 
+def runFileArguments(file_name):
+    
+    
+    f = open(file_name,"r") 
+    
+    for line in f:
+
+        if line.strip() != "" :
+                        
+            arguments = shlex.split(line)
+            main(arguments[2:])
+            pyplot.close("all")
+        
+ 
 
 if __name__ == "__main__":
 
-    main(sys.argv[1:])
+
+    input_file = ""
+
+    print(sys.argv[2])
+
+    if sys.argv[1] == "inputfile" :
+    
+        
+        print("Input file")
+        runFileArguments(sys.argv[2])
+
+    
+    else:    
+        
+        print("No input file");
+        main(sys.argv[1:])
+        
+        

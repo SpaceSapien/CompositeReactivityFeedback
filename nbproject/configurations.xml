@@ -58,6 +58,7 @@
     <itemPath>input/default-input-file.inp</itemPath>
     <itemPath>source/newfile</itemPath>
     <itemPath>python/plot-local.py</itemPath>
+    <itemPath>python/recreate-plot.py</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>source</Elem>
@@ -83,6 +84,8 @@
       <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -186,6 +189,8 @@
       </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
@@ -280,6 +285,8 @@
       <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -379,6 +386,8 @@
       <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>

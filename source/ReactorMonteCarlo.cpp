@@ -14,6 +14,7 @@
 #include "ReactorMonteCarlo.h"
 #include "MicroGeometry.h"
 #include <sstream>
+#include <math.h>
 #include "InputDataFunctions.h"
 #include <chrono>
 #include <thread>
@@ -24,10 +25,8 @@ ReactorMonteCarlo::ReactorMonteCarlo() {}
 
 ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Real &starting_k_eff, const  std::string &run_directory)
 {
-    Real k_eff;
-    Real prompt_removal_lifetime;
-    Real k_eff_sigma;
-    Real prompt_removal_lifetime_sigma;
+    Real k_eff, prompt_removal_lifetime, k_eff_sigma, prompt_removal_lifetime_sigma;
+    Real nd_k_eff, nd_prompt_removal_lifetime, nd_k_eff_sigma, nd_prompt_removal_lifetime_sigma;
     
     
     _run_directory = run_directory;
@@ -41,17 +40,20 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
     _cells_per_zone = this->_reactor->_input_file_reader->getInputFileParameter("Cells Per Zone", 1 );  
     
     
-    getRawCriticalityParameters(k_eff,k_eff_sigma,prompt_removal_lifetime,prompt_removal_lifetime_sigma);
+
+    getRawCriticalityParameters( "keffective-calc",            k_eff,    k_eff_sigma,    prompt_removal_lifetime,    prompt_removal_lifetime_sigma);
+    getRawCriticalityParameters( "keffective-no-delayed-calc", nd_k_eff, nd_k_eff_sigma, nd_prompt_removal_lifetime, nd_prompt_removal_lifetime_sigma, false);    
+    
+    
     _virtual_k_eff_multiplier = starting_k_eff / k_eff;  
     _current_k_eff = starting_k_eff;
     _current_prompt_neutron_lifetime = prompt_removal_lifetime;
     _current_k_eff_sigma = k_eff_sigma * _virtual_k_eff_multiplier;
     _current_prompt_neutron_lifetime_sigma = prompt_removal_lifetime_sigma;
+    _current_beta_eff = ( k_eff - nd_k_eff ) / k_eff;
+    _current_beta_eff_sigma = this->getBetaEffSigma(k_eff, k_eff_sigma, nd_k_eff, nd_k_eff_sigma);
     
-    //Parameters that will come from the Monte Carlo Simulation
-    std::pair<FissionableIsotope,Real> U235 = { FissionableIsotope::U235, 1 };
-    _fission_tally_listing = { U235 };
-    
+
      
     
 }
@@ -61,40 +63,70 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
  * @param k_eff
  * @param prompt_removal_lifetime
  */
-void ReactorMonteCarlo::updateAdjustedCriticalityParameters()
+void ReactorMonteCarlo::updateAdjustedCriticalityParameters(const bool &update_beta)
 {
     Real raw_k_effective, raw_k_effective_sigma, prompt_removal_lifetime, prompt_removal_lifetime_sigma;
     
-    getRawCriticalityParameters(raw_k_effective,raw_k_effective_sigma, prompt_removal_lifetime, prompt_removal_lifetime_sigma);    
+    getRawCriticalityParameters("keffective-calc", raw_k_effective,raw_k_effective_sigma, prompt_removal_lifetime, prompt_removal_lifetime_sigma);    
     
     _current_k_eff = raw_k_effective * _virtual_k_eff_multiplier;
     _current_prompt_neutron_lifetime = prompt_removal_lifetime;
     _current_k_eff_sigma = raw_k_effective_sigma * _virtual_k_eff_multiplier;
     _current_prompt_neutron_lifetime_sigma = prompt_removal_lifetime_sigma;
+    
+    if( update_beta )
+    {
+        Real raw_nd_k_effective, raw_nd_k_effective_sigma, nd_prompt_removal_lifetime, nd_prompt_removal_lifetime_sigma;
+
+        getRawCriticalityParameters("keffective-no-delayed-calc", raw_nd_k_effective,raw_nd_k_effective_sigma, nd_prompt_removal_lifetime, nd_prompt_removal_lifetime_sigma);    
+        
+        _current_beta_eff = ( raw_k_effective - raw_nd_k_effective ) / raw_k_effective;
+        _current_beta_eff_sigma = getBetaEffSigma(raw_k_effective, raw_k_effective_sigma, raw_nd_k_effective, raw_nd_k_effective_sigma );
+    }
+    
+    
 }
+
+Real ReactorMonteCarlo::getBetaEffSigma(const Real &k_eff,const Real &k_eff_sigma,const Real &nd_k_eff,const Real &nd_k_eff_sigma)
+{
+    Real current_beta_eff = ( k_eff - nd_k_eff ) / k_eff;
+    
+    //sqrt of the sum of the squares of sigmas
+    Real difference_uncertainty = sqrt( k_eff_sigma * k_eff_sigma + nd_k_eff_sigma * nd_k_eff_sigma );
+    
+    //Find the uncertainty fractions
+    Real numerator_uncertainty_fraction = difference_uncertainty / ( k_eff - nd_k_eff );
+    Real denominator_uncertainty_fraction = k_eff_sigma / k_eff;
+    
+    //uncertainty is the sum of the squares of the fractions
+    return current_beta_eff * sqrt( numerator_uncertainty_fraction * numerator_uncertainty_fraction  + denominator_uncertainty_fraction * denominator_uncertainty_fraction );
+}
+
 
 /**
  * Get the raw k_effective from MCNP
  * @param k_eff
  * @param prompt_removal_lifetime
  */
-void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma)
+void ReactorMonteCarlo::getRawCriticalityParameters(const std::string &file_root, Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma,const bool &delayed_neutrons)
 {
-
+    //create the MCNP input file
+    std::string run_title = this->_reactor->_run_name + " Time = "  + std::to_string(this->_reactor->_thermal_solver->_current_time);
+    std::string input_file_name = file_root + ".inp";
+    std::string output_file_name =  file_root + ".out";
+    std::string runtpe_name =  file_root + ".runtpe";
+    std::string srctpe_name =  file_root + ".srctp";
+    
     //clean up the previous MCNP data files
-    std::string clean_mcnp_command = "rm " + this->_run_directory + "mcnp-composite-fue[l-z].out " + this->_run_directory + "runtp[e-z] " + this->_run_directory + "srct[p-z]";
+    std::string clean_mcnp_command = "rm " + this->_run_directory + input_file_name + " " + this->_run_directory + output_file_name + " " + this->_run_directory + runtpe_name + " " + this->_run_directory + srctpe_name;
     exec(clean_mcnp_command);
     
     //create a symbolic link to the Doppler broadened cross sections
     std::string symbolic_link_command = "cd " + this->_run_directory + "; ln -s ../../../doppler-broadened-cs/otf*txt .";
     exec(symbolic_link_command);
     
-    //create the MCNP input file
-    std::string file_root = "mcnp-composite-fuel";
-    std::string input_file_name = file_root + ".inp";
-    std::string output_file_name =  file_root + ".out";
-    this->createMCNPOutputFile(input_file_name);
-   
+    
+    this->createMCNPOutputFile(run_title, input_file_name, delayed_neutrons);
     std::string command_line_log_file = "mcnp_run_log.txt";
     
     //Run the file
@@ -102,7 +134,7 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &k_eff_si
     
     //We are just running MPI here
     std::string mcnp_path = "/media/chris/DoubleSpace/MCNP/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
-    std::string command = "cd " + this->_run_directory + "; mpirun -np  7 " + mcnp_path + " i=" + input_file_name + " o=" + output_file_name + " | tee " + command_line_log_file;
+    std::string command = "cd " + this->_run_directory + "; mpirun -np  7 " + mcnp_path + " i=\"" + input_file_name + "\" o=\"" + output_file_name + "\" runtpe=\"" + runtpe_name + "\" srctp=\"" + srctpe_name + "\" | tee \"" + command_line_log_file + "\"";
     exec(command);
     
     #elif PRACTICE_CLUSTER
@@ -114,7 +146,7 @@ void ReactorMonteCarlo::getRawCriticalityParameters( Real &k_eff, Real &k_eff_si
     exec(remove_command);
 
     //Run Submission Script with the created MCNP file
-    std::string qsub_command = "cd " + this->_run_directory + ";qsub -pe orte 32 ../../../composite-fuel-submission-script.sh " + input_file_name + " " + output_file_name + " " + command_line_log_file;
+    std::string qsub_command = "cd " + this->_run_directory + ";qsub -n " + this->_reactor->_run_name + " -pe orte 32 ../../../composite-fuel-submission-script.sh " + file_root + " " + command_line_log_file;
     exec(qsub_command);
     //Constantly read the output file until it says mcrun done 
     std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";
@@ -354,18 +386,17 @@ std::string ReactorMonteCarlo::getSurfaceCards()
 }
 
 
-void ReactorMonteCarlo::createMCNPOutputFile(const std::string &file_name)
+void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const std::string &file_name,const bool &delayed_neutrons)
 {
     
     std::stringstream mcnp_file;
    
-     
     std::string cell_cards = this->getCellCards();
     std::string surface_cards = this->getSurfaceCards();
     std::string material_cards = this->getMaterialCards();
     int number_of_cycles = this->_reactor->_input_file_reader->getInputFileParameter("Number of MCNP Cycles", 33);
     
-    mcnp_file << "Composite Fuel Kernel Scale" << std::endl;
+    mcnp_file << run_title << std::endl;
     mcnp_file << "c Simulating a small UO2 fuel kernel inside a graphite matrix" << std::endl;
     mcnp_file << "c TMP [MeV] = 8.617e-11 [MeV/K] * T [K]   " << std::endl;
     mcnp_file << "c ----------------------CELL CARDS----------------------------" << std::endl;
@@ -378,6 +409,13 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &file_name)
     mcnp_file << std::endl;
     mcnp_file << "c ------------------MATERIAL AND DATA CARDS--------------------" << std::endl;
     mcnp_file << material_cards;
+    
+    if(!delayed_neutrons)
+    {
+        mcnp_file << " TOTNU NO" << std::endl;
+    }
+    
+    
     mcnp_file << " KCODE 10000 1.5 3 " << number_of_cycles << "  $need at least 30 active cycles to print results" << std::endl;
     mcnp_file << " KSRC 0 0 0" << std::endl;
     mcnp_file << " print" << std::endl;

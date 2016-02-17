@@ -12,6 +12,7 @@
  */
 #include "DelayedNeutronSet.h"
 #include "ReactorKinetics.h"
+#include "InfiniteCompositeReactor.h"
 #include <iostream>
 
 ReactorKinetics::ReactorKinetics() { }
@@ -22,11 +23,13 @@ ReactorKinetics::ReactorKinetics() { }
  * @param initial_power
  * @param state
  */
-ReactorKinetics::ReactorKinetics(const Real &initial_power,const DelayedPrecursorInitialState &state) 
+ReactorKinetics::ReactorKinetics(InfiniteCompositeReactor* reactor, const Real &initial_power,const DelayedPrecursorInitialState &state) 
 {
+    _reactor = reactor;
     _initial_power = initial_power;
     _current_power = _initial_power;
-    _current_time  = 0;
+    _current_time  = 0;    
+    _kinetics_time_step = _reactor->_input_file_reader->getInputFileParameter("Kinetics Time Iteration", 10e-9);
     
     //default delayed neutron set
     _delayed_neutron_set = DelayedNeutronSet(FissionableIsotope::U235);
@@ -83,16 +86,12 @@ Real ReactorKinetics::solveForPower
     const Real &simulation_coupled_time_step, 
     const Real &k_effective, 
     const Real &neutron_generation_time, 
-    const std::vector< std::pair<FissionableIsotope,Real> > &fission_listing
+    const Real &beta_effective
 )
 {
-    //Get the proper beta based on the fissions
-    _delayed_neutron_set = DelayedNeutronSet(fission_listing);
-    //_delayed_neutron_set.print();
     
     //Calculate some parameters
     Real reactivity = ( k_effective - 1 )/k_effective;
-    Real total_beta = _delayed_neutron_set.getTotalBeta();
     Real total_neutrons_per_fission = _delayed_neutron_set._neutrons_per_fission;
     
     Real simulation_time_step = 10e-9;
@@ -116,7 +115,7 @@ Real ReactorKinetics::solveForPower
         }
         
         //Calculate the current power
-        Real dPdt = ( reactivity - total_beta )/neutron_generation_time * _current_power + _power_per_fission/(neutron_generation_time * total_neutrons_per_fission)*delayed_contributions;
+        Real dPdt = ( reactivity - beta_effective )/neutron_generation_time * _current_power + _power_per_fission/(neutron_generation_time * total_neutrons_per_fission)*delayed_contributions;
         _current_power += simulation_time_step * dPdt;
         
         

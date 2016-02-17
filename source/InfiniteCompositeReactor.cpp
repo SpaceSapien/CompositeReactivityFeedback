@@ -43,9 +43,9 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
     time_t run_identification_number = std::time(nullptr);
     
     std::string default_run_name = "Unnamed-Run";
-    std::string results_folder_name = _input_file_reader->getInputFileParameter("Run Name", default_run_name);
+    _run_name = _input_file_reader->getInputFileParameter("Run Name", default_run_name);
     
-    _results_directory =  "results/" + results_folder_name + "-" + std::to_string(run_identification_number) + "/";    
+    _results_directory =  "results/" + _run_name + "-" + std::to_string(run_identification_number) + "/";    
     
     
     _data_file = "datafile.csv";
@@ -74,20 +74,36 @@ void InfiniteCompositeReactor::simulate()
         Real prompt_removal_lifetime = _monte_carlo_model->_current_prompt_neutron_lifetime;
         Real k_eff = _monte_carlo_model->_current_k_eff; 
         Real k_eff_sigma = _monte_carlo_model->_current_k_eff_sigma;
+        Real beta_eff = _monte_carlo_model->_current_beta_eff;
+        Real beta_eff_sigma = _monte_carlo_model->_current_beta_eff_sigma;
         
         Real lambda = prompt_removal_lifetime/k_eff;
         Real lambda_sigma = _monte_carlo_model->_current_prompt_neutron_lifetime_sigma/k_eff;
         
-        std::vector<std::pair<FissionableIsotope,Real> > fission_listing = _monte_carlo_model->_fission_tally_listing;
-        Real reactivity = 10000.0*(k_eff - 1.0)/k_eff;
+        std::tuple<Real,Real,Real> k_effective_data = std::make_tuple( transient_time , k_eff, k_eff_sigma );
+        _k_eff_record.push_back( k_effective_data );
         
-        std::tuple<Real,Real,Real> _k_effective_data = std::make_tuple( transient_time , k_eff, k_eff_sigma );
-        _k_eff_record.push_back( _k_effective_data );
+        std::tuple<Real,Real,Real> beta_effective_data = std::make_tuple( transient_time , beta_eff, beta_eff_sigma );
+        _beta_eff_record.push_back( beta_effective_data );
         
         std::tuple<Real,Real,Real> prompt_removal_lifetime_pair = std::make_tuple(transient_time, lambda, lambda_sigma);
         _prompt_life_time_record.push_back(prompt_removal_lifetime_pair);
-       
-        this->saveCurrentData(transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma);
+        
+        Real reactivity = (k_eff - 1.0)/k_eff;
+        Real reactivity_uncertainty = sqrt( 2 ) * k_eff_sigma;
+        Real reactivity_pcm = 10000.0 * reactivity;
+        Real reactivity_pcm_uncertainty = 10000.0 * reactivity_uncertainty; 
+        Real reactivity_cents = reactivity / beta_eff;
+        Real reactivity_cents_uncertainty = sqrt( (reactivity_uncertainty / reactivity) * (reactivity_uncertainty / reactivity) + ( beta_eff_sigma / beta_eff) * ( beta_eff_sigma / beta_eff) );
+        
+        std::tuple<Real,Real,Real> reactivity_pcm_pair = std::make_tuple(transient_time, reactivity_pcm, reactivity_pcm_uncertainty);
+        _reactivity_pcm_record.push_back(reactivity_pcm_pair);        
+        
+        std::tuple<Real,Real,Real> reactivity_cents_pair = std::make_tuple(transient_time, reactivity_cents, reactivity_cents_uncertainty);
+       _reactivity_cents_record.push_back(reactivity_cents_pair);
+        
+        
+        this->saveCurrentData(transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma);
          
         Real last_reported_time = 0;
         
@@ -95,7 +111,7 @@ void InfiniteCompositeReactor::simulate()
         for( inner_time_step = 0 ; inner_time_step < _monte_carlo_time_iteration ; inner_time_step += _kinetics_thermal_sync_time_step)
         {
             //Solve the kinetics model
-            current_power = _kinetics_model->solveForPower(_kinetics_thermal_sync_time_step, k_eff,lambda,fission_listing);
+            current_power = _kinetics_model->solveForPower(_kinetics_thermal_sync_time_step, k_eff,lambda, beta_eff);
             
             //Get a vector representation of the radial power distribution
             std::vector<Real> power_distribition = _thermal_solver->getRespresentativePowerDistribution( current_power /* current shape */ );
@@ -126,7 +142,7 @@ void InfiniteCompositeReactor::simulate()
         //if there is still enough time left to do another monte carlo time iteration
         if(transient_time + inner_time_step < _end_time)
         {
-            _monte_carlo_model->updateAdjustedCriticalityParameters();
+             _monte_carlo_model->updateAdjustedCriticalityParameters(true);
         }
          
         
@@ -135,11 +151,14 @@ void InfiniteCompositeReactor::simulate()
     
     MicroSolution::saveSolutions( _plot_solutions, this->_results_directory );
     MicroSolution::plotSolutions( _plot_solutions, 4 , this->_results_directory + "solutions-graph.png");
-    PythonPlot::plotData(      _power_record,            "Time [s]", "Power Density [W/m^3]",      "", "Power vs. Time",                   this->_results_directory + "power-graph.png");
-    PythonErrorPlot::plotData( _prompt_life_time_record, "Time [s]", "Prompt Neutron Lifetime [s]","", "Prompt Neutron Lifetime vs. Time", this->_results_directory + "prompt-neutron-lifetime-graph.png");
-    PythonErrorPlot::plotData( _k_eff_record,            "Time [s]", "Excess Reactivity [pcm]",    "", "K-eff vs. Time",                   this->_results_directory + "excess-reactivity-graph.png");
-    //PythonPlot::plotData(      _k_eff_record,            "Time [s]", "Excess Reactivity [pcm]",    "", "K-eff vs. Time",                   this->_results_directory + "excess-reactivity-graph.png");
-    PythonPlot::plotData(      _delayed_record,          "Time [s]", "Delayed Precursors",         {}, "Keff vs. Delayed Precursors",      this->_results_directory + "delayed-precursors.png");
+    PythonPlot::plotData(      _power_record,            "Time [s]", "Power Density [W/m^3]",      "", "Power vs. Time",                   this->_results_directory + "power-graph.png",                   {0, _end_time} );
+    PythonErrorPlot::plotData( _prompt_life_time_record, "Time [s]", "Prompt Neutron Lifetime [s]","", "Prompt Neutron Lifetime vs. Time", this->_results_directory + "prompt-neutron-lifetime-graph.png", {0, _end_time} );
+    PythonErrorPlot::plotData( _k_eff_record,            "Time [s]", "K effective",    "",             "K-eff vs. Time",                   this->_results_directory + "k-eff-graph.png",                   {0, _end_time} );
+    PythonErrorPlot::plotData( _reactivity_cents_record, "Time [s]", "Reactivity [Dollars]",    "",    "Reactivity vs. Time",              this->_results_directory + "reactivity-cents-graph.png",        {0, _end_time} );
+    PythonErrorPlot::plotData( _reactivity_pcm_record,   "Time [s]", "Reactivity [pcm]",    "",        "Reactivity vs. Time",              this->_results_directory + "reactivity-pcm-graph.png",          {0, _end_time} );
+    PythonErrorPlot::plotData( _beta_eff_record,         "Time [s]", "Beta effective",    "",          "Beta-eff vs. Time",                this->_results_directory + "beta-eff-graph.png",                {0, _end_time} );
+    PythonPlot::plotData(      _delayed_record,          "Time [s]", "Delayed Precursors",         {}, "Keff vs. Delayed Precursors",      this->_results_directory + "delayed-precursors.png",            {0, _end_time} );
+    PythonPlot::createPlots();
 }
 
 InfiniteCompositeReactor::~InfiniteCompositeReactor()
@@ -191,9 +210,7 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     this->_monte_carlo_model = new ReactorMonteCarlo(this, starting_k_eff, this->_results_directory + "run/");   
     
     //Define the kinetics parameters
-    std::vector<std::pair<FissionableIsotope,Real> > fission_listing = this->_monte_carlo_model->_fission_tally_listing;
-    this->_kinetics_model = new ReactorKinetics(initial_power_density, ReactorKinetics::DelayedPrecursorInitialState::EquilibriumPrecursors);
-    
+    this->_kinetics_model = new ReactorKinetics(this,initial_power_density, ReactorKinetics::DelayedPrecursorInitialState::EquilibriumPrecursors);    
     
     //Time stepping parameters
     _power_and_delayed_neutron_record_time_step =  _input_file_reader->getInputFileParameter("Power Record",0.0005 );  //How often to calculate keff and the prompt neutron lifetime
@@ -210,7 +227,7 @@ void InfiniteCompositeReactor::createOutputFile()
     std::ofstream output_file;
     output_file.open( this->_results_directory + this->_data_file, std::ios::out);
     
-    output_file << "Time [s], Power [W/m^3], k_eff, k_eff_sigma, neutron_lifetime [s], neutron_lifetime_sigma [s]";
+    output_file << "Time [s], Power [W/m^3], k_eff, k_eff sigma, neutron lifetime [s], Neutron Lifetime sigma [s], Beta_eff, Beta_eff sigma";
     
     for(size_t index = 1; index <= 6; index++ )
     {
@@ -221,12 +238,12 @@ void InfiniteCompositeReactor::createOutputFile()
     output_file.close();
 }
 
-void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma)
+void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma)
 {
     std::ofstream output_file;
     output_file.open( this->_results_directory + this->_data_file, std::ios::app);
     
-    output_file << time << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma;
+    output_file << time << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma;
     
     size_t delayed_size = _delayed_record.size();
     

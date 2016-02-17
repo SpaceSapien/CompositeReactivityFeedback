@@ -23,15 +23,15 @@ Thermal Solver Order: Second
 Steady State Temperature Solution Max Residual: 0.2
 
 Uranium Enrichment Fraction: 0.2 
-Cells Per Zone: 5
+Cells Per Zone: 1
 
 #Timer iteration data
 Monte Carlo Recalculation Timestep: 0.01 #s
 Kinetics Time Iteration: 10e-9           #s
 Thermal Time Iteration: 100e-9           #s
 Kinetics Thermal Data Sync: 20e-6        #s
-Calculation End Time: 1                  #s
-Power Record: 0.00025                    #s  Time between recording power and the delayed neutron record
+Calculation End Time: 0.05               #s
+Power Record: 0.0001                     #s  Time between recording power and the delayed neutron record
 
 Number of MCNP Cycles : 34
 

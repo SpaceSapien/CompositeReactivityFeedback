@@ -44,7 +44,7 @@ void PythonPlot::plotData(const std::string& x_data, const std::string& y_data, 
 }
 
 
-void PythonPlot::plotData(const std::vector<std::vector<Real>> &x_data, const std::vector<std::vector<Real>> &y_data, const std::string &x_label, const std::string &y_label,const std::vector<std::string> &legend_data, const std::string &title_data, const std::string &save_file_name)
+void PythonPlot::plotData(const std::vector<std::vector<Real>> &x_data, const std::vector<std::vector<Real>> &y_data, const std::string &x_label, const std::string &y_label,const std::vector<std::string> &legend_data, const std::string &title_data, const std::string &save_file_name, const std::pair<Real,Real> &x_limits, const std::pair<Real,Real> &y_limits )
 {
     if( x_data.size() == y_data.size() && y_data.size() == legend_data.size() )
     {
@@ -62,7 +62,7 @@ void PythonPlot::plotData(const std::vector<std::vector<Real>> &x_data, const st
         
         std::string x_data_string = PythonPlot::commandLinePlotData(x_data);
         std::string y_data_string = PythonPlot::commandLinePlotData(y_data);
-        PythonPlot plot = PythonPlot(x_data_string,y_data_string,x_label,y_label,legend_string,title_data,save_file_name);
+        PythonPlot plot = PythonPlot(x_data_string,y_data_string,x_label,y_label,legend_string,title_data,save_file_name, x_limits, y_limits);
         plot.plot();
     }
     else
@@ -72,7 +72,7 @@ void PythonPlot::plotData(const std::vector<std::vector<Real>> &x_data, const st
 }
 
 
-void PythonPlot::plotData(const std::vector<std::pair<Real,Real> > &data, const std::string &x_label, const std::string &y_label,const std::string &legend_data, const std::string &title_data, const std::string &save_file_name)
+void PythonPlot::plotData(const std::vector<std::pair<Real,Real> > &data, const std::string &x_label, const std::string &y_label,const std::string &legend_data, const std::string &title_data, const std::string &save_file_name, const std::pair<Real,Real> &x_limits, const std::pair<Real,Real> &y_limits )
 {
     std::vector<Real> x_data;
     std::vector<Real> y_data;
@@ -82,11 +82,11 @@ void PythonPlot::plotData(const std::vector<std::pair<Real,Real> > &data, const 
         x_data.push_back(data[x].first);
         y_data.push_back(data[x].second);
     }
-    PythonPlot::plotData(x_data,y_data,x_label,y_label,legend_data,title_data,save_file_name);
+    PythonPlot::plotData(x_data,y_data,x_label,y_label,legend_data,title_data,save_file_name, x_limits, y_limits);
        
 }
 
-void PythonPlot::plotData(const std::vector<std::pair<Real, std::vector<Real> > > &data, const std::string &x_label, const std::string &y_label,const std::vector<std::string> &legend_data, const std::string &title_data, const std::string &save_file_name)
+void PythonPlot::plotData(const std::vector<std::pair<Real, std::vector<Real> > > &data, const std::string &x_label, const std::string &y_label,const std::vector<std::string> &legend_data, const std::string &title_data, const std::string &save_file_name, const std::pair<Real,Real> &x_limits, const std::pair<Real,Real> &y_limits )
 {
  
     std::vector< std::vector<Real> > y_data;
@@ -134,7 +134,7 @@ void PythonPlot::plotData(const std::vector<std::pair<Real, std::vector<Real> > 
         x_data.push_back(temp_x_data);
     }
         
-    PythonPlot::plotData(x_data, y_data,x_label,y_label,legend_data_passing,title_data,save_file_name);
+    PythonPlot::plotData(x_data, y_data,x_label,y_label,legend_data_passing,title_data,save_file_name, x_limits, y_limits);
 }
 
 void PythonPlot::plotData(const std::vector<Real> &x_data, const std::vector<Real> &y_data, const std::string &x_label, const std::string &y_label,const std::string &legend_data, const std::string &title_data, const std::string &save_file_name, const std::pair<Real,Real> &x_limits, const std::pair<Real,Real> &y_limits)
@@ -230,10 +230,9 @@ void PythonPlot::plot()
 
     
     this->printToLogFile(command_line_plot);
-    exec( command_line_plot );
 }
 
-void PythonErrorPlot::plotData(const std::vector<std::tuple<Real,Real,Real> > &data, const std::string &x_label, const std::string &y_label,const std::string &legend_data, const std::string &title_data, const std::string &save_file_name)
+void PythonErrorPlot::plotData(const std::vector<std::tuple<Real,Real,Real> > &data, const std::string &x_label, const std::string &y_label,const std::string &legend_data, const std::string &title_data, const std::string &save_file_name, const std::pair<Real,Real> &x_limits, const std::pair<Real,Real> &y_limits )
 {
     std::vector<Real> x_data;
     std::vector<Real> y_data;
@@ -245,10 +244,10 @@ void PythonErrorPlot::plotData(const std::vector<std::tuple<Real,Real,Real> > &d
         y_data.push_back(std::get<1>(data[x]));
         error_data.push_back(std::get<2>(data[x]));
     }
-    PythonErrorPlot::plotData(x_data,y_data,error_data,x_label,y_label,legend_data,title_data,save_file_name);    
+    PythonErrorPlot::plotData(x_data,y_data,error_data,x_label,y_label,legend_data,title_data,save_file_name, x_limits, y_limits);    
 }
 
-void PythonErrorPlot::plotData(const std::vector<Real> &x_data,const std::vector<Real> &y_data,const std::vector<Real> &error_data, const std::string &x_label, const std::string &y_label,const std::string &legend_data, const std::string &title_data, const std::string &save_file_name)
+void PythonErrorPlot::plotData(const std::vector<Real> &x_data,const std::vector<Real> &y_data,const std::vector<Real> &error_data, const std::string &x_label, const std::string &y_label,const std::string &legend_data, const std::string &title_data, const std::string &save_file_name, const std::pair<Real,Real> &x_limits, const std::pair<Real,Real> &y_limits)
 {
     
     if( x_data.size() == y_data.size() && x_data.size() == error_data.size() )
@@ -263,15 +262,13 @@ void PythonErrorPlot::plotData(const std::vector<Real> &x_data,const std::vector
     else
     {
         throw Error::XYDataVectorsNotSameSize;
-    }
-    
-    
+    }  
     
     
 }
 
-PythonErrorPlot::PythonErrorPlot(const std::string &x_data, const std::string &y_data,  const std::string &error_data, const std::string &x_label, const std::string &y_label, const std::string &legend_data, const std::string &title_data, const std::string &save_file_name) :
-PythonPlot(x_data, y_data, x_label, y_label, legend_data, title_data, save_file_name)
+PythonErrorPlot::PythonErrorPlot(const std::string &x_data, const std::string &y_data,  const std::string &error_data, const std::string &x_label, const std::string &y_label, const std::string &legend_data, const std::string &title_data, const std::string &save_file_name, const std::pair<Real,Real> &x_limits, const std::pair<Real,Real> &y_limits ) :
+PythonPlot(x_data, y_data, x_label, y_label, legend_data, title_data, save_file_name, x_limits, y_limits)
 {
     _error_data = error_data;
 }
@@ -279,7 +276,6 @@ PythonPlot(x_data, y_data, x_label, y_label, legend_data, title_data, save_file_
 void PythonErrorPlot::plot()
 {
     std::string program = PYTHON_PLOT_SCRIPT;  
-    
     
     std::string x_command = " --xdata=\"" + _x_data + "\" ";
     std::string y_command = " --ydata=\"" + _y_data + "\" ";
@@ -290,20 +286,41 @@ void PythonErrorPlot::plot()
     std::string legend = " --legend=\"" + _legend + "\" ";
     std::string command_line_plot = program + x_command + y_command + error_command  + axis_labels + legend + title + save_file;
     this->printToLogFile(command_line_plot);
-    
-    
-    exec( command_line_plot );
 }
+
 
 void PythonPlot::printToLogFile(const std::string &command)
 {
+    
+    
+    
     if(PythonPlot::_log_file != "")
     {
-        std::ofstream myfile;
-        myfile.open (PythonPlot::_log_file, std::fstream::app);
-        myfile << command << std::endl << std::endl;
-        myfile.close();    
+        //Save the data
+        std::ofstream log_file;
+        log_file.open (PythonPlot::_log_file, std::fstream::app);
+        log_file << command << std::endl;
+        log_file.close(); 
+        
+        //Create the editable figure caller
+        /*std::cout<< this->_save_file + ".sh" << std::endl;
+        std::ofstream figure_file;
+        figure_file.open ( this->_save_file + ".sh" , std::fstream::out);
+        figure_file << "#!/bin/bash" << std::endl;
+        figure_file << "$( $( sed  '"<< this->_log_counter << "q;d' " << "graph_log.log )" << " --figure )" << std::endl;
+        figure_file.close();
+        this->_log_counter++;*/
     }
 }
 
+//This function creates all of the plots at one time using the log_file and avoilds the 
+//command line long command issues;
+void PythonPlot::createPlots()
+{
+    std::string program = PYTHON_PLOT_SCRIPT;  
+    std::string command = program + " inputfile " + PythonPlot::_log_file;
+    exec(command);   
+}
+
 std::string PythonPlot::_log_file = "";
+int PythonPlot::_log_counter = 1;

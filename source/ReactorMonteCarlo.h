@@ -26,24 +26,22 @@ class ReactorMonteCarlo
 
 public:
     
-    /**
-     *
-     */
     Real _virtual_k_eff_multiplier;
     Real _current_k_eff;
     Real _current_k_eff_sigma;
     Real _current_prompt_neutron_lifetime;
     Real _current_prompt_neutron_lifetime_sigma;
+    Real _current_beta_eff;
+    Real _current_beta_eff_sigma;
     int _cells_per_zone;
     
     std::string _run_directory;
-    std::vector<std::pair<FissionableIsotope,Real> > _fission_tally_listing;
     
     ReactorMonteCarlo();
     ReactorMonteCarlo(InfiniteCompositeReactor* reactor, const Real &starting_k_effective,const std::string &run_directory);
-    void createMCNPOutputFile(const std::string &file_name);
-    void updateAdjustedCriticalityParameters();
-    void getRawCriticalityParameters( Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma);   
+    void createMCNPOutputFile(const std::string &run_title, const std::string &file_name,const bool &delated_neutrons = true);
+    void updateAdjustedCriticalityParameters(const bool &update_beta_eff = false);
+    void getRawCriticalityParameters(const std::string &file_root, Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma, const bool &delayed_neutrons = true);   
     void readOutputFile(const std::string &file_name, Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma);
     
     std::string getMaterialCards();
@@ -54,6 +52,7 @@ public:
     
 private:
     
+    Real getBetaEffSigma(const Real &k_eff,const Real &k_eff_sigma,const Real &nd_k_eff,const Real &nd_k_eff_sigma);
     InfiniteCompositeReactor* _reactor;
 
 };
