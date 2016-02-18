@@ -8,4 +8,4 @@
 
 export DATAPATH=/share/apps/mcnp/MCNP_DATA
 EXE=/share/apps/mcnp/MCNP_CODE/MCNP6/bin/mcnp6.mpi
-mpirun $EXE i="$1.inp" o="$1.out" srctp="$1.srctp" runtpe="$runtpe" > $2
+mpirun $EXE i="$1.inp" o="$1.out" srctp="$1.srctp" runtpe="$1.runtpe" > $2

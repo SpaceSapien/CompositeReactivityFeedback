@@ -78,7 +78,7 @@ void ReactorMonteCarlo::updateAdjustedCriticalityParameters(const bool &update_b
     {
         Real raw_nd_k_effective, raw_nd_k_effective_sigma, nd_prompt_removal_lifetime, nd_prompt_removal_lifetime_sigma;
 
-        getRawCriticalityParameters("keffective-no-delayed-calc", raw_nd_k_effective,raw_nd_k_effective_sigma, nd_prompt_removal_lifetime, nd_prompt_removal_lifetime_sigma);    
+        getRawCriticalityParameters("keffective-no-delayed-calc", raw_nd_k_effective,raw_nd_k_effective_sigma, nd_prompt_removal_lifetime, nd_prompt_removal_lifetime_sigma, false);    
         
         _current_beta_eff = ( raw_k_effective - raw_nd_k_effective ) / raw_k_effective;
         _current_beta_eff_sigma = getBetaEffSigma(raw_k_effective, raw_k_effective_sigma, raw_nd_k_effective, raw_nd_k_effective_sigma );

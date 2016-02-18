@@ -9,7 +9,7 @@ Radaii: 4e-4 4.5e-4 2e-3 #m
 
 #Starting Power Density 
 Starting Power Density: 200e6 # W/m^3
-Starting K-eff: 1.01
+Starting K-eff: 1.001
 Kernel Outer Temperature: 800 K
 
 #Generally 100 is a good size
@@ -26,12 +26,12 @@ Uranium Enrichment Fraction: 0.2
 Cells Per Zone: 1
 
 #Timer iteration data
-Monte Carlo Recalculation Timestep: 0.01 #s
+Monte Carlo Recalculation Timestep: 0.005 #s
 Kinetics Time Iteration: 10e-9           #s
 Thermal Time Iteration: 100e-9           #s
 Kinetics Thermal Data Sync: 20e-6        #s
 Calculation End Time: 0.05               #s
 Power Record: 0.0001                     #s  Time between recording power and the delayed neutron record
 
-Number of MCNP Cycles : 34
+Number of MCNP Cycles: 264
 
