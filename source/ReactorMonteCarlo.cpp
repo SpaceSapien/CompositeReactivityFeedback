@@ -146,7 +146,7 @@ void ReactorMonteCarlo::getRawCriticalityParameters(const std::string &file_root
     exec(remove_command);
 
     //Run Submission Script with the created MCNP file
-    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte 32 ../../../composite-fuel-submission-script.sh " + file_root + " " + command_line_log_file;
+    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte 32 ../../../job-submission/practice-cluster-submission-script.sh " + file_root + " " + command_line_log_file;
     exec(qsub_command);
     //Constantly read the output file until it says mcrun done 
     std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";
@@ -157,6 +157,30 @@ void ReactorMonteCarlo::getRawCriticalityParameters(const std::string &file_root
         std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         is_done = exec(search_lock);
     }while(is_done == "");
+    
+    #elif ANTAL
+    
+    std::string mcnp_path = "/share/apps/MCNP/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
+    
+    //Delete the old log output by overwriting it with a blank string (we are using the log to check to see if the qsub is done)
+    std::string remove_command = "cd " + this->_run_directory + "; echo \"\" > " + command_line_log_file;
+    exec(remove_command);
+
+    //Run Submission Script with the created MCNP file
+    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte 32 ../../../job-submission/antal-submission-script.sh " + file_root + " " + command_line_log_file;
+    exec(qsub_command);
+    //Constantly read the output file until it says mcrun done 
+    std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";
+    std::string is_done;
+    
+    do
+    {   
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        is_done = exec(search_lock);
+    }while(is_done == "");
+    
+    
+    
     
     #endif
     
@@ -231,18 +255,9 @@ std::string ReactorMonteCarlo::getMaterialCards()
         otfdb_card << doppler_card_entry;        
     }       
     
-     #ifdef LAPTOP
-
-    std::string U238_cs = "92238.66c";
-    std::string U235_cs = "92235.66c";
-
-    #elif  PRACTICE_CLUSTER 
-
     std::string U238_cs = "92238.80c";
     std::string U235_cs = "92235.80c";    
 
-    #endif
-    
     otfdb_card << " OTFDB " << U238_cs << std::endl;
     otfdb_card << "       " << U235_cs << std::endl;
     //otfdb_card << "       8016.60c" << std::endl;

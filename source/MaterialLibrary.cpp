@@ -386,18 +386,9 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
     
     
         
-    #ifdef LAPTOP
-
-    std::string U238_cs = "92238.66c";
-    std::string U235_cs = "92235.66c";
-
-    #elif  PRACTICE_CLUSTER 
-
     std::string U238_cs = "92238.80c";
     std::string U235_cs = "92235.80c";    
-
-    #endif
-        
+     
     Real U235_fraction = enrichment_fraction;
     Real U238_fraction = (1 - enrichment_fraction);
     

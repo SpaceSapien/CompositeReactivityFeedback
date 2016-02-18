@@ -14,19 +14,15 @@
             </sourceRootList>
             <confList>
                 <confElem>
-                    <name>Debug</name>
-                    <type>1</type>
-                </confElem>
-                <confElem>
-                    <name>Release</name>
-                    <type>1</type>
-                </confElem>
-                <confElem>
                     <name>PracticeCluster</name>
                     <type>1</type>
                 </confElem>
                 <confElem>
                     <name>Laptop</name>
+                    <type>1</type>
+                </confElem>
+                <confElem>
+                    <name>Antal</name>
                     <type>1</type>
                 </confElem>
             </confList>

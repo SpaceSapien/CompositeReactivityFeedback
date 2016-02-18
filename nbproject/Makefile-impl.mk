@@ -27,11 +27,11 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 PROJECTNAME=FiniteDifference
 
 # Active Configuration
-DEFAULTCONF=Debug
+DEFAULTCONF=PracticeCluster
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=Debug Release PracticeCluster Laptop 
+ALLCONFS=PracticeCluster Laptop Antal 
 
 
 # build

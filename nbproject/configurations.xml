@@ -54,10 +54,10 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
-    <itemPath>composite-fuel-submission-script.sh</itemPath>
     <itemPath>input/default-input-file.inp</itemPath>
     <itemPath>source/newfile</itemPath>
     <itemPath>python/plot-local.py</itemPath>
+    <itemPath>job-submission/practice-cluster-submission-script.sh</itemPath>
     <itemPath>python/recreate-plot.py</itemPath>
   </logicalFolder>
   <sourceRootList>
@@ -65,204 +65,6 @@
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
-    <conf name="Debug" type="1">
-      <toolsSet>
-        <compilerSet>OpenMPI|GNU</compilerSet>
-        <dependencyChecking>true</dependencyChecking>
-        <rebuildPropChanged>false</rebuildPropChanged>
-      </toolsSet>
-      <compileType>
-        <ccTool>
-          <commandLine>-std=c++11</commandLine>
-        </ccTool>
-      </compileType>
-      <item path="composite-fuel-submission-script.sh"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/ExplicitSolverSettings.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/ExplicitSolverSettings.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/InfiniteCompositeReactor.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="source/InfiniteCompositeReactor.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/InputDataFunctions.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/InputFileParser.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/InputFileParser.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/MaterialDataPacket.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/MaterialDataPacket.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/MaterialEnum.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/MaterialLibrary.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/MaterialLibrary.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/MicroCell.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/MicroCell.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/MicroCellBoundaryCondition.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="source/MicroCellBoundaryCondition.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="source/MicroGeometry.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/MicroGeometry.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/MicroSolution.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/MicroSolution.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/PythonPlot.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/PythonPlot.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/ReactorKinetics.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/ReactorMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/ReactorMonteCarlo.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/main.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/newfile" ex="false" tool="3" flavor2="0">
-      </item>
-    </conf>
-    <conf name="Release" type="1">
-      <toolsSet>
-        <compilerSet>default</compilerSet>
-        <dependencyChecking>true</dependencyChecking>
-        <rebuildPropChanged>false</rebuildPropChanged>
-      </toolsSet>
-      <compileType>
-        <cTool>
-          <developmentMode>5</developmentMode>
-        </cTool>
-        <ccTool>
-          <developmentMode>5</developmentMode>
-          <commandLine>-std=c++11</commandLine>
-        </ccTool>
-        <fortranCompilerTool>
-          <developmentMode>5</developmentMode>
-        </fortranCompilerTool>
-        <asmTool>
-          <developmentMode>5</developmentMode>
-        </asmTool>
-      </compileType>
-      <item path="composite-fuel-submission-script.sh"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/ExplicitSolverSettings.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/ExplicitSolverSettings.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/InfiniteCompositeReactor.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="source/InfiniteCompositeReactor.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/InputDataFunctions.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/InputFileParser.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/InputFileParser.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/MaterialDataPacket.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/MaterialDataPacket.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/MaterialEnum.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/MaterialLibrary.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/MaterialLibrary.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/MicroCell.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/MicroCell.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/MicroCellBoundaryCondition.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="source/MicroCellBoundaryCondition.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="source/MicroGeometry.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/MicroGeometry.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/MicroSolution.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/MicroSolution.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/PythonPlot.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/PythonPlot.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/ReactorKinetics.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/ReactorMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/ReactorMonteCarlo.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/main.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/newfile" ex="false" tool="3" flavor2="0">
-      </item>
-    </conf>
     <conf name="PracticeCluster" type="1">
       <toolsSet>
         <compilerSet>default</compilerSet>
@@ -277,12 +79,12 @@
           </preprocessorList>
         </ccTool>
       </compileType>
-      <item path="composite-fuel-submission-script.sh"
+      <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="job-submission/practice-cluster-submission-script.sh"
             ex="false"
             tool="3"
             flavor2="0">
-      </item>
-      <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>
@@ -378,12 +180,109 @@
           <commandlineTool>g++</commandlineTool>
         </linkerTool>
       </compileType>
-      <item path="composite-fuel-submission-script.sh"
+      <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="job-submission/practice-cluster-submission-script.sh"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
+      <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/ExplicitSolverSettings.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ExplicitSolverSettings.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeReactor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InputDataFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InputFileParser.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/InputFileParser.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/MaterialDataPacket.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/MaterialDataPacket.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/MaterialEnum.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/MaterialLibrary.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/MaterialLibrary.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/MicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/MicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/MicroCellBoundaryCondition.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/MicroCellBoundaryCondition.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="source/MicroGeometry.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/MicroGeometry.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/MicroSolution.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/MicroSolution.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/PythonPlot.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/PythonPlot.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ReactorKinetics.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/ReactorMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ReactorMonteCarlo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/newfile" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Antal" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <standard>8</standard>
+          <preprocessorList>
+            <Elem>ANTAL</Elem>
+          </preprocessorList>
+        </ccTool>
+      </compileType>
       <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="job-submission/practice-cluster-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="python/plot-local.py" ex="false" tool="3" flavor2="0">
       </item>

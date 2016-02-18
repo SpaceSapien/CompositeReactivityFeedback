@@ -3,7 +3,6 @@
 #
 # NOCDDL
 #
-# Debug configuration
-# Release configuration
 # PracticeCluster configuration
 # Laptop configuration
+# Antal configuration
