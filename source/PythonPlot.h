@@ -18,15 +18,10 @@
 #include <tuple>
 #include "EnumsAndFunctions.h"
 
-#ifdef LAPTOP
     
-    #define PYTHON_PLOT_SCRIPT "python python/plot.py " 
+#define PYTHON_PLOT_SCRIPT "python python/plot.py " 
     
-#elif PRACTICE_CLUSTER
-    
-    #define PYTHON_PLOT_SCRIPT "python python/plot.py " 
-    
-#endif
+
 
 class PythonPlot 
 {
