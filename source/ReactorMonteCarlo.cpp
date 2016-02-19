@@ -39,7 +39,8 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
     //Cells per zone splits each zone up into multiple cells
     _cells_per_zone = this->_reactor->_input_file_reader->getInputFileParameter("Cells Per Zone", 1 );  
     
-    
+    //Cells per zone splits each zone up into multiple cells
+    _number_cpus = this->_reactor->_input_file_reader->getInputFileParameter("Number CPUs", 32 );  
 
     getRawCriticalityParameters( "keffective-calc",            k_eff,    k_eff_sigma,    prompt_removal_lifetime,    prompt_removal_lifetime_sigma);
     getRawCriticalityParameters( "keffective-no-delayed-calc", nd_k_eff, nd_k_eff_sigma, nd_prompt_removal_lifetime, nd_prompt_removal_lifetime_sigma, false);    
@@ -146,7 +147,7 @@ void ReactorMonteCarlo::getRawCriticalityParameters(const std::string &file_root
     exec(remove_command);
 
     //Run Submission Script with the created MCNP file
-    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte 32 ../../../job-submission/practice-cluster-submission-script.sh " + file_root + " " + command_line_log_file;
+    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte " + std::to_string(_number_cpus) + " ../../../job-submission/practice-cluster-submission-script.sh " + file_root + " " + command_line_log_file;
     exec(qsub_command);
     //Constantly read the output file until it says mcrun done 
     std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";
@@ -167,7 +168,7 @@ void ReactorMonteCarlo::getRawCriticalityParameters(const std::string &file_root
     exec(remove_command);
 
     //Run Submission Script with the created MCNP file
-    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte 32 ../../../job-submission/antal-submission-script.sh " + file_root + " " + command_line_log_file;
+    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte " + std::to_string(_number_cpus) + " ../../../job-submission/antal-submission-script.sh " + file_root + " " + command_line_log_file;
     exec(qsub_command);
     //Constantly read the output file until it says mcrun done 
     std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";

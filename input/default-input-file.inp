@@ -34,4 +34,5 @@ Calculation End Time: 0.05               #s
 Power Record: 0.0001                     #s  Time between recording power and the delayed neutron record
 
 Number of MCNP Cycles: 264
+Number CPUs:  32
 

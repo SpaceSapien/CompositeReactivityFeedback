@@ -33,6 +33,7 @@ public:
     Real _current_prompt_neutron_lifetime_sigma;
     Real _current_beta_eff;
     Real _current_beta_eff_sigma;
+    int _number_cpus;
     int _cells_per_zone;
     
     std::string _run_directory;
