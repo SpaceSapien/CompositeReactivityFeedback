@@ -18,6 +18,8 @@
 #include <string>
 #include "MicroCell.h"
 #include "InfiniteCompositeReactor.h"
+#include "SimulationResults.h"
+
 
 class InfiniteCompositeReactor;
 
@@ -35,14 +37,25 @@ public:
     Real _current_beta_eff_sigma;
     int _number_cpus;
     int _cells_per_zone;
+    int _k_eff_number_cycles;
+    int _beta_eff_number_cycles;
+    int _calulate_beta_interval;
+    int _number_of_keff_calculations;
     
     std::string _run_directory;
     
     ReactorMonteCarlo();
     ReactorMonteCarlo(InfiniteCompositeReactor* reactor, const Real &starting_k_effective,const std::string &run_directory);
-    void createMCNPOutputFile(const std::string &run_title, const std::string &file_name,const bool &delated_neutrons = true);
-    void updateAdjustedCriticalityParameters(const bool &update_beta_eff = false);
-    void getRawCriticalityParameters(const std::string &file_root, Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma, const bool &delayed_neutrons = true);   
+    void createMCNPOutputFile(const std::string &run_title, const std::string &file_name,const int &number_cycles, const bool &delated_neutrons = true);
+    void updateAdjustedCriticalityParameters();
+    
+    void updateCurrentValuesFromResults(const BetaSimulationResults &results);
+    void updateCurrentValuesFromResults(const SimulationResults &results);
+    
+    BetaSimulationResults getRawKeffAndBetaEff();
+    SimulationResults getRawKeff();    
+    SimulationResults getRawCriticalityParameters(const std::string &file_root, const int &number_cycles, const bool &delayed_neutrons);
+    
     void readOutputFile(const std::string &file_name, Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma);
     
     std::string getMaterialCards();
@@ -53,7 +66,8 @@ public:
     
 private:
     
-    Real getBetaEffSigma(const Real &k_eff,const Real &k_eff_sigma,const Real &nd_k_eff,const Real &nd_k_eff_sigma);
+    //Helper function to calculate uncertainties
+    //Pointer the the reactor
     InfiniteCompositeReactor* _reactor;
 
 };

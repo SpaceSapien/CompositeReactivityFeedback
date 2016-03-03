@@ -49,6 +49,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/source/PythonPlot.o \
 	${OBJECTDIR}/source/ReactorKinetics.o \
 	${OBJECTDIR}/source/ReactorMonteCarlo.o \
+	${OBJECTDIR}/source/SimulationResults.o \
 	${OBJECTDIR}/source/main.o
 
 
@@ -145,6 +146,11 @@ ${OBJECTDIR}/source/ReactorMonteCarlo.o: source/ReactorMonteCarlo.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DPRACTICE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/ReactorMonteCarlo.o source/ReactorMonteCarlo.cpp
+
+${OBJECTDIR}/source/SimulationResults.o: source/SimulationResults.cpp 
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DPRACTICE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/SimulationResults.o source/SimulationResults.cpp
 
 ${OBJECTDIR}/source/main.o: source/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/source

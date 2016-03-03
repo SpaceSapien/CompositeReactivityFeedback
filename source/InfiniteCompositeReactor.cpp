@@ -142,7 +142,7 @@ void InfiniteCompositeReactor::simulate()
         //if there is still enough time left to do another monte carlo time iteration
         if(transient_time + inner_time_step < _end_time)
         {
-             _monte_carlo_model->updateAdjustedCriticalityParameters(true);
+            _monte_carlo_model->updateAdjustedCriticalityParameters();
         }
          
         

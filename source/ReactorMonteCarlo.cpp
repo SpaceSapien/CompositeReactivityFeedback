@@ -11,7 +11,7 @@
  * Created on December 17, 2015, 7:09 PM
  */
 
-#include "ReactorMonteCarlo.h"
+
 #include "MicroGeometry.h"
 #include <sstream>
 #include <math.h>
@@ -19,16 +19,13 @@
 #include <chrono>
 #include <thread>
 #include "InfiniteCompositeReactor.h"
-
+#include "ReactorMonteCarlo.h"
+#include "SimulationResults.h"
 
 ReactorMonteCarlo::ReactorMonteCarlo() {}
 
 ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Real &starting_k_eff, const  std::string &run_directory)
 {
-    Real k_eff, prompt_removal_lifetime, k_eff_sigma, prompt_removal_lifetime_sigma;
-    Real nd_k_eff, nd_prompt_removal_lifetime, nd_k_eff_sigma, nd_prompt_removal_lifetime_sigma;
-    
-    
     _run_directory = run_directory;
     
     std::string run_command = "mkdir -p " + _run_directory;
@@ -41,75 +38,85 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
     
     //Cells per zone splits each zone up into multiple cells
     _number_cpus = this->_reactor->_input_file_reader->getInputFileParameter("Number CPUs", 32 );  
-
-    getRawCriticalityParameters( "keffective-calc",            k_eff,    k_eff_sigma,    prompt_removal_lifetime,    prompt_removal_lifetime_sigma);
-    getRawCriticalityParameters( "keffective-no-delayed-calc", nd_k_eff, nd_k_eff_sigma, nd_prompt_removal_lifetime, nd_prompt_removal_lifetime_sigma, false);    
+    _k_eff_number_cycles = this->_reactor->_input_file_reader->getInputFileParameter("Number of MCNP Cycles", 60 );  
+    _beta_eff_number_cycles = this->_reactor->_input_file_reader->getInputFileParameter("Number of MCNP Cycles for Beta", 600 );  
+    
+    BetaSimulationResults beta_results = getRawKeffAndBetaEff();
+    
+    _calulate_beta_interval = this->_reactor->_input_file_reader->getInputFileParameter("Keff Calculation Per Beta Eff Calculation",0);
     
     
-    _virtual_k_eff_multiplier = starting_k_eff / k_eff;  
-    _current_k_eff = starting_k_eff;
-    _current_prompt_neutron_lifetime = prompt_removal_lifetime;
-    _current_k_eff_sigma = k_eff_sigma * _virtual_k_eff_multiplier;
-    _current_prompt_neutron_lifetime_sigma = prompt_removal_lifetime_sigma;
-    _current_beta_eff = ( k_eff - nd_k_eff ) / k_eff;
-    _current_beta_eff_sigma = this->getBetaEffSigma(k_eff, k_eff_sigma, nd_k_eff, nd_k_eff_sigma);
-    
-
-     
-    
+    _virtual_k_eff_multiplier = starting_k_eff / beta_results._with_delayed_neutrons._k_eff;  
+    this->updateCurrentValuesFromResults(beta_results);
+    this->_number_of_keff_calculations = 1;
 }
+
+void ReactorMonteCarlo::updateCurrentValuesFromResults(const BetaSimulationResults &beta_results)
+{
+    _current_beta_eff = beta_results._beta;
+    _current_beta_eff_sigma = beta_results._beta_sigma;
+    this->updateCurrentValuesFromResults( beta_results._with_delayed_neutrons);
+}
+
+void ReactorMonteCarlo::updateCurrentValuesFromResults(const SimulationResults &results)
+{
+    _current_k_eff = results._k_eff * _virtual_k_eff_multiplier;
+    _current_prompt_neutron_lifetime = results._prompt_neutron_lifetime;
+    _current_k_eff_sigma = results._k_eff_sigma * _virtual_k_eff_multiplier;
+    _current_prompt_neutron_lifetime_sigma = results._prompt_neutron_lifetime_sigma;
+}
+
 
 /**
  * Adjusts the k_effective to match the desired starting reactivity
  * @param k_eff
  * @param prompt_removal_lifetime
  */
-void ReactorMonteCarlo::updateAdjustedCriticalityParameters(const bool &update_beta)
+void ReactorMonteCarlo::updateAdjustedCriticalityParameters()
 {
-    Real raw_k_effective, raw_k_effective_sigma, prompt_removal_lifetime, prompt_removal_lifetime_sigma;
-    
-    getRawCriticalityParameters("keffective-calc", raw_k_effective,raw_k_effective_sigma, prompt_removal_lifetime, prompt_removal_lifetime_sigma);    
-    
-    _current_k_eff = raw_k_effective * _virtual_k_eff_multiplier;
-    _current_prompt_neutron_lifetime = prompt_removal_lifetime;
-    _current_k_eff_sigma = raw_k_effective_sigma * _virtual_k_eff_multiplier;
-    _current_prompt_neutron_lifetime_sigma = prompt_removal_lifetime_sigma;
-    
-    if( update_beta )
+    if( _calulate_beta_interval <= 0 || _number_of_keff_calculations % _calulate_beta_interval == 0 )
     {
-        Real raw_nd_k_effective, raw_nd_k_effective_sigma, nd_prompt_removal_lifetime, nd_prompt_removal_lifetime_sigma;
-
-        getRawCriticalityParameters("keffective-no-delayed-calc", raw_nd_k_effective,raw_nd_k_effective_sigma, nd_prompt_removal_lifetime, nd_prompt_removal_lifetime_sigma, false);    
-        
-        _current_beta_eff = ( raw_k_effective - raw_nd_k_effective ) / raw_k_effective;
-        _current_beta_eff_sigma = getBetaEffSigma(raw_k_effective, raw_k_effective_sigma, raw_nd_k_effective, raw_nd_k_effective_sigma );
+        BetaSimulationResults beta_results = this->getRawKeffAndBetaEff();
+        this->updateCurrentValuesFromResults(beta_results);
+    }
+    else
+    {
+        SimulationResults results = this->getRawKeff();
+        this->updateCurrentValuesFromResults(results);
     }
     
-    
+    _number_of_keff_calculations++;
 }
 
-Real ReactorMonteCarlo::getBetaEffSigma(const Real &k_eff,const Real &k_eff_sigma,const Real &nd_k_eff,const Real &nd_k_eff_sigma)
+BetaSimulationResults ReactorMonteCarlo::getRawKeffAndBetaEff()
 {
-    Real current_beta_eff = ( k_eff - nd_k_eff ) / k_eff;
-    
-    //sqrt of the sum of the squares of sigmas
-    Real difference_uncertainty = sqrt( k_eff_sigma * k_eff_sigma + nd_k_eff_sigma * nd_k_eff_sigma );
-    
-    //Find the uncertainty fractions
-    Real numerator_uncertainty_fraction = difference_uncertainty / ( k_eff - nd_k_eff );
-    Real denominator_uncertainty_fraction = k_eff_sigma / k_eff;
-    
-    //uncertainty is the sum of the squares of the fractions
-    return current_beta_eff * sqrt( numerator_uncertainty_fraction * numerator_uncertainty_fraction  + denominator_uncertainty_fraction * denominator_uncertainty_fraction );
+    //Run the simulation to get the results for both delated and non delayed to do the beta calculation
+    SimulationResults k_eff_with_delayed = getRawCriticalityParameters( "keffective-calc", _beta_eff_number_cycles, true);
+    SimulationResults k_eff_without_delayed = getRawCriticalityParameters( "keffective-no-delayed-calc", _beta_eff_number_cycles, false);    
+    //Create the BetaSimulationResults Object
+    BetaSimulationResults beta_results = BetaSimulationResults(k_eff_with_delayed,k_eff_without_delayed);
+    return beta_results;
 }
 
+
+SimulationResults ReactorMonteCarlo::getRawKeff()
+{
+    //return the simulation results
+    return this->getRawCriticalityParameters("k-effective-calc", _k_eff_number_cycles, false);    
+}
 
 /**
- * Get the raw k_effective from MCNP
+ * Create the input file, run it, and grab the k-effective from the MCNP output file
+ * 
+ * @param file_root
  * @param k_eff
+ * @param k_eff_sigma
  * @param prompt_removal_lifetime
+ * @param prompt_removal_lifetime_sigma
+ * @param number_cycles
+ * @param delayed_neutrons
  */
-void ReactorMonteCarlo::getRawCriticalityParameters(const std::string &file_root, Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma,const bool &delayed_neutrons)
+SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::string &file_root, const int &number_cycles, const bool &delayed_neutrons)
 {
     //create the MCNP input file
     std::string run_title = this->_reactor->_run_name + " Time = "  + std::to_string(this->_reactor->_thermal_solver->_current_time);
@@ -127,7 +134,7 @@ void ReactorMonteCarlo::getRawCriticalityParameters(const std::string &file_root
     exec(symbolic_link_command);
     
     
-    this->createMCNPOutputFile(run_title, input_file_name, delayed_neutrons);
+    this->createMCNPOutputFile(run_title, input_file_name, number_cycles, delayed_neutrons);
     std::string command_line_log_file = "mcnp_run_log.txt";
     
     //Run the file
@@ -187,51 +194,9 @@ void ReactorMonteCarlo::getRawCriticalityParameters(const std::string &file_root
     
 
     //Read the output file
-    this->readOutputFile(output_file_name, k_eff, k_eff_sigma, prompt_removal_lifetime, prompt_removal_lifetime_sigma);
+    SimulationResults results = SimulationResults(output_file_name, this->_run_directory );
+    return results;
         
-}
-
-void ReactorMonteCarlo::readOutputFile(const std::string &file_name, Real &k_eff, Real &k_eff_sigma, Real &prompt_removal_lifetime, Real &prompt_removal_lifetime_sigma)
-{
-    
-    std::string base_command = "cd " + this->_run_directory + ";cat " + file_name + " | perl -ne ";   
-    
-    std::string k_eff_regex = "'/estimated combined collision\\/absorption\\/track-length keff = ([0-9]\\.[0-9]+) with an estimated standard deviation of ([0-9]\\.[0-9]+)/ && print $1'";
-    std::string k_eff_command = base_command + k_eff_regex;
-    std::string k_eff_str = exec(k_eff_command);
-    k_eff = std::stod(k_eff_str);
-        
-    std::string k_eff_sigma_regex = "'/estimated combined collision\\/absorption\\/track-length keff = ([0-9]\\.[0-9]+) with an estimated standard deviation of ([0-9]\\.[0-9]+)/ && print $2'";
-    std::string k_eff_sigma_command = base_command + k_eff_sigma_regex;
-    std::string k_eff_sigma_str = exec(k_eff_sigma_command);
-    k_eff_sigma = std::stod(k_eff_sigma_str);
-    
-    std::string prompt_lifetime_regex = "'/the final combined \\(col\\/abs\\/tl\\) prompt removal lifetime = ([0-9]+\\.[0-9]+E-?[0-9]+) seconds with an estimated standard deviation of ([0-9]+\\.[0-9]+E-?[0-9]+)/ && print $1'";
-    std::string prompt_lifetime_command = base_command + prompt_lifetime_regex;
-    std::string prompt_removal_lifetime_str = exec(prompt_lifetime_command);    
-    prompt_removal_lifetime = std::stod(prompt_removal_lifetime_str);
-        
-    std::string prompt_lifetime_sigma_regex = "'/the final combined \\(col\\/abs\\/tl\\) prompt removal lifetime = ([0-9]+\\.[0-9]+E-?[0-9]+) seconds with an estimated standard deviation of ([0-9]+\\.[0-9]+E-?[0-9]+)/ && print $2'";
-    std::string prompt_lifetime_sigma_command = base_command + prompt_lifetime_sigma_regex;
-    std::string prompt_removal_lifetime_sigma_str = exec(prompt_lifetime_sigma_command);
-    prompt_removal_lifetime_sigma = std::stod(prompt_removal_lifetime_sigma_str);
-    
-    
-    /*std::ifstream mcnp_output_file;
-    mcnp_output_file.open(file_name);
-    
-    std::string output_file_text;
-    
-    if (mcnp_output_file.is_open()) 
-    {
-        output_file_text.assign( std::istreambuf_iterator<char>(mcnp_output_file) , std::istreambuf_iterator<char>()  );
-    }
-    mcnp_output_file.close();
-    
-    
-   
-    //"estimated combined collision/absorption/track-length keff = 1.79363 with an estimated standard deviation of 0.00064"
-    //the final combined (col/abs/tl) prompt removal lifetime = 2.6650E-04 seconds with an estimated standard deviation of 4.6932E-07 */
 }
 
 std::string ReactorMonteCarlo::getMaterialCards()
@@ -402,7 +367,7 @@ std::string ReactorMonteCarlo::getSurfaceCards()
 }
 
 
-void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const std::string &file_name,const bool &delayed_neutrons)
+void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const std::string &file_name,const int &number_of_cycles, const bool &delayed_neutrons)
 {
     
     std::stringstream mcnp_file;
@@ -410,7 +375,6 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const
     std::string cell_cards = this->getCellCards();
     std::string surface_cards = this->getSurfaceCards();
     std::string material_cards = this->getMaterialCards();
-    int number_of_cycles = this->_reactor->_input_file_reader->getInputFileParameter("Number of MCNP Cycles", 33);
     
     mcnp_file << run_title << std::endl;
     mcnp_file << "c Simulating a small UO2 fuel kernel inside a graphite matrix" << std::endl;

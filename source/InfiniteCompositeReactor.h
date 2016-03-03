@@ -78,7 +78,6 @@ class InfiniteCompositeReactor
     std::string _run_name;
     
     
-    
     void simulate();
     void initializeInifiniteCompositeReactorProblem();
     void plotDelayedPrecursors();
