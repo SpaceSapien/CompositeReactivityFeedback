@@ -14,7 +14,25 @@
 #ifndef SIMULATIONRESULTS_H
 #define SIMULATIONRESULTS_H
 #include <string>
+#include <vector>
 #include "EnumsAndFunctions.h"
+
+
+class TallyResults 
+{
+    
+public:
+    
+    std::vector< std::pair< Real, std::vector<Real> > > _energy_tally_counts;
+    
+    void readTallyFile(const std::string &output_file, const std::string &directory);
+    TallyResults(const std::string &output_file, const std::string &directory );
+    TallyResults();
+    
+private:
+
+};
+
 
 /**
  * This class represents the data that can be represented from an output file

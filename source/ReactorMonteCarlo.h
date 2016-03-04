@@ -41,6 +41,7 @@ public:
     int _beta_eff_number_cycles;
     int _calulate_beta_interval;
     int _number_of_keff_calculations;
+    bool _tally_cells;
     
     std::string _run_directory;
     
@@ -61,7 +62,9 @@ public:
     std::string getMaterialCards();
     std::string getCellCards();
     std::string getSurfaceCards();
+    std::string getTallyCards();
     std::string getSingleCellCard(const Materials &material, const int &current_zone, int &cell_number );
+    
     
     
 private:

@@ -44,7 +44,7 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
     BetaSimulationResults beta_results = getRawKeffAndBetaEff();
     
     _calulate_beta_interval = this->_reactor->_input_file_reader->getInputFileParameter("Keff Calculation Per Beta Eff Calculation",0);
-    
+    _tally_cells = this->_reactor->_input_file_reader->getInputFileParameter("Tally Cells", false);
     
     _virtual_k_eff_multiplier = starting_k_eff / beta_results._with_delayed_neutrons._k_eff;  
     this->updateCurrentValuesFromResults(beta_results);
@@ -102,7 +102,7 @@ BetaSimulationResults ReactorMonteCarlo::getRawKeffAndBetaEff()
 SimulationResults ReactorMonteCarlo::getRawKeff()
 {
     //return the simulation results
-    return this->getRawCriticalityParameters("k-effective-calc", _k_eff_number_cycles, false);    
+    return this->getRawCriticalityParameters("k-effective-calc", _k_eff_number_cycles, true);    
 }
 
 /**
@@ -299,6 +299,31 @@ std::string ReactorMonteCarlo::getCellCards()
     return cell_cards.str();
 }
 
+std::string ReactorMonteCarlo::getTallyCards()
+{
+   std::stringstream tally_cards;
+    
+    std::vector<std::pair<Materials, Dimension> > geometry_data = _reactor->_micro_sphere_geometry->_geometry;
+    int number_zones = geometry_data.size();   
+    int cell_number = 1;
+    
+    //For each zone create a cell
+    for( int current_zone = 1; current_zone <= number_zones  ; current_zone++ )
+    {
+        for( int current_cell_in_zone = 1; current_cell_in_zone <= _cells_per_zone; current_cell_in_zone++)
+        {
+            tally_cards << "F" + std::to_string(cell_number) << "7:n " << std::to_string(cell_number) << "   $cell tally" << std::endl;
+            tally_cards << "F" + std::to_string(cell_number) << "4:n " << std::to_string(cell_number) << "   $fission energy deposition tally" << std::endl;
+            cell_number++;
+        }
+    }
+    
+    tally_cards << "E0 0.000001 20ILOG 10" << std::endl;
+    tally_cards << "PRDMP   j j 1 		$write mctal file" << std::endl;
+    
+    return tally_cards.str(); 
+}
+
 std::string ReactorMonteCarlo::getSurfaceCards()
 {
     std::stringstream surface_cards;
@@ -395,6 +420,11 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const
         mcnp_file << " TOTNU NO" << std::endl;
     }
     
+    if(_tally_cells)
+    {
+        std::string tally_cards = this->getTallyCards();
+        mcnp_file << tally_cards;
+    }
     
     mcnp_file << " KCODE 10000 1.5 3 " << number_of_cycles << "  $need at least 30 active cycles to print results" << std::endl;
     mcnp_file << " KSRC 0 0 0" << std::endl;

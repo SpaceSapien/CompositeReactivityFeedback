@@ -23,7 +23,7 @@ Thermal Solver Order: Second
 Steady State Temperature Solution Max Residual: 0.2
 
 Uranium Enrichment Fraction: 0.2 
-Cells Per Zone: 1
+Cells Per Zone: 3
 
 #Timer iteration data
 Keff Calculation Per Beta Eff Calculation: 20   # calculating the beta is expensive so we only calculate it once for ever so may keff calculations zero means only calculate at the beginning of the simulation
@@ -37,4 +37,6 @@ Power Record: 0.0001                            #s  Time between recording power
 Number of MCNP Cycles: 33                      #cycles - number of cycles to run in a normal k-eff run 
 Number of MCNP Cycles for Beta: 60            #cycles - number of cycles to run in a beta effective calculation
 Number CPUs:  32
+
+Tally Cells: true                             #tally the cells in the problem
 

@@ -102,3 +102,47 @@ Real BetaSimulationResults::getBetaEffSigma(const Real &k_eff,const Real &k_eff_
     return current_beta_eff * sqrt( numerator_uncertainty_fraction * numerator_uncertainty_fraction  + denominator_uncertainty_fraction * denominator_uncertainty_fraction );
 }
 
+TallyResults::TallyResults(const std::string &file_name, const std::string &directory) 
+{
+    this->readTallyFile(file_name, directory);
+}
+
+
+
+
+TallyResults::TallyResults() {}
+
+/**
+ * Read the MCNP output file and parse the important paramters
+ * @param file_name
+ * @param k_eff
+ * @param k_eff_sigma
+ * @param prompt_removal_lifetime
+ * @param prompt_removal_lifetime_sigma
+ */
+void TallyResults::readTallyFile(const std::string &file_name, const std::string &directory)
+{
+    
+    std::string base_command = "cd " + directory + ";cat " + file_name + " | perl -ne ";   
+    
+    std::string k_eff_regex = "'/estimated combined collision\\/absorption\\/track-length keff = ([0-9]\\.[0-9]+) with an estimated standard deviation of ([0-9]\\.[0-9]+)/ && print $1'";
+    std::string k_eff_command = base_command + k_eff_regex;
+    std::string k_eff_str = exec(k_eff_command);
+//    _k_eff = std::stod(k_eff_str);
+        
+    std::string k_eff_sigma_regex = "'/estimated combined collision\\/absorption\\/track-length keff = ([0-9]\\.[0-9]+) with an estimated standard deviation of ([0-9]\\.[0-9]+)/ && print $2'";
+    std::string k_eff_sigma_command = base_command + k_eff_sigma_regex;
+    std::string k_eff_sigma_str = exec(k_eff_sigma_command);
+//    _k_eff_sigma = std::stod(k_eff_sigma_str);
+    
+    std::string prompt_lifetime_regex = "'/the final combined \\(col\\/abs\\/tl\\) prompt removal lifetime = ([0-9]+\\.[0-9]+E-?[0-9]+) seconds with an estimated standard deviation of ([0-9]+\\.[0-9]+E-?[0-9]+)/ && print $1'";
+    std::string prompt_lifetime_command = base_command + prompt_lifetime_regex;
+    std::string prompt_removal_lifetime_str = exec(prompt_lifetime_command);    
+ //   _prompt_neutron_lifetime = std::stod(prompt_removal_lifetime_str);
+        
+    std::string prompt_lifetime_sigma_regex = "'/the final combined \\(col\\/abs\\/tl\\) prompt removal lifetime = ([0-9]+\\.[0-9]+E-?[0-9]+) seconds with an estimated standard deviation of ([0-9]+\\.[0-9]+E-?[0-9]+)/ && print $2'";
+    std::string prompt_lifetime_sigma_command = base_command + prompt_lifetime_sigma_regex;
+    std::string prompt_removal_lifetime_sigma_str = exec(prompt_lifetime_sigma_command);
+  //  _prompt_neutron_lifetime_sigma = std::stod(prompt_removal_lifetime_sigma_str);
+}
+
