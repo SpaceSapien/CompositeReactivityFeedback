@@ -40,11 +40,12 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
     _number_cpus = this->_reactor->_input_file_reader->getInputFileParameter("Number CPUs", 32 );  
     _k_eff_number_cycles = this->_reactor->_input_file_reader->getInputFileParameter("Number of MCNP Cycles", 60 );  
     _beta_eff_number_cycles = this->_reactor->_input_file_reader->getInputFileParameter("Number of MCNP Cycles for Beta", 600 );  
+    _calulate_beta_interval = this->_reactor->_input_file_reader->getInputFileParameter("Keff Calculation Per Beta Eff Calculation",0);
+    _tally_cells = this->_reactor->_input_file_reader->getInputFileParameter("Tally Cells", false);
+   
     
     BetaSimulationResults beta_results = getRawKeffAndBetaEff();
     
-    _calulate_beta_interval = this->_reactor->_input_file_reader->getInputFileParameter("Keff Calculation Per Beta Eff Calculation",0);
-    _tally_cells = this->_reactor->_input_file_reader->getInputFileParameter("Tally Cells", false);
     
     _virtual_k_eff_multiplier = starting_k_eff / beta_results._with_delayed_neutrons._k_eff;  
     this->updateCurrentValuesFromResults(beta_results);
@@ -124,9 +125,10 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     std::string output_file_name =  file_root + ".out";
     std::string runtpe_name =  file_root + ".runtpe";
     std::string srctpe_name =  file_root + ".srctp";
+    std::string mctal_name =  file_root + ".mctal";
     
     //clean up the previous MCNP data files
-    std::string clean_mcnp_command = "rm " + this->_run_directory + input_file_name + " " + this->_run_directory + output_file_name + " " + this->_run_directory + runtpe_name + " " + this->_run_directory + srctpe_name;
+    std::string clean_mcnp_command = "rm " + this->_run_directory + input_file_name + " " + this->_run_directory + output_file_name + " " + this->_run_directory + runtpe_name + " " + this->_run_directory + srctpe_name + " " + this->_run_directory + mctal_name;
     exec(clean_mcnp_command);
     
     //create a symbolic link to the Doppler broadened cross sections
@@ -142,7 +144,7 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     //We are just running MPI here
     std::string mcnp_path = "/media/chris/DoubleSpace/MCNP/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
-    std::string command = "cd " + this->_run_directory + "; mpirun -np  7 " + mcnp_path + " i=\"" + input_file_name + "\" o=\"" + output_file_name + "\" runtpe=\"" + runtpe_name + "\" srctp=\"" + srctpe_name + "\" | tee \"" + command_line_log_file + "\"";
+    std::string command = "cd " + this->_run_directory + "; mpirun -np  7 " + mcnp_path + " i=\"" + input_file_name + "\" o=\"" + output_file_name + "\" runtpe=\"" + runtpe_name + "\" srctp=\"" + srctpe_name + "\" mctal=\"" + mctal_name + "\" | tee \"" + command_line_log_file + "\"";
     exec(command);
     
     #elif PRACTICE_CLUSTER
@@ -301,8 +303,10 @@ std::string ReactorMonteCarlo::getCellCards()
 
 std::string ReactorMonteCarlo::getTallyCards()
 {
-   std::stringstream tally_cards;
+    std::stringstream tally_cards;
     
+    
+    tally_cards << "c Tally Cards" << std::endl;
     std::vector<std::pair<Materials, Dimension> > geometry_data = _reactor->_micro_sphere_geometry->_geometry;
     int number_zones = geometry_data.size();   
     int cell_number = 1;
@@ -312,14 +316,14 @@ std::string ReactorMonteCarlo::getTallyCards()
     {
         for( int current_cell_in_zone = 1; current_cell_in_zone <= _cells_per_zone; current_cell_in_zone++)
         {
-            tally_cards << "F" + std::to_string(cell_number) << "7:n " << std::to_string(cell_number) << "   $cell tally" << std::endl;
-            tally_cards << "F" + std::to_string(cell_number) << "4:n " << std::to_string(cell_number) << "   $fission energy deposition tally" << std::endl;
+            tally_cards << " F" + std::to_string(cell_number) << "7:n " << std::to_string(cell_number) << "   $cell tally" << std::endl;
+            tally_cards << " F" + std::to_string(cell_number) << "4:n " << std::to_string(cell_number) << "   $fission energy deposition tally" << std::endl;
             cell_number++;
         }
     }
     
-    tally_cards << "E0 0.000001 20ILOG 10" << std::endl;
-    tally_cards << "PRDMP   j j 1 		$write mctal file" << std::endl;
+    tally_cards << " E0 0.00000001 45ILOG 10" << std::endl;
+    tally_cards << " PRDMP   j j 1 		$write mctal file" << std::endl;
     
     return tally_cards.str(); 
 }

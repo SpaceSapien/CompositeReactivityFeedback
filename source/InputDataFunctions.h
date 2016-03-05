@@ -27,6 +27,6 @@ std::vector<Real> getPowerDistribution(std::vector<Dimension> radial_points,cons
 std::string exec(const std::string command, const bool &print_command = true,const bool &print_output = true);
 std::string doubleToScientificString(double value);
 bool file_exists(const std::string &name);  
-
+std::string trim(const std::string& str);
 #endif /* INPUTDATAFUNCTIONS_H */
 

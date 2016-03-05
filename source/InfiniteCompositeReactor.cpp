@@ -36,8 +36,10 @@
 
 InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file_name ) 
 {   
+    
+    
     //Initialize the input file reader
-    this->_input_file_reader = new InputFileParser( input_file_name);
+    this->_input_file_reader = new InputFileParser( input_file_name );
     
     //Create the Results Folder
     time_t run_identification_number = std::time(nullptr);
@@ -47,10 +49,17 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
     
     _results_directory =  "results/" + _run_name + "-" + std::to_string(run_identification_number) + "/";    
     
-    
     _data_file = "datafile.csv";
     std::string folder_command = "mkdir -p " + _results_directory;
     exec( folder_command );
+    
+    std::string copy_input_file_command = "cp " + input_file_name + " " + _results_directory + "input_file.inp";
+    exec( copy_input_file_command );
+    
+    
+    
+    
+    
     createOutputFile();
     initializeInifiniteCompositeReactorProblem();
 }
@@ -106,6 +115,9 @@ void InfiniteCompositeReactor::simulate()
         this->saveCurrentData(transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma);
          
         Real last_reported_time = 0;
+        
+        
+        
         
         //This loop iterates the kinetics and thermal model data
         for( inner_time_step = 0 ; inner_time_step < _monte_carlo_time_iteration ; inner_time_step += _kinetics_thermal_sync_time_step)

@@ -35,7 +35,7 @@ Calculation End Time: 0.05                      #s
 Power Record: 0.0001                            #s  Time between recording power and the delayed neutron record
 
 Number of MCNP Cycles: 33                      #cycles - number of cycles to run in a normal k-eff run 
-Number of MCNP Cycles for Beta: 60            #cycles - number of cycles to run in a beta effective calculation
+Number of MCNP Cycles for Beta: 60             #cycles - number of cycles to run in a beta effective calculation
 Number CPUs:  32
 
 Tally Cells: true                             #tally the cells in the problem

@@ -142,7 +142,7 @@ std::string InputFileParser::getInputFileParameter(const std::string &name, cons
 bool InputFileParser::getInputFileParameter(const std::string &name, const bool &default_value)
 {
     
-    std::string input_file_data = this->getInputFileTextEntry(name);
+    std::string input_file_data = trim(this->getInputFileTextEntry(name));
     
     
     if(input_file_data == "")
@@ -161,8 +161,8 @@ bool InputFileParser::getInputFileParameter(const std::string &name, const bool 
         }
         else
         {
-            std::cerr<< name << " in the input file " << this->_input_file_name << " has an unknown value assume true.";
-            return true;
+            std::cerr<< name << " in the input file " << this->_input_file_name << " has an unknown value assume default value.";
+            return default_value;
         }
     }
 }
