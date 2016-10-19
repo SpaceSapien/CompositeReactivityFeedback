@@ -75,6 +75,10 @@ std::string getMaterialName(const Materials &material)
         {
             return "Graphene";
         }
+        case Materials::ZrO2 :
+        {
+            return "ZrO2";
+        }
         default :
         {
             return "Unknown Material";
@@ -143,6 +147,10 @@ Materials getMaterialFromName(const std::string &material_name)
     if( material_name == "Zr" )
     {
         return Materials::Zr;
+    }
+    if( material_name == "ZrO2" )
+    {
+        return Materials::ZrO2;
     }
     throw -1;
 };

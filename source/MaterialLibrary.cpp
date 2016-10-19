@@ -228,6 +228,14 @@ std::pair<Real,Real> MaterialLibrary::getDensityPair(const Materials &material,c
             return std::pair<Real,Real>(density,density_derivative);            
         }
 
+        case Materials::ZrO2 :
+        {
+            density = 6000;
+            //rho = 6090/(( MaterialProperties.getIntegratedLinearExpansion(material,300,T,radiation) + 1)^3);
+            return std::pair<Real,Real>(density,density_derivative);            
+        }
+
+        
         default :
         {
             throw Errors::MaterialNotDefined;
@@ -363,6 +371,12 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
             
         }
         
+        case Materials::ZrO2 :
+        {        
+            //relatively flat
+            return std::pair<Real,Real>(2.0,0);
+        }
+        
         default :
         {
             throw Errors::MaterialNotDefined;
@@ -490,6 +504,13 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
         {        
             material_cards << " m" << zone << "  42000    1          $ZrB2" << std::endl;
             material_cards << "     5011        2          " << std::endl;
+            break;
+        }
+        
+        case Materials::ZrO2 :
+        {        
+            material_cards << " m" << zone << "  42000    1          $ZrO2" << std::endl;
+            material_cards << "     8016        2          " << std::endl;
             break;
         }
         
@@ -663,6 +684,17 @@ std::pair<Real,Real> MaterialLibrary::getSpecificHeatPair(const Materials &mater
             const std::vector<Real> Cp_data ={ 425, 510, 540, 565, 585, 600, 675,  825 }; 
             return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);            
         }
+        
+        case Materials::ZrO2 :
+        {
+        
+            //first point extrapolated last point extrapolated
+            //http://onlinelibrary.wiley.com/doi/10.1111/j.1151-2916.2000.tb01506.x/pdf
+            const std::vector<Real> T_data = { 300, 578, 1578, 2958 };
+            const std::vector<Real> Cp_data ={ 500, 550, 610,  660 }; 
+            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);            
+        }
+        
         default :
         {
             throw Errors::MaterialNotDefined;
@@ -758,6 +790,12 @@ Real MaterialLibrary::getMeltingPoint(const Materials &material)
             melting_temperature = 3516;
             break;
         }
+        case Materials::ZrO2 :
+        {
+            
+            melting_temperature = 2958;
+            break;
+        }        
         default :
         {
             throw Errors::MaterialNotDefined;
@@ -901,6 +939,17 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
             //range here...
             const std::vector<Real> T_data = {298,    3516};
             const std::vector<Real> a_data = {5.2e-6, 6.7e-6};
+            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            
+            break;
+        }
+         case Materials::ZrO2 :
+        {
+            //NETZCH Poswer
+            //Data from NETZCH Ceramics Poster, in reality there is a
+            //range here...
+            const std::vector<Real> T_data = {298,    3516};
+            const std::vector<Real> a_data = {12.5e-6, 12.5e-6};
             alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
             
             break;

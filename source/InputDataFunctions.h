@@ -28,5 +28,6 @@ std::string exec(const std::string command, const bool &print_command = true,con
 std::string doubleToScientificString(double value);
 bool file_exists(const std::string &name);  
 std::string trim(const std::string& str);
+std::string get_file_text(const std::string& file_path);
 #endif /* INPUTDATAFUNCTIONS_H */
 

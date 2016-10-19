@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <ctime>
 #include <sstream>
+#include <fstream>
 #include "MicroSolution.h"
 #include "MaterialLibrary.h"
 #include "EnumsAndFunctions.h"
@@ -134,4 +135,19 @@ std::string trim(const std::string& str)
     size_t first = str.find_first_not_of(' ');
     size_t last = str.find_last_not_of(' ');
     return str.substr(first, (last-first+1));
+}
+
+std::string get_file_text(const std::string& file_path)
+{
+    std::stringstream file_data;
+    std::ifstream infile(file_path);
+    std::string line;
+    
+    while( std::getline(infile,line))
+    {
+        file_data << line;
+    }
+    
+    
+    return file_data.str();
 }

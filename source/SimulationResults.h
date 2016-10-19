@@ -23,8 +23,6 @@ class TallyResults
     
 public:
     
-    std::vector< std::pair< Real, std::vector<Real> > > _energy_tally_counts;
-    
     void readTallyFile(const std::string &output_file, const std::string &directory);
     TallyResults(const std::string &output_file, const std::string &directory );
     TallyResults();

@@ -10,7 +10,6 @@
  * 
  * Created on March 1, 2016, 1:44 PM
  */
-
 #include "SimulationResults.h"
 #include "EnumsAndFunctions.h"
 #include "InputDataFunctions.h"
@@ -123,26 +122,42 @@ TallyResults::TallyResults() {}
 void TallyResults::readTallyFile(const std::string &file_name, const std::string &directory)
 {
     
-    std::string base_command = "cd " + directory + ";cat " + file_name + " | perl -ne ";   
+   // std::string file_text = this->grabFileVector(directory + file_name);
     
-    std::string k_eff_regex = "'/estimated combined collision\\/absorption\\/track-length keff = ([0-9]\\.[0-9]+) with an estimated standard deviation of ([0-9]\\.[0-9]+)/ && print $1'";
-    std::string k_eff_command = base_command + k_eff_regex;
-    std::string k_eff_str = exec(k_eff_command);
-//    _k_eff = std::stod(k_eff_str);
-        
-    std::string k_eff_sigma_regex = "'/estimated combined collision\\/absorption\\/track-length keff = ([0-9]\\.[0-9]+) with an estimated standard deviation of ([0-9]\\.[0-9]+)/ && print $2'";
-    std::string k_eff_sigma_command = base_command + k_eff_sigma_regex;
-    std::string k_eff_sigma_str = exec(k_eff_sigma_command);
-//    _k_eff_sigma = std::stod(k_eff_sigma_str);
+    //std::size_t ntal_start = file_text.find("ntal");
+    //std::size_t = file_text.substr(file_text.).find( )
+            
+            
+    /*
+    std::string start_index = "tally   " + std::to_string(tally_number);
+    start_index.substr()
+    std::size_t found = str.find(str2);
     
-    std::string prompt_lifetime_regex = "'/the final combined \\(col\\/abs\\/tl\\) prompt removal lifetime = ([0-9]+\\.[0-9]+E-?[0-9]+) seconds with an estimated standard deviation of ([0-9]+\\.[0-9]+E-?[0-9]+)/ && print $1'";
-    std::string prompt_lifetime_command = base_command + prompt_lifetime_regex;
-    std::string prompt_removal_lifetime_str = exec(prompt_lifetime_command);    
- //   _prompt_neutron_lifetime = std::stod(prompt_removal_lifetime_str);
-        
-    std::string prompt_lifetime_sigma_regex = "'/the final combined \\(col\\/abs\\/tl\\) prompt removal lifetime = ([0-9]+\\.[0-9]+E-?[0-9]+) seconds with an estimated standard deviation of ([0-9]+\\.[0-9]+E-?[0-9]+)/ && print $2'";
-    std::string prompt_lifetime_sigma_command = base_command + prompt_lifetime_sigma_regex;
-    std::string prompt_removal_lifetime_sigma_str = exec(prompt_lifetime_sigma_command);
-  //  _prompt_neutron_lifetime_sigma = std::stod(prompt_removal_lifetime_sigma_str);
+    if (found!=std::string::npos)
+    {
+        std::cout << "first 'needle' found at: " << found << '\n';
+    }
+    
+    found=str.find("needles are small",found+1,6);
+    
+    if (found!=std::string::npos)
+    {
+        std::cout << "second 'needle' found at: " << found << '\n';
+    }
+    
+    found=str.find("haystack");
+    if (found!=std::string::npos)
+    {
+        std::cout << "'haystack' also found at: " << found << '\n';
+    }
+    
+    found=str.find('.');
+    if (found!=std::string::npos)
+    {
+        std::cout << "Period found at: " << found << '\n';
+    }
+    // let's replace the first needle:
+    str.replace(str.find(str2),str2.length(),"preposition");*/
+    
 }
 

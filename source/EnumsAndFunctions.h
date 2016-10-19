@@ -36,6 +36,7 @@ enum Materials
     Mo,
     Nb,
     Zr,
+    ZrO2,
     Graphene
 };
    

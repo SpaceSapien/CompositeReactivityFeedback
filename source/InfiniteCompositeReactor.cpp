@@ -155,8 +155,30 @@ void InfiniteCompositeReactor::simulate()
         if(transient_time + inner_time_step < _end_time)
         {
             _monte_carlo_model->updateAdjustedCriticalityParameters();
+            
+            
+             Real k_eff_change = abs(k_eff - _monte_carlo_model->_current_k_eff);
+             
+            
+            Real k_eff_sigma = _monte_carlo_model->_current_k_eff_sigma;
+            Real min_k_eff_change = k_eff_sigma*2/3;
+            Real max_k_eff_change = k_eff_sigma*3;
+             
+            //We need smaller time steps
+            if( max_k_eff_change < k_eff_change )
+            {
+                _monte_carlo_time_iteration *= 0.5;
+            }
+            //we can get away with bigger time steps
+            else if( min_k_eff_change > k_eff_change )
+            {
+                _monte_carlo_time_iteration *= 2;
+            }
+            
+            
         }
-         
+        
+       
         
     }
     
