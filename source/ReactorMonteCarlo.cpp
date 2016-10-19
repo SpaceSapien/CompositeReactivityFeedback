@@ -144,7 +144,7 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     //We are just running MPI here
     std::string mcnp_path = "/media/chris/DoubleSpace/MCNP/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
-    std::string command = "cd " + this->_run_directory + "; export PATH=/home/chris/OPENMPI/bin:$PATH; export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/chris/OPENMPI/lib; mpirun -np  7 " + mcnp_path + " i=\"" + input_file_name + "\" o=\"" + output_file_name + "\" runtpe=\"" + runtpe_name + "\" srctp=\"" + srctpe_name + "\" mctal=\"" + mctal_name + "\" | tee \"" + command_line_log_file + "\"";
+    std::string command = "cd " + this->_run_directory + "; PATH=/home/chris/Programs/openmpi/bin:$PATH;LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/chris/Programs/openmpi/lib; mpirun -np  7 " + mcnp_path + " i=\"" + input_file_name + "\" o=\"" + output_file_name + "\" runtpe=\"" + runtpe_name + "\" srctp=\"" + srctpe_name + "\" mctal=\"" + mctal_name + "\" | tee \"" + command_line_log_file + "\"";
     exec(command);
     
     #elif PRACTICE_CLUSTER
