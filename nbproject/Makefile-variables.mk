@@ -30,6 +30,14 @@ CND_ARTIFACT_PATH_Antal=dist/Antal/GNU-Linux/promptdopplerfeedback
 CND_PACKAGE_DIR_Antal=dist/Antal/GNU-Linux/package
 CND_PACKAGE_NAME_Antal=promptdopplerfeedback.tar
 CND_PACKAGE_PATH_Antal=dist/Antal/GNU-Linux/package/promptdopplerfeedback.tar
+# MC configuration
+CND_PLATFORM_MC=GNU-Linux
+CND_ARTIFACT_DIR_MC=dist/MC/GNU-Linux
+CND_ARTIFACT_NAME_MC=promptdopplerfeedback
+CND_ARTIFACT_PATH_MC=dist/MC/GNU-Linux/promptdopplerfeedback
+CND_PACKAGE_DIR_MC=dist/MC/GNU-Linux/package
+CND_PACKAGE_NAME_MC=promptdopplerfeedback.tar
+CND_PACKAGE_PATH_MC=dist/MC/GNU-Linux/package/promptdopplerfeedback.tar
 #
 # include compiler specific variables
 #

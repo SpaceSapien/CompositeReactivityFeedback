@@ -6,3 +6,4 @@
 # PracticeCluster configuration
 # Laptop configuration
 # Antal configuration
+# MC configuration

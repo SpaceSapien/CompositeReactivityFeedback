@@ -190,6 +190,29 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     }while(is_done == "");
     
     
+    #elif MC_CLUSTER
+    
+    //std::string mcnp_path = "/share/apps/MCNP/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
+    
+    //Delete the old log output by overwriting it with a blank string (we are using the log to check to see if the qsub is done)
+    std::string remove_command = "cd " + this->_run_directory + "; echo \"\" > " + command_line_log_file;
+    exec(remove_command);
+
+    //Run Submission Script with the created MCNP file
+    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte " + std::to_string(_number_cpus) + " ../../../job-submission/mc-submission-script.sh " + file_root + " " + command_line_log_file;
+    exec(qsub_command);
+    //Constantly read the output file until it says mcrun done 
+    std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";
+    std::string is_done;
+    
+    do
+    {   
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        is_done = exec(search_lock);
+    }while(is_done == "");
+    
+    
+    
     
     
     #endif
