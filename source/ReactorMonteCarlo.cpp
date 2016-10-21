@@ -147,59 +147,29 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     std::string command = "cd " + this->_run_directory + "; PATH=/home/chris/Programs/openmpi/bin:$PATH;LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/chris/Programs/openmpi/lib; mpirun -np  7 " + mcnp_path + " i=\"" + input_file_name + "\" o=\"" + output_file_name + "\" runtpe=\"" + runtpe_name + "\" srctp=\"" + srctpe_name + "\" mctal=\"" + mctal_name + "\" | tee \"" + command_line_log_file + "\"";
     exec(command);
     
-    #elif PRACTICE_CLUSTER
-    
-    std::string mcnp_path = "/share/apps/mcnp/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
+    #else
     
     //Delete the old log output by overwriting it with a blank string (we are using the log to check to see if the qsub is done)
     std::string remove_command = "cd " + this->_run_directory + "; echo \"\" > " + command_line_log_file;
     exec(remove_command);
 
-    //Run Submission Script with the created MCNP file
-    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte " + std::to_string(_number_cpus) + " ../../../job-submission/practice-cluster-submission-script.sh " + file_root + " " + command_line_log_file;
-    exec(qsub_command);
-    //Constantly read the output file until it says mcrun done 
-    std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";
-    std::string is_done;
+    #ifdef PRACTICE_CLUSTER
     
-    do
-    {   
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-        is_done = exec(search_lock);
-    }while(is_done == "");
+    std::string submission_script = "practice-cluster-submission-script.sh";
     
     #elif ANTAL
     
-    std::string mcnp_path = "/share/apps/MCNP/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
-    
-    //Delete the old log output by overwriting it with a blank string (we are using the log to check to see if the qsub is done)
-    std::string remove_command = "cd " + this->_run_directory + "; echo \"\" > " + command_line_log_file;
-    exec(remove_command);
-
-    //Run Submission Script with the created MCNP file
-    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte " + std::to_string(_number_cpus) + " ../../../job-submission/antal-submission-script.sh " + file_root + " " + command_line_log_file;
-    exec(qsub_command);
-    //Constantly read the output file until it says mcrun done 
-    std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";
-    std::string is_done;
-    
-    do
-    {   
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-        is_done = exec(search_lock);
-    }while(is_done == "");
-    
+    std::string submission_script = "antal-submission-script.sh";
     
     #elif MC_CLUSTER
     
-    //std::string mcnp_path = "/share/apps/MCNP/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
+    std::string submission_script = "mc-submission-script.sh";
     
-    //Delete the old log output by overwriting it with a blank string (we are using the log to check to see if the qsub is done)
-    std::string remove_command = "cd " + this->_run_directory + "; echo \"\" > " + command_line_log_file;
-    exec(remove_command);
-
+    #endif
+    
+    
     //Run Submission Script with the created MCNP file
-    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte " + std::to_string(_number_cpus) + " ../../../job-submission/mc-submission-script.sh " + file_root + " " + command_line_log_file;
+    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + " -pe orte " + std::to_string(_number_cpus) + " ../../../job-submission/" + submission_script + " " + file_root + " " + command_line_log_file;
     exec(qsub_command);
     //Constantly read the output file until it says mcrun done 
     std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";
@@ -207,11 +177,9 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     do
     {   
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
         is_done = exec(search_lock);
     }while(is_done == "");
-    
-    
     
     
     

@@ -157,7 +157,7 @@ void InfiniteCompositeReactor::simulate()
             _monte_carlo_model->updateAdjustedCriticalityParameters();
             
             
-             Real k_eff_change = abs(k_eff - _monte_carlo_model->_current_k_eff);
+            Real k_eff_change = abs(k_eff - _monte_carlo_model->_current_k_eff);
              
             
             Real k_eff_sigma = _monte_carlo_model->_current_k_eff_sigma;
