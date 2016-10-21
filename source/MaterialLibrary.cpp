@@ -16,7 +16,7 @@
  */
 #include <vector>
 #include <complex>
-#include <math.h>
+#include <cmath>
 #include "MaterialLibrary.h"
 
 //Constructor

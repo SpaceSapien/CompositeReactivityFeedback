@@ -11,7 +11,7 @@
  * Created on November 20, 2015, 3:13 PM
  */
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include "MicroGeometry.h"
 
 MicroGeometry::MicroGeometry(const std::vector<Materials> &materials,const std::vector<Dimension> &dimensions) 

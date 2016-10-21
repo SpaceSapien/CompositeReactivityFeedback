@@ -58,6 +58,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>job-submission/acorite-submission-script.sh</itemPath>
     <itemPath>input/default-input-file.inp</itemPath>
     <itemPath>job-submission/mc-submission-script.sh</itemPath>
     <itemPath>job-submission/practice-cluster-submission-script.sh</itemPath>
@@ -83,6 +84,11 @@
         </ccTool>
       </compileType>
       <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="job-submission/acorite-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="job-submission/mc-submission-script.sh"
             ex="false"
@@ -194,6 +200,11 @@
       </compileType>
       <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="job-submission/acorite-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="job-submission/mc-submission-script.sh"
             ex="false"
             tool="3"
@@ -300,6 +311,11 @@
       </compileType>
       <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="job-submission/acorite-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="job-submission/mc-submission-script.sh"
             ex="false"
             tool="3"
@@ -405,6 +421,11 @@
         </ccTool>
       </compileType>
       <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="job-submission/acorite-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="job-submission/mc-submission-script.sh"
             ex="false"

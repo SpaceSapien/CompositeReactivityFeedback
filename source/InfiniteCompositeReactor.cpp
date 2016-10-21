@@ -19,7 +19,7 @@
 #include <sstream>
 #include <iostream>
 #include <memory>
-#include <math.h>
+#include <cmath>
 #include <iomanip>
 #include <ctime>
 #include "MicroSolution.h"
@@ -154,10 +154,15 @@ void InfiniteCompositeReactor::simulate()
         //if there is still enough time left to do another monte carlo time iteration
         if(transient_time + inner_time_step < _end_time)
         {
+            Real last_k_eff = _monte_carlo_model->_current_k_eff;
+            
             _monte_carlo_model->updateAdjustedCriticalityParameters();
             
+            Real current_k_eff =  _monte_carlo_model->_current_k_eff;
+                   
+            Real difference = current_k_eff - last_k_eff;
             
-            Real k_eff_change = abs(k_eff - _monte_carlo_model->_current_k_eff);
+            Real k_eff_change = std::abs( difference);
              
             
             Real k_eff_sigma = _monte_carlo_model->_current_k_eff_sigma;

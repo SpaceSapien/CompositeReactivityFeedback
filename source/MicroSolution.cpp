@@ -13,7 +13,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <math.h>
+#include <cmath>
 #include <fstream>
 #include "EnumsAndFunctions.h"
 #include "MicroSolution.h"

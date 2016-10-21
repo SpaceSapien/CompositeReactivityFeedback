@@ -20,7 +20,7 @@
 #include <sstream>
 #include <iostream>
 #include <memory>
-#include <math.h>
+#include <cmath>
 #include <iomanip>
 #include <ctime>
 #include "MicroSolution.h"

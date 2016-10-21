@@ -12,7 +12,6 @@
 #define VARIABLE_MATERIAL_PROPERTIES_DIFFERENTIAL
 #include <iostream>
 #include <vector>
-#include <math.h>
 #include <cmath>
 #include "MicroSolution.h"
 #include "EnumsAndFunctions.h"
