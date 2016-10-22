@@ -7,3 +7,4 @@
 # Laptop configuration
 # Antal configuration
 # MC configuration
+# ACORITE configuration

@@ -31,7 +31,7 @@ DEFAULTCONF=PracticeCluster
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=PracticeCluster Laptop Antal MC 
+ALLCONFS=PracticeCluster Laptop Antal MC ACORITE 
 
 
 # build

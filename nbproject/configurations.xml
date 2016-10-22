@@ -517,5 +517,116 @@
       <item path="source/main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
+    <conf name="ACORITE" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <standard>8</standard>
+          <preprocessorList>
+            <Elem>ACORITE_CLUSTER</Elem>
+          </preprocessorList>
+        </ccTool>
+      </compileType>
+      <item path="input/default-input-file.inp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="job-submission/acorite-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="job-submission/mc-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="job-submission/practice-cluster-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/ExplicitSolverSettings.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ExplicitSolverSettings.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeReactor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InputDataFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InputFileParser.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/InputFileParser.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/MaterialDataPacket.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/MaterialDataPacket.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/MaterialEnum.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/MaterialLibrary.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/MaterialLibrary.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/MicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/MicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/MicroCellBoundaryCondition.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/MicroCellBoundaryCondition.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="source/MicroGeometry.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/MicroGeometry.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/MicroSolution.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/MicroSolution.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/PythonPlot.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/PythonPlot.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ReactorKinetics.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/ReactorMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ReactorMonteCarlo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/SimulationResults.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/SimulationResults.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Tally.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Tally.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
   </confs>
 </configurationDescriptor>

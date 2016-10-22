@@ -38,6 +38,14 @@ CND_ARTIFACT_PATH_MC=dist/MC/GNU-Linux/promptdopplerfeedback
 CND_PACKAGE_DIR_MC=dist/MC/GNU-Linux/package
 CND_PACKAGE_NAME_MC=promptdopplerfeedback.tar
 CND_PACKAGE_PATH_MC=dist/MC/GNU-Linux/package/promptdopplerfeedback.tar
+# ACORITE configuration
+CND_PLATFORM_ACORITE=GNU-Linux
+CND_ARTIFACT_DIR_ACORITE=dist/ACORITE/GNU-Linux
+CND_ARTIFACT_NAME_ACORITE=promptdopplerfeedback
+CND_ARTIFACT_PATH_ACORITE=dist/ACORITE/GNU-Linux/promptdopplerfeedback
+CND_PACKAGE_DIR_ACORITE=dist/ACORITE/GNU-Linux/package
+CND_PACKAGE_NAME_ACORITE=promptdopplerfeedback.tar
+CND_PACKAGE_PATH_ACORITE=dist/ACORITE/GNU-Linux/package/promptdopplerfeedback.tar
 #
 # include compiler specific variables
 #

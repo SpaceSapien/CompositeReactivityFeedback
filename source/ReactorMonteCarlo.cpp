@@ -165,6 +165,10 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     std::string submission_script = "mc-submission-script.sh";
     
+    #elif ACORITE_CLUSTER
+    
+    std::string submission_script = "acorite-submission-script.sh";
+    
     #endif
     
     
