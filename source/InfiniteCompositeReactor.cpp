@@ -148,7 +148,7 @@ void InfiniteCompositeReactor::simulate()
             
         }
         
-        solution.plot( this->_results_directory + "solution-" + std::to_string(_thermal_solver->_current_time)  + ".png", 800, 3000);
+        solution.plot( this->_results_directory + "solution-" + std::to_string(transient_time)  + ".png", 800, 3000);
         _plot_solutions.push_back(solution); 
         
         //if there is still enough time left to do another monte carlo time iteration
@@ -167,7 +167,7 @@ void InfiniteCompositeReactor::simulate()
             
             Real k_eff_sigma = _monte_carlo_model->_current_k_eff_sigma;
             Real min_k_eff_change = k_eff_sigma*2/3;
-            Real max_k_eff_change = k_eff_sigma*3;
+            Real max_k_eff_change = k_eff_sigma*2;
              
             //We need smaller time steps
             if( max_k_eff_change < k_eff_change )
@@ -177,7 +177,7 @@ void InfiniteCompositeReactor::simulate()
             //we can get away with bigger time steps
             else if( min_k_eff_change > k_eff_change )
             {
-                _monte_carlo_time_iteration *= 2;
+                _monte_carlo_time_iteration *= 1.5;
             }
             
             
