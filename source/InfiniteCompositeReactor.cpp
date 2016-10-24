@@ -33,6 +33,7 @@
 #include "PythonPlot.h"
 #include "InputFileParser.h"
 
+const std::time_t InfiniteCompositeReactor::_simulation_start_time = std::time(nullptr);;
 
 InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file_name ) 
 {   
@@ -111,8 +112,9 @@ void InfiniteCompositeReactor::simulate()
         std::tuple<Real,Real,Real> reactivity_cents_pair = std::make_tuple(transient_time, reactivity_cents, reactivity_cents_uncertainty);
        _reactivity_cents_record.push_back(reactivity_cents_pair);
         
-        
-        this->saveCurrentData(transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma);
+        Real hottest_temperature = this->_thermal_solver->_solution[0]; 
+       
+        this->saveCurrentData(transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma, hottest_temperature);
          
         Real last_reported_time = 0;
         
@@ -266,7 +268,7 @@ void InfiniteCompositeReactor::createOutputFile()
     std::ofstream output_file;
     output_file.open( this->_results_directory + this->_data_file, std::ios::out);
     
-    output_file << "Time [s], Power [W/m^3], k_eff, k_eff sigma, neutron lifetime [s], Neutron Lifetime sigma [s], Beta_eff, Beta_eff sigma";
+    output_file << "Time [s], Power [W/m^3], k_eff, k_eff sigma, neutron lifetime [s], Neutron Lifetime sigma [s], Beta_eff, Beta_eff sigma, Run Time [s], Edge Temp [K]";
     
     for(size_t index = 1; index <= 6; index++ )
     {
@@ -277,12 +279,29 @@ void InfiniteCompositeReactor::createOutputFile()
     output_file.close();
 }
 
-void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma)
+/**
+ * 
+ * @param time
+ * @param power
+ * @param k_eff
+ * @param k_eff_sigma
+ * @param neutron_lifetime
+ * @param neutron_lifetime_sigma
+ * @param beta_eff
+ * @param beta_eff_sigma
+ * @param hot_temperature
+ */
+void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature)
 {
     std::ofstream output_file;
     output_file.open( this->_results_directory + this->_data_file, std::ios::app);
     
-    output_file << time << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma;
+    //time elapsed since the simulation started
+    std::time_t elapsed_time_since_start =  std::time(nullptr) - InfiniteCompositeReactor::_simulation_start_time;
+    
+    
+    
+    output_file << time << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma << ", " << elapsed_time_since_start << ", " << hot_temperature;
     
     size_t delayed_size = _delayed_record.size();
     

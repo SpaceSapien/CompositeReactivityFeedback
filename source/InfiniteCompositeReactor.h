@@ -78,10 +78,12 @@ class InfiniteCompositeReactor
     std::string _run_name;
     
     
+    const static std::time_t _simulation_start_time;
+    
     void simulate();
     void initializeInifiniteCompositeReactorProblem();
     void plotDelayedPrecursors();
-    void saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma);
+    void saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature);
     void createOutputFile();
     
     
