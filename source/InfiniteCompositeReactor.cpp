@@ -57,7 +57,7 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
     std::string copy_input_file_command = "cp " + input_file_name + " " + _results_directory + "input_file.inp";
     exec( copy_input_file_command );
     
-    
+    _monte_carlo_number_iterations = 0;
     
     
     
@@ -72,8 +72,7 @@ void InfiniteCompositeReactor::simulate()
     //Simulate the transient the outer loop is the monte carlo simulation
     for( this->_transient_time = 0; _transient_time < _end_time; _transient_time += _inner_time_step)
     {
-        this->timeIterationInnerLoop();
-        this->monteCarloTimeStepSimulationProcessing();
+        this->timeIterationInnerLoop();        
     }
     
     //Save data and create the graphs for the post simulation data
@@ -178,11 +177,14 @@ void InfiniteCompositeReactor::timeIterationInnerLoop()
 
     }
 
+    this->monteCarloTimeStepSimulationProcessing();
+    
     //if there is still enough time left to do another monte carlo time iteration
     if( _transient_time + _inner_time_step < _end_time)
     {
         Real last_k_eff = _monte_carlo_model->_current_k_eff;
 
+        
         _monte_carlo_model->updateAdjustedCriticalityParameters();
 
         Real current_k_eff =  _monte_carlo_model->_current_k_eff;
@@ -205,10 +207,11 @@ void InfiniteCompositeReactor::timeIterationInnerLoop()
         else if( min_k_eff_change > k_eff_change )
         {
             _monte_carlo_time_iteration *= 1.5;
-        }
-
-
+        }       
     }
+    
+     _monte_carlo_number_iterations++;
+    
 }
 
 /*InfiniteCompositeReactor::temperatureIterationInnerLoop()
@@ -283,7 +286,7 @@ void InfiniteCompositeReactor::createOutputFile()
     std::ofstream output_file;
     output_file.open( this->_results_directory + this->_data_file, std::ios::out);
     
-    output_file << "Time [s], Power [W/m^3], k_eff, k_eff sigma, neutron lifetime [s], Neutron Lifetime sigma [s], Beta_eff, Beta_eff sigma, Run Time [s], Edge Temp [K]";
+    output_file << "Iteration, Time [s], Timestep [s], Power [W/m^3], k_eff, k_eff sigma, neutron lifetime [s], Neutron Lifetime sigma [s], Beta_eff, Beta_eff sigma, Run Time [s], Edge Temp [K]";
     
     for(size_t index = 1; index <= 6; index++ )
     {
@@ -316,7 +319,7 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
     
     
     
-    output_file << time << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma << ", " << elapsed_time_since_start << ", " << hot_temperature;
+    output_file << _monte_carlo_number_iterations << ", " << _monte_carlo_time_iteration << ", " << time << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma << ", " << elapsed_time_since_start << ", " << hot_temperature;
     
     size_t delayed_size = _delayed_record.size();
     

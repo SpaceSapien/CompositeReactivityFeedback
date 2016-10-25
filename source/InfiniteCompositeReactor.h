@@ -71,6 +71,7 @@ class InfiniteCompositeReactor
     Real _end_time;                    //How many seconds should the simulation last?
     Real _power_and_delayed_neutron_record_time_step; //How often to record the power and delated neutron data
     Real _inner_time_step;
+    int _monte_carlo_number_iterations;
     std::string _data_file;            //Data file
     
     InfiniteCompositeReactor(const std::string &input_file = "");
