@@ -32,10 +32,12 @@ public:
     
     MicroCell();
     MicroCell(InfiniteCompositeReactor* reactor, const Real &intial_temperature);
+    
     InfiniteCompositeReactor* _reactor;
     
+    
+    MicroSolution getCurrentMicrosolution();
     MicroSolution solve(const Real &simulation_time_step, const std::vector<Real> &power_distribution);
-    MicroSolution getInitialConditions();
     MaterialDataPacket testMaterialProperties(const Real &radial_position);
     ExplicitSolverSettings _solver_settings;
     Real _current_time;

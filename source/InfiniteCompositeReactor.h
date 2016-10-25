@@ -65,10 +65,12 @@ class InfiniteCompositeReactor
     std::vector<std::tuple<Real,Real,Real>> _reactivity_cents_record;
     
     //Time stepping parameters
+    Real _transient_time;              //Time since the start of the transient
     Real _monte_carlo_time_iteration;  //How often to calculate keff and the prompt neutron lifetime
     Real _kinetics_thermal_sync_time_step;     //How often to couple the kinetics and heat transfer routines    
     Real _end_time;                    //How many seconds should the simulation last?
     Real _power_and_delayed_neutron_record_time_step; //How often to record the power and delated neutron data
+    Real _inner_time_step;
     std::string _data_file;            //Data file
     
     InfiniteCompositeReactor(const std::string &input_file = "");
@@ -81,11 +83,14 @@ class InfiniteCompositeReactor
     const static std::time_t _simulation_start_time;
     
     void simulate();
+    void timeIterationInnerLoop();
+    
     void initializeInifiniteCompositeReactorProblem();
     void plotDelayedPrecursors();
     void saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature);
     void createOutputFile();
-    
+    void postSimulationProcessing();
+    void monteCarloTimeStepSimulationProcessing();
     
 private:
     

@@ -69,127 +69,69 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
 void InfiniteCompositeReactor::simulate()
 {
    
-    //Save the initial conditions in the plot_solutions array
-    MicroSolution solution =  this->_thermal_solver->getInitialConditions();
-    _plot_solutions.push_back(solution);
-    
-    Real inner_time_step = 0;
-    
     //Simulate the transient the outer loop is the monte carlo simulation
-    for( Real transient_time = 0; transient_time < _end_time; transient_time += inner_time_step)
+    for( this->_transient_time = 0; _transient_time < _end_time; _transient_time += _inner_time_step)
     {
-        Real current_power = this->_kinetics_model->_current_power;
-        //Gather the parameters from the monte carlo model 
-        //The Monte Carlo model is run on the outer loop
-        Real prompt_removal_lifetime = _monte_carlo_model->_current_prompt_neutron_lifetime;
-        Real k_eff = _monte_carlo_model->_current_k_eff; 
-        Real k_eff_sigma = _monte_carlo_model->_current_k_eff_sigma;
-        Real beta_eff = _monte_carlo_model->_current_beta_eff;
-        Real beta_eff_sigma = _monte_carlo_model->_current_beta_eff_sigma;
-        
-        Real lambda = prompt_removal_lifetime/k_eff;
-        Real lambda_sigma = _monte_carlo_model->_current_prompt_neutron_lifetime_sigma/k_eff;
-        
-        std::tuple<Real,Real,Real> k_effective_data = std::make_tuple( transient_time , k_eff, k_eff_sigma );
-        _k_eff_record.push_back( k_effective_data );
-        
-        std::tuple<Real,Real,Real> beta_effective_data = std::make_tuple( transient_time , beta_eff, beta_eff_sigma );
-        _beta_eff_record.push_back( beta_effective_data );
-        
-        std::tuple<Real,Real,Real> prompt_removal_lifetime_pair = std::make_tuple(transient_time, lambda, lambda_sigma);
-        _prompt_life_time_record.push_back(prompt_removal_lifetime_pair);
-        
-        Real reactivity = (k_eff - 1.0)/k_eff;
-        Real reactivity_uncertainty = sqrt( 2 ) * k_eff_sigma;
-        Real reactivity_pcm = 10000.0 * reactivity;
-        Real reactivity_pcm_uncertainty = 10000.0 * reactivity_uncertainty; 
-        Real reactivity_cents = reactivity / beta_eff;
-        Real reactivity_cents_uncertainty = sqrt( (reactivity_uncertainty / reactivity) * (reactivity_uncertainty / reactivity) + ( beta_eff_sigma / beta_eff) * ( beta_eff_sigma / beta_eff) );
-        
-        std::tuple<Real,Real,Real> reactivity_pcm_pair = std::make_tuple(transient_time, reactivity_pcm, reactivity_pcm_uncertainty);
-        _reactivity_pcm_record.push_back(reactivity_pcm_pair);        
-        
-        std::tuple<Real,Real,Real> reactivity_cents_pair = std::make_tuple(transient_time, reactivity_cents, reactivity_cents_uncertainty);
-       _reactivity_cents_record.push_back(reactivity_cents_pair);
-        
-        Real hottest_temperature = this->_thermal_solver->_solution[0]; 
-       
-        this->saveCurrentData(transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma, hottest_temperature);
-         
-        Real last_reported_time = 0;
-        
-        
-        
-        
-        //This loop iterates the kinetics and thermal model data
-        for( inner_time_step = 0 ; inner_time_step < _monte_carlo_time_iteration ; inner_time_step += _kinetics_thermal_sync_time_step)
-        {
-            //Solve the kinetics model
-            current_power = _kinetics_model->solveForPower(_kinetics_thermal_sync_time_step, k_eff,lambda, beta_eff);
-            
-            //Get a vector representation of the radial power distribution
-            std::vector<Real> power_distribition = _thermal_solver->getRespresentativePowerDistribution( current_power /* current shape */ );
-            
-            //Get the thermal solution
-            solution =  _thermal_solver->solve( _kinetics_thermal_sync_time_step, power_distribition); 
-            
-            //Add the current time steps solution to the record (we can record all of them every 20 us let usually do every millisecond)            
-            if( ( inner_time_step - last_reported_time )  >= _power_and_delayed_neutron_record_time_step )
-            {
-                last_reported_time = inner_time_step;
-                
-                Real absolute_time = transient_time + inner_time_step;
-                
-                //Everytime the MC is recalculated store this data
-                std::pair<Real,Real> power_entry = { absolute_time, current_power };
-                _power_record.push_back(power_entry);
-
-                std::pair<Real,std::vector<Real>> delayed_entry = { absolute_time, this->_kinetics_model->_delayed_precursors };
-                _delayed_record.push_back(delayed_entry);
-            }
-            
-        }
-        
-        solution.plot( this->_results_directory + "solution-" + std::to_string(transient_time)  + ".png", 800, 3000);
-        _plot_solutions.push_back(solution); 
-        
-        //if there is still enough time left to do another monte carlo time iteration
-        if(transient_time + inner_time_step < _end_time)
-        {
-            Real last_k_eff = _monte_carlo_model->_current_k_eff;
-            
-            _monte_carlo_model->updateAdjustedCriticalityParameters();
-            
-            Real current_k_eff =  _monte_carlo_model->_current_k_eff;
-                   
-            Real difference = current_k_eff - last_k_eff;
-            
-            Real k_eff_change = std::abs( difference);
-             
-            
-            Real k_eff_sigma = _monte_carlo_model->_current_k_eff_sigma;
-            Real min_k_eff_change = k_eff_sigma*2/3;
-            Real max_k_eff_change = k_eff_sigma*2;
-             
-            //We need smaller time steps
-            if( max_k_eff_change < k_eff_change )
-            {
-                _monte_carlo_time_iteration *= 0.5;
-            }
-            //we can get away with bigger time steps
-            else if( min_k_eff_change > k_eff_change )
-            {
-                _monte_carlo_time_iteration *= 1.5;
-            }
-            
-            
-        }
-        
-       
-        
+        this->timeIterationInnerLoop();
+        this->monteCarloTimeStepSimulationProcessing();
     }
     
+    //Save data and create the graphs for the post simulation data
+    this->postSimulationProcessing();
+}
+
+void InfiniteCompositeReactor::monteCarloTimeStepSimulationProcessing()
+{
+    //Set the current power
+    Real current_power = this->_kinetics_model->_current_power;
+
+    //Gather the parameters from the monte carlo model 
+    //The Monte Carlo model is run on the outer loop
+    Real prompt_removal_lifetime = _monte_carlo_model->_current_prompt_neutron_lifetime;
+    Real k_eff = _monte_carlo_model->_current_k_eff; 
+    Real k_eff_sigma = _monte_carlo_model->_current_k_eff_sigma;
+    Real beta_eff = _monte_carlo_model->_current_beta_eff;
+    Real beta_eff_sigma = _monte_carlo_model->_current_beta_eff_sigma;        
+    Real lambda = prompt_removal_lifetime/k_eff;
+    Real lambda_sigma = _monte_carlo_model->_current_prompt_neutron_lifetime_sigma/k_eff;
+
+    //Create the data structures for each time step's storage
+    std::tuple<Real,Real,Real> k_effective_data = std::make_tuple( _transient_time , k_eff, k_eff_sigma );
+    _k_eff_record.push_back( k_effective_data );
+
+    std::tuple<Real,Real,Real> beta_effective_data = std::make_tuple( _transient_time , beta_eff, beta_eff_sigma );
+    _beta_eff_record.push_back( beta_effective_data );
+
+    std::tuple<Real,Real,Real> prompt_removal_lifetime_pair = std::make_tuple(_transient_time, lambda, lambda_sigma);
+    _prompt_life_time_record.push_back(prompt_removal_lifetime_pair);
+
+    Real reactivity = (k_eff - 1.0)/k_eff;
+    Real reactivity_uncertainty = std::sqrt( 2 ) * k_eff_sigma;
+    Real reactivity_pcm = 10000.0 * reactivity;
+    Real reactivity_pcm_uncertainty = 10000.0 * reactivity_uncertainty; 
+    Real reactivity_cents = reactivity / beta_eff;
+    Real reactivity_cents_uncertainty = std::sqrt( (reactivity_uncertainty / reactivity) * (reactivity_uncertainty / reactivity) + ( beta_eff_sigma / beta_eff) * ( beta_eff_sigma / beta_eff) );
+
+    std::tuple<Real,Real,Real> reactivity_pcm_pair = std::make_tuple(_transient_time, reactivity_pcm, reactivity_pcm_uncertainty);
+    _reactivity_pcm_record.push_back(reactivity_pcm_pair);        
+
+    std::tuple<Real,Real,Real> reactivity_cents_pair = std::make_tuple(_transient_time, reactivity_cents, reactivity_cents_uncertainty);
+   _reactivity_cents_record.push_back(reactivity_cents_pair);
+
+    Real hottest_temperature = this->_thermal_solver->_solution[0]; 
+
+    this->saveCurrentData(_transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma, hottest_temperature);
     
+    MicroSolution solution = this->_thermal_solver->getCurrentMicrosolution();
+    
+    solution.plot( this->_results_directory + "solution-" + std::to_string( _transient_time )  + ".png", 800, 3000);
+    _plot_solutions.push_back(solution); 
+        
+}
+
+void InfiniteCompositeReactor::postSimulationProcessing()
+{
+    //Post Processing graph creation
     MicroSolution::saveSolutions( _plot_solutions, this->_results_directory );
     MicroSolution::plotSolutions( _plot_solutions, 4 , this->_results_directory + "solutions-graph.png");
     PythonPlot::plotData(      _power_record,            "Time [s]", "Power Density [W/m^3]",      "", "Power vs. Time",                   this->_results_directory + "power-graph.png",                   {0, _end_time} );
@@ -201,6 +143,79 @@ void InfiniteCompositeReactor::simulate()
     PythonPlot::plotData(      _delayed_record,          "Time [s]", "Delayed Precursors",         {}, "Keff vs. Delayed Precursors",      this->_results_directory + "delayed-precursors.png",            {0, _end_time} );
     PythonPlot::createPlots();
 }
+
+
+void InfiniteCompositeReactor::timeIterationInnerLoop()
+{
+    Real last_reported_time = 0;
+        
+    //This loop iterates the kinetics and thermal model data
+    for( _inner_time_step = 0 ; _inner_time_step < _monte_carlo_time_iteration ; _inner_time_step += _kinetics_thermal_sync_time_step)
+    {
+        //Solve the kinetics model
+        Real current_power = _kinetics_model->solveForPower(_kinetics_thermal_sync_time_step);
+
+        //Get a vector representation of the radial power distribution
+        std::vector<Real> power_distribition = _thermal_solver->getRespresentativePowerDistribution( current_power /* current shape */ );
+
+        //Get the thermal solution
+        _thermal_solver->solve( _kinetics_thermal_sync_time_step, power_distribition); 
+
+        //Add the current time steps solution to the record (we can record all of them every 20 us let usually do every millisecond)            
+        if( ( _inner_time_step - last_reported_time )  >= _power_and_delayed_neutron_record_time_step )
+        {
+            last_reported_time = _inner_time_step;
+
+            Real absolute_time = _transient_time + _inner_time_step;
+
+            //Everytime the MC is recalculated store this data
+            std::pair<Real,Real> power_entry = { absolute_time, current_power };
+            _power_record.push_back(power_entry);
+
+            std::pair<Real,std::vector<Real>> delayed_entry = { absolute_time, _kinetics_model->_delayed_precursors };
+            _delayed_record.push_back(delayed_entry);
+        }
+
+    }
+
+    //if there is still enough time left to do another monte carlo time iteration
+    if( _transient_time + _inner_time_step < _end_time)
+    {
+        Real last_k_eff = _monte_carlo_model->_current_k_eff;
+
+        _monte_carlo_model->updateAdjustedCriticalityParameters();
+
+        Real current_k_eff =  _monte_carlo_model->_current_k_eff;
+
+        Real difference = current_k_eff - last_k_eff;
+
+        Real k_eff_change = std::abs( difference);
+
+
+        Real k_eff_sigma = _monte_carlo_model->_current_k_eff_sigma;
+        Real min_k_eff_change = k_eff_sigma*2/3;
+        Real max_k_eff_change = k_eff_sigma*2.5;
+
+        //We need smaller time steps
+        if( max_k_eff_change < k_eff_change )
+        {
+            _monte_carlo_time_iteration *= 0.5;
+        }
+        //we can get away with bigger time steps
+        else if( min_k_eff_change > k_eff_change )
+        {
+            _monte_carlo_time_iteration *= 1.5;
+        }
+
+
+    }
+}
+
+/*InfiniteCompositeReactor::temperatureIterationInnerLoop()
+{
+    
+}*/
+
 
 InfiniteCompositeReactor::~InfiniteCompositeReactor()
 {
@@ -232,7 +247,7 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     
     
     //Define the heat transfer settings
-    Real initial_power_density =  _input_file_reader->getInputFileParameter("Starting Power Density",200e6); // W/m^3 averaged over the entire micro sphere
+    Real initial_power_density =  _input_file_reader->getInputFileParameter("Starting Power Density",static_cast<Real>(200e6) ); // W/m^3 averaged over the entire micro sphere
     Real initial_outer_shell_temperature = 800;//_input_file.getInputFileParameter("Kernel Outer Temperature",800); // Kelvin
     
     MicroCellBoundaryCondition fixed_temperature_boundary_condition = MicroCellBoundaryCondition::getFixedBoundaryCondition(initial_outer_shell_temperature);
@@ -247,17 +262,17 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     this->_thermal_solver->setBoundaryCondition(reflected_boundary_condition);
     
     //Define the Monte Carlo Parameters
-    Real starting_k_eff =  _input_file_reader->getInputFileParameter("Starting K-eff",1.01);    
+    Real starting_k_eff =  _input_file_reader->getInputFileParameter("Starting K-eff",static_cast<Real>(1.01) );    
     this->_monte_carlo_model = new ReactorMonteCarlo(this, starting_k_eff, this->_results_directory + "run/");   
     
     //Define the kinetics parameters
     this->_kinetics_model = new ReactorKinetics(this,initial_power_density, ReactorKinetics::DelayedPrecursorInitialState::EquilibriumPrecursors);    
     
     //Time stepping parameters
-    _power_and_delayed_neutron_record_time_step =  _input_file_reader->getInputFileParameter("Power Record",0.0005 );  //How often to calculate keff and the prompt neutron lifetime
-    _monte_carlo_time_iteration =  _input_file_reader->getInputFileParameter("Monte Carlo Recalculation Timestep",0.01 );  //How often to calculate keff and the prompt neutron lifetime
-    _kinetics_thermal_sync_time_step = _input_file_reader->getInputFileParameter("Kinetics Thermal Data Sync",20e-6);      //How often to couple the kinetics and heat transfer routines    
-    _end_time = _input_file_reader->getInputFileParameter("Calculation End Time",1.00);                                    //How many seconds should the simulation last 
+    _power_and_delayed_neutron_record_time_step =  _input_file_reader->getInputFileParameter("Power Record", static_cast<Real>(0.0005) );  //How often to calculate keff and the prompt neutron lifetime
+    _monte_carlo_time_iteration =  _input_file_reader->getInputFileParameter("Monte Carlo Recalculation Timestep", static_cast<Real>(0.01) );  //How often to calculate keff and the prompt neutron lifetime
+    _kinetics_thermal_sync_time_step = _input_file_reader->getInputFileParameter("Kinetics Thermal Data Sync", static_cast<Real>(20e-6) );      //How often to couple the kinetics and heat transfer routines    
+    _end_time = _input_file_reader->getInputFileParameter("Calculation End Time", static_cast<Real>(1.00) );                                    //How many seconds should the simulation last 
     
     //Resetting the timer to zero so that the timer reads t = 0 when the transient starts
     _kinetics_model->_current_time = 0;

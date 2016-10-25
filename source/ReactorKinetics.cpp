@@ -29,7 +29,7 @@ ReactorKinetics::ReactorKinetics(InfiniteCompositeReactor* reactor, const Real &
     _initial_power = initial_power;
     _current_power = _initial_power;
     _current_time  = 0;    
-    _kinetics_time_step = _reactor->_input_file_reader->getInputFileParameter("Kinetics Time Iteration", 10e-9);
+    _kinetics_time_step = _reactor->_input_file_reader->getInputFileParameter("Kinetics Time Iteration", static_cast<Real>(10e-9) );
     
     //default delayed neutron set
     _delayed_neutron_set = DelayedNeutronSet(FissionableIsotope::U235);
@@ -83,13 +83,14 @@ ReactorKinetics::ReactorKinetics(InfiniteCompositeReactor* reactor, const Real &
  */
 Real ReactorKinetics::solveForPower
 (
-    const Real &simulation_coupled_time_step, 
-    const Real &k_effective, 
-    const Real &neutron_generation_time, 
-    const Real &beta_effective
+    const Real &simulation_coupled_time_step
 )
 {
     
+    Real k_effective = _reactor->_monte_carlo_model->_current_k_eff;
+    Real neutron_generation_time = _reactor->_monte_carlo_model->_current_prompt_neutron_lifetime / k_effective;
+    Real beta_effective = _reactor->_monte_carlo_model->_current_beta_eff;
+            
     //Calculate some parameters
     Real reactivity = ( k_effective - 1 )/k_effective;
     Real total_neutrons_per_fission = _delayed_neutron_set._neutrons_per_fission;

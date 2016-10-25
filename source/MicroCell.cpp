@@ -56,7 +56,7 @@ MicroSolution MicroCell::solve(const Real &simulation_time_step,const std::vecto
 MicroSolution MicroCell::solveFourthOrder(const Real &simulation_time_step, const std::vector<Real> &power_distribution)
 {
     std::vector<Real> radial_mesh = _solver_settings._radial_mesh;
-    std::vector<Real> previous_solution = this->_solution;
+    std::vector<Real> previous_solution = _solution;
     std::vector<Real> current_solution;
     
     current_solution.resize( previous_solution.size() );
@@ -131,8 +131,14 @@ MicroSolution MicroCell::solveFourthOrder(const Real &simulation_time_step, cons
     }
     
     this->_current_time = time;
-    this->_solution = current_solution;
-    MicroSolution solution = MicroSolution(radial_mesh,current_solution,time);
+    this->_solution = current_solution;    
+    return this->getCurrentMicrosolution();
+}
+
+
+MicroSolution MicroCell::getCurrentMicrosolution()
+{
+    MicroSolution solution = MicroSolution(_solver_settings._radial_mesh,_solution,_current_time);
     return solution;
 }
 
@@ -237,10 +243,9 @@ MicroSolution MicroCell::solveSecondOrder(const Real &simulation_time_step, cons
         previous_solution = current_solution;
     }
     
-    this->_current_time = time;
-    this->_solution = current_solution;
-    MicroSolution solution = MicroSolution(radial_mesh,current_solution,time);
-    return solution;
+    _current_time = time;
+    _solution = current_solution;
+    return this->getCurrentMicrosolution();
 }
 
 
@@ -267,11 +272,6 @@ MaterialDataPacket MicroCell::testMaterialProperties(const Real &radius)
     
 }
 
-MicroSolution MicroCell::getInitialConditions()
-{
-    MicroSolution solution = MicroSolution(_solver_settings._radial_mesh,_solution,_current_time);
-    return solution;
-}
 
 std::vector<MicroSolution> MicroCell::iterateInitialConditions(const Real &initial_average_power_density)
 {
@@ -280,7 +280,7 @@ std::vector<MicroSolution> MicroCell::iterateInitialConditions(const Real &initi
     Real solution_time_step = 0.05;
     Real max_residual = 1;
     Real index = 0;
-    Real desired_residual = _reactor->_input_file_reader->getInputFileParameter("Steady State Temperature Solution Max Residual", 0.01 );
+    Real desired_residual = _reactor->_input_file_reader->getInputFileParameter("Steady State Temperature Solution Max Residual", static_cast<Real>(0.01) );
     
     
     while( max_residual > desired_residual )

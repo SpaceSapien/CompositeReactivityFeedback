@@ -200,7 +200,7 @@ std::string ReactorMonteCarlo::getMaterialCards()
 {
     std::stringstream material_cards, otfdb_card;
         
-    Real enrichment_fraction = _reactor->_input_file_reader->getInputFileParameter("Uranium Enrichment Fraction", 0.2);
+    Real enrichment_fraction = _reactor->_input_file_reader->getInputFileParameter("Uranium Enrichment Fraction", static_cast<Real>(0.2) );
 
     std::vector<std::pair<Materials, Dimension> > geometry_data = _reactor->_micro_sphere_geometry->_geometry;
     size_t number_zones = geometry_data.size();   

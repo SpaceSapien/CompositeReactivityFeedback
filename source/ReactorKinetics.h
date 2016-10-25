@@ -44,13 +44,7 @@ public:
     
     ReactorKinetics();
     ReactorKinetics(InfiniteCompositeReactor* reactor,const Real &initial_power, const DelayedPrecursorInitialState &state );
-    Real solveForPower
-    (
-        const Real &simulation_time, 
-        const Real &k_effective, 
-        const Real &neutron_generation_time, 
-        const Real &beta_effective      
-    );
+    Real solveForPower( const Real &simulation_time);
     
 private:
     DelayedNeutronSet getDelayedNeutronInfo(const std::vector< std::pair<FissionableIsotope,Real> > &fission_listing);

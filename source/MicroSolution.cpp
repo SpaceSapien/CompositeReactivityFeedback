@@ -75,7 +75,7 @@ void MicroSolution::plotSolutions(const std::vector<MicroSolution> &plot_data_ve
     }
     else
     {
-        int indicies = floor(plot_data_vector.size()/2.0);
+        int indicies = std::floor(plot_data_vector.size()/2.0);
         int two_power_index = 1;
         
         while(number_plots < indicies)
@@ -84,7 +84,7 @@ void MicroSolution::plotSolutions(const std::vector<MicroSolution> &plot_data_ve
             two_power_index++;
         }
         
-        for( int i_index = 0; i_index < plot_data_vector.size(); i_index+=pow(2,two_power_index) )
+        for( int i_index = 0; i_index < plot_data_vector.size(); i_index+=std::pow(2,two_power_index) )
         {
             MicroSolution plot = plot_data_vector[i_index];  
 
