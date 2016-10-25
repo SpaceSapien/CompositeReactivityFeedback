@@ -18,6 +18,7 @@
 #include "EnumsAndFunctions.h"
 #include "MicroSolution.h"
 #include "PythonPlot.h"
+#include "InputDataFunctions.h"
 
 const std::string MicroSolution::_x_label = "Radial Position [m]";
 const std::string MicroSolution::_y_label = "Temperature [K]";
@@ -102,21 +103,27 @@ void MicroSolution::saveSolutions(const std::vector<MicroSolution> &plot_data_ve
 {
     
     std::ofstream output_file;
-    output_file.open( save_folder + save_file_name,std::ios::out);
+    
     
     size_t grid_size = plot_data_vector[0]._grid.size();
     size_t  time_steps= plot_data_vector.size();
     
-    //Todo
     //If the file exists append to it else create it
-    //if()
+    if(! file_exists(save_folder + save_file_name) )
     {
+        output_file.open( save_folder + save_file_name,std::ios::out);
+        
         for( size_t i_index = 0; i_index < grid_size; i_index++ )
         {
             output_file << plot_data_vector[0]._grid[i_index] << ", ";
         }
         
         output_file << std::endl;
+    }
+    //the file exists just append to it
+    else
+    {
+        output_file.open( save_folder + save_file_name,std::ios::app);
     }
         
     

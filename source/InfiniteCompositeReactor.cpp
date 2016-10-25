@@ -125,13 +125,17 @@ void InfiniteCompositeReactor::monteCarloTimeStepSimulationProcessing()
     
     solution.plot( this->_results_directory + "solution-" + std::to_string( _transient_time )  + ".png", 800, 3000);
     _plot_solutions.push_back(solution); 
+    
+    //Save the current thermal solution to the output file
+    std::vector<MicroSolution> current_solution = { solution };
+    MicroSolution::saveSolutions( current_solution, this->_results_directory );
         
 }
 
 void InfiniteCompositeReactor::postSimulationProcessing()
 {
     //Post Processing graph creation
-    MicroSolution::saveSolutions( _plot_solutions, this->_results_directory );
+    //MicroSolution::saveSolutions( _plot_solutions, this->_results_directory );
     MicroSolution::plotSolutions( _plot_solutions, 4 , this->_results_directory + "solutions-graph.png");
     PythonPlot::plotData(      _power_record,            "Time [s]", "Power Density [W/m^3]",      "", "Power vs. Time",                   this->_results_directory + "power-graph.png",                   {0, _end_time} );
     PythonErrorPlot::plotData( _prompt_life_time_record, "Time [s]", "Prompt Neutron Lifetime [s]","", "Prompt Neutron Lifetime vs. Time", this->_results_directory + "prompt-neutron-lifetime-graph.png", {0, _end_time} );

@@ -30,7 +30,7 @@ public:
     int size();
     void plot(const std::string &file_name = "", const Real &min_temperature=0, const Real &max_temperature=0 );
     void static plotSolutions(const std::vector<MicroSolution> &plot_data,const int &number_plots = 0,const std::string &file_name = "");
-    void static saveSolutions(const std::vector<MicroSolution> &plot_data_vector, const std::string &save_folder, const std::string &save_file_name="temperature-data.txt");
+    void static saveSolutions(const std::vector<MicroSolution> &plot_data_vector, const std::string &save_folder, const std::string &save_file_name="temperature-data.csv");
     
     enum Errors
     {
