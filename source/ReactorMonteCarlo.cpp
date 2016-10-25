@@ -42,8 +42,7 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
     _beta_eff_number_cycles = this->_reactor->_input_file_reader->getInputFileParameter("Number of MCNP Cycles for Beta", 600 );  
     _calulate_beta_interval = this->_reactor->_input_file_reader->getInputFileParameter("Keff Calculation Per Beta Eff Calculation",0);
     _tally_cells = this->_reactor->_input_file_reader->getInputFileParameter("Tally Cells", false);
-   
-    
+        
     BetaSimulationResults beta_results = getRawKeffAndBetaEff();
     
     
@@ -173,7 +172,7 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     
     //Run Submission Script with the created MCNP file
-    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + "-t-" + std::to_string(_reactor->_transient_time) + " -pe orte " + std::to_string(_number_cpus) + " ../../../job-submission/" + submission_script + " " + file_root + " " + command_line_log_file;
+    std::string qsub_command = "cd " + this->_run_directory + ";qsub -N " + this->_reactor->_run_name + "-t-" + std::to_string(static_cast<float>(_reactor->_transient_time) ) + " -pe orte " + std::to_string(_number_cpus) + " ../../../job-submission/" + submission_script + " " + file_root + " " + command_line_log_file;
     exec(qsub_command);
     //Constantly read the output file until it says mcrun done 
     std::string search_lock = "cd " + this->_run_directory + ";cat " + command_line_log_file + " | grep \"mcrun  is done\"";

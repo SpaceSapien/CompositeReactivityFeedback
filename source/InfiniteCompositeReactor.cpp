@@ -58,7 +58,7 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
     exec( copy_input_file_command );
     
     _monte_carlo_number_iterations = 0;
-    
+    _transient_time = 0;
     
     
     createOutputFile();
@@ -148,6 +148,11 @@ void InfiniteCompositeReactor::postSimulationProcessing()
 }
 
 
+void InfiniteCompositeReactor::temperatureIterationInnerLoop()
+{
+    
+}
+
 void InfiniteCompositeReactor::timeIterationInnerLoop()
 {
     Real last_reported_time = 0;
@@ -217,12 +222,6 @@ void InfiniteCompositeReactor::timeIterationInnerLoop()
      _monte_carlo_number_iterations++;
     
 }
-
-/*InfiniteCompositeReactor::temperatureIterationInnerLoop()
-{
-    
-}*/
-
 
 InfiniteCompositeReactor::~InfiniteCompositeReactor()
 {

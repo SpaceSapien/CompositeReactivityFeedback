@@ -85,6 +85,7 @@ class InfiniteCompositeReactor
     
     void simulate();
     void timeIterationInnerLoop();
+    void temperatureIterationInnerLoop();
     
     void initializeInifiniteCompositeReactorProblem();
     void plotDelayedPrecursors();
@@ -92,6 +93,7 @@ class InfiniteCompositeReactor
     void createOutputFile();
     void postSimulationProcessing();
     void monteCarloTimeStepSimulationProcessing();
+    
     
 private:
     
