@@ -16,8 +16,8 @@
 #ifndef MATERIALENUM_H
 #define MATERIALENUM_H
 
-typedef long double Real;
-typedef long double Dimension;
+typedef double Real;
+typedef double Dimension;
 
 enum Materials
 {
