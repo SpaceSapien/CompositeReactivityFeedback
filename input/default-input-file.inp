@@ -27,7 +27,12 @@ Cells Per Zone: 3
 
 #Timer iteration data
 Keff Calculation Per Beta Eff Calculation: 20   # calculating the beta is expensive so we only calculate it once for ever so may keff calculations zero means only calculate at the beginning of the simulation
-Monte Carlo Recalculation Timestep: 0.005       #s
+
+#Options: Time and Temperature
+Monte Carlo Recalculation Type: Temperature
+MC Recalc Delta T: 10  # K
+#Monte Carlo Recalculation Timestep: 0.005      #s
+
 Kinetics Time Iteration: 10e-9                  #s
 Thermal Time Iteration: 100e-9                  #s
 Kinetics Thermal Data Sync: 20e-6               #s

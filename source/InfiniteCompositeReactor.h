@@ -43,6 +43,18 @@ class InfiniteCompositeReactor
 {
     public:    
     
+        
+    enum MoneCarloRecalculation
+    {
+        Time,
+        Temperature
+    };  
+    
+    MoneCarloRecalculation static getRecalculationType(const std::string &string_type);
+    MoneCarloRecalculation _monte_carlo_reclaculation_type;
+    Real _maximum_allowed_temperature_difference;
+    
+        
     //The geometry object
     MicroGeometry* _micro_sphere_geometry;
     //Create the thermal heat transfer object 
@@ -74,6 +86,7 @@ class InfiniteCompositeReactor
     int _monte_carlo_number_iterations;
     std::string _data_file;            //Data file
     
+    
     InfiniteCompositeReactor(const std::string &input_file = "");
     virtual ~InfiniteCompositeReactor();
     std::string getSaveDirectory();
@@ -86,6 +99,7 @@ class InfiniteCompositeReactor
     void simulate();
     void timeIterationInnerLoop();
     void temperatureIterationInnerLoop();
+    bool significantTemperatureDifference(MicroSolution* comparison);
     
     void initializeInifiniteCompositeReactorProblem();
     void plotDelayedPrecursors();

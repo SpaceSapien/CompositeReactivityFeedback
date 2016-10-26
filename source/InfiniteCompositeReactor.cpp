@@ -38,7 +38,6 @@ const std::time_t InfiniteCompositeReactor::_simulation_start_time = std::time(n
 InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file_name ) 
 {   
     
-    
     //Initialize the input file reader
     this->_input_file_reader = new InputFileParser( input_file_name );
     
@@ -60,8 +59,6 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
     _monte_carlo_number_iterations = 0;
     _transient_time = 0;
     
-    
-    createOutputFile();
     initializeInifiniteCompositeReactorProblem();
 }
 
@@ -72,7 +69,18 @@ void InfiniteCompositeReactor::simulate()
     //Simulate the transient the outer loop is the monte carlo simulation
     for( this->_transient_time = 0; _transient_time < _end_time; _transient_time += _inner_time_step)
     {
-        this->timeIterationInnerLoop();        
+        if( _monte_carlo_reclaculation_type == MoneCarloRecalculation::Time)
+        {
+            this->timeIterationInnerLoop();        
+        }
+        else if( _monte_carlo_reclaculation_type == MoneCarloRecalculation::Temperature )
+        {
+            this->temperatureIterationInnerLoop();
+        }
+        else
+        {
+            throw "Monte Carlo Iteration Type Unknown";
+        }
     }
     
     //Save data and create the graphs for the post simulation data
@@ -147,10 +155,87 @@ void InfiniteCompositeReactor::postSimulationProcessing()
     PythonPlot::createPlots();
 }
 
+bool InfiniteCompositeReactor::significantTemperatureDifference(MicroSolution* comparison)
+{
+     MicroSolution* reference = &_plot_solutions.back();
+     
+     MicroSolution differences = MicroSolution::temperatureDifference( comparison, reference);
+     
+     Real max_difference = 0;
+     Real average_difference = 0;
+     
+     for(std::size_t ii=0; ii < differences.size(); ++ii)
+     {
+         if(max_difference < differences._solution[ii])
+         {
+             max_difference = differences._solution[ii];
+         }
+         
+         if(ii !=0)
+         {
+            average_difference += differences._solution[ii] * ( std::pow(differences._grid[ii],3) - std::pow(differences._grid[ii - 1],3) );         
+         }
+         else
+         {
+             average_difference += differences._solution[ii] * ( std::pow(differences._grid[ii],3) );         
+         }
+     }     
+     
+     average_difference /= std::pow(differences._grid.back(),3);
+     
+     if( max_difference > _maximum_allowed_temperature_difference || average_difference > _maximum_allowed_temperature_difference/3 )
+     {
+         return true;
+     }
+     else
+     {
+         return false;
+     }     
+}
 
 void InfiniteCompositeReactor::temperatureIterationInnerLoop()
 {
-    
+    Real last_reported_time = 0;
+        
+    //This loop iterates the kinetics and thermal model data
+    for( _inner_time_step = 0 ; true /*infinite loop this and exit with a break*/ ; _inner_time_step += _kinetics_thermal_sync_time_step)
+    {
+        //Solve the kinetics model
+        Real current_power = _kinetics_model->solveForPower(_kinetics_thermal_sync_time_step);
+
+        //Get a vector representation of the radial power distribution
+        std::vector<Real> power_distribition = _thermal_solver->getRespresentativePowerDistribution( current_power /* current shape */ );
+
+        //Get the thermal solution
+        MicroSolution current_solution = _thermal_solver->solve( _kinetics_thermal_sync_time_step, power_distribition); 
+
+        
+        //Record the power and delayed records on an intermediate time scale
+        if( ( _inner_time_step - last_reported_time )  >= _power_and_delayed_neutron_record_time_step )
+        {
+            last_reported_time = _inner_time_step;
+
+            Real absolute_time = _transient_time + _inner_time_step;
+
+            //Everytime the MC is recalculated store this data
+            std::pair<Real,Real> power_entry = { absolute_time, current_power };
+            _power_record.push_back(power_entry);
+
+            std::pair<Real,std::vector<Real>> delayed_entry = { absolute_time, _kinetics_model->_delayed_precursors };
+            _delayed_record.push_back(delayed_entry);
+        }
+        
+        if( this->significantTemperatureDifference(&current_solution))
+        {
+            break;
+        }
+
+    }
+
+    this->monteCarloTimeStepSimulationProcessing();
+    _monte_carlo_model->updateAdjustedCriticalityParameters();
+    _monte_carlo_time_iteration = _inner_time_step;   
+    _monte_carlo_number_iterations++;
 }
 
 void InfiniteCompositeReactor::timeIterationInnerLoop()
@@ -234,6 +319,20 @@ InfiniteCompositeReactor::~InfiniteCompositeReactor()
     
 void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
 {
+    
+    std::string mc_recalc_type = _input_file_reader->getInputFileParameter(std::string("Monte Carlo Recalculation Type"), std::string("Temperature"));
+    _monte_carlo_reclaculation_type = InfiniteCompositeReactor::getRecalculationType(mc_recalc_type);
+    
+    if( _monte_carlo_reclaculation_type == MoneCarloRecalculation::Temperature )
+    {
+        _maximum_allowed_temperature_difference = _input_file_reader->getInputFileParameter("MC Recalc Delta T", static_cast<Real>(20.0));
+        _monte_carlo_time_iteration = -1;
+    }
+    else if( _monte_carlo_reclaculation_type == MoneCarloRecalculation::Time )
+    {
+        _monte_carlo_time_iteration =  _input_file_reader->getInputFileParameter("Monte Carlo Recalculation Timestep", static_cast<Real>(0.01) );  //How often to calculate keff and the prompt neutron lifetime
+    }
+    
     //This command establishes the logging of python plot commands. Useful for debugging
     PythonPlot::_log_file = this->_results_directory + "graph_log.log";
     
@@ -249,9 +348,7 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     std::vector<Materials> materials =   _input_file_reader->getInputFileParameter("Materials", default_materials);
     
     this->_micro_sphere_geometry = new MicroGeometry(materials, dimensions);    
-    
-    
-    
+          
     //Define the heat transfer settings
     Real initial_power_density =  _input_file_reader->getInputFileParameter("Starting Power Density",static_cast<Real>(200e6) ); // W/m^3 averaged over the entire micro sphere
     Real initial_outer_shell_temperature = 800;//_input_file.getInputFileParameter("Kernel Outer Temperature",800); // Kelvin
@@ -276,12 +373,14 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     
     //Time stepping parameters
     _power_and_delayed_neutron_record_time_step =  _input_file_reader->getInputFileParameter("Power Record", static_cast<Real>(0.0005) );  //How often to calculate keff and the prompt neutron lifetime
-    _monte_carlo_time_iteration =  _input_file_reader->getInputFileParameter("Monte Carlo Recalculation Timestep", static_cast<Real>(0.01) );  //How often to calculate keff and the prompt neutron lifetime
     _kinetics_thermal_sync_time_step = _input_file_reader->getInputFileParameter("Kinetics Thermal Data Sync", static_cast<Real>(20e-6) );      //How often to couple the kinetics and heat transfer routines    
     _end_time = _input_file_reader->getInputFileParameter("Calculation End Time", static_cast<Real>(1.00) );                                    //How many seconds should the simulation last 
     
     //Resetting the timer to zero so that the timer reads t = 0 when the transient starts
     _kinetics_model->_current_time = 0;
+    
+    //Add the starting MicroSolution
+    _plot_solutions.push_back( _thermal_solver->getCurrentMicrosolution() );
 }
 
 void InfiniteCompositeReactor::createOutputFile()
@@ -315,14 +414,20 @@ void InfiniteCompositeReactor::createOutputFile()
 void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature)
 {
     std::ofstream output_file;
-    output_file.open( this->_results_directory + this->_data_file, std::ios::app);
+    std::string file_path = this->_results_directory + this->_data_file;
+    
+    if(!file_exists(file_path))
+    {
+        this->createOutputFile();
+    }
+    
+    output_file.open( file_path, std::ios::app);
     
     //time elapsed since the simulation started
-    std::time_t elapsed_time_since_start =  std::time(nullptr) - InfiniteCompositeReactor::_simulation_start_time;
+    std::time_t elapsed_time_since_start =  std::time(nullptr) - InfiniteCompositeReactor::_simulation_start_time;   
     
     
-    
-    output_file << _monte_carlo_number_iterations << ", " << _monte_carlo_time_iteration << ", " << time << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma << ", " << elapsed_time_since_start << ", " << hot_temperature;
+    output_file << _monte_carlo_number_iterations << ", " << time << ", " << _monte_carlo_time_iteration << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma << ", " << elapsed_time_since_start << ", " << hot_temperature;
     
     size_t delayed_size = _delayed_record.size();
     
@@ -338,4 +443,16 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
     }
     output_file << std::endl;    
     output_file.close();
+}
+
+InfiniteCompositeReactor::MoneCarloRecalculation InfiniteCompositeReactor::getRecalculationType(const std::string &string_type)
+{
+    if(string_type == "Temperature")
+    {
+        return InfiniteCompositeReactor::MoneCarloRecalculation::Temperature;
+    }
+    else if( string_type == "Time" )
+    {
+        return InfiniteCompositeReactor::MoneCarloRecalculation::Time;
+    }
 }

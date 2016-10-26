@@ -141,3 +141,23 @@ void MicroSolution::saveSolutions(const std::vector<MicroSolution> &plot_data_ve
     
     output_file.close();
 }
+
+MicroSolution MicroSolution::temperatureDifference(MicroSolution* compare1, MicroSolution* compare2)
+{
+    if( compare1->size() != compare2->size() ) 
+    {
+        throw "Size of Solutions Not the Same";
+    }
+    
+    std::size_t size = compare1->size();
+    
+    std::vector<Real> differences;
+    differences.resize( size );
+    
+    for( std::size_t ii = 0; ii < size; ii++ )
+    {
+        differences[ii] = std::abs( compare1->_solution[ii] - compare2->_solution[ii] );
+    }
+    
+    return MicroSolution(compare1->_grid, differences, 0);
+}

@@ -42,6 +42,8 @@ public:
     
     Real _time;
     
+    MicroSolution static temperatureDifference(MicroSolution* compare1, MicroSolution* compare2);
+    
 private:
     
     
