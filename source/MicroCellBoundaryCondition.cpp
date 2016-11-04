@@ -11,6 +11,7 @@
 
 #include "MicroCellBoundaryCondition.h"
 
+
 MicroCellBoundaryCondition::MicroCellBoundaryCondition() { }
 
 
@@ -20,9 +21,9 @@ MicroCellBoundaryCondition::MicroCellBoundaryCondition(const BoundaryType &bound
 }
 
 
-MicroCellBoundaryCondition  MicroCellBoundaryCondition::getRefelectedBoundaryCondition()
+MicroCellBoundaryCondition*  MicroCellBoundaryCondition::getReflectedHeatFluxBoundaryConditionFactory()
 {
-    MicroCellBoundaryCondition boundary_condition = MicroCellBoundaryCondition(BoundaryType::Reflected);
+    MicroCellBoundaryCondition* boundary_condition = new MicroCellBoundaryCondition(BoundaryType::ReflectedHeatFlux);
     return boundary_condition; 
 }
 
@@ -32,111 +33,43 @@ MicroCellBoundaryCondition  MicroCellBoundaryCondition::getRefelectedBoundaryCon
  * @param fixed_spatial_derivative dr/dT = cost where const is fixed_spatial_derivative
  * @return MicroCellBoundaryCondition
  */
-MicroCellBoundaryCondition  MicroCellBoundaryCondition::getFixedDerivativeBoundaryCondition(const Real &fixed_spatial_derivative)
+MicroCellBoundaryCondition*  MicroCellBoundaryCondition::getFixedHeatFluxBoundaryConditionFactory(const Real &fixed_heat_flux)
 {
-    MicroCellBoundaryCondition boundary_condition = MicroCellBoundaryCondition(BoundaryType::FixedDerivative);
-    boundary_condition._fixed_temperature_derivative = fixed_spatial_derivative;
+    MicroCellBoundaryCondition* boundary_condition = new MicroCellBoundaryCondition(BoundaryType::FixedHeatFlux);
+    boundary_condition->_fixed_heat_flux = fixed_heat_flux;
     return boundary_condition; 
 }
 
     
-MicroCellBoundaryCondition MicroCellBoundaryCondition::getFixedBoundaryCondition(const Real &fixed_temperature)
+MicroCellBoundaryCondition* MicroCellBoundaryCondition::getFixedTemperatureBoundaryConditionFactory(const Real &fixed_temperature)
 {
-    MicroCellBoundaryCondition boundary_condition = MicroCellBoundaryCondition(BoundaryType::Fixed);
-    boundary_condition._fixed_temperature = fixed_temperature;
+    MicroCellBoundaryCondition* boundary_condition = new MicroCellBoundaryCondition(BoundaryType::FixedTemperature);
+    boundary_condition->_fixed_temperature = fixed_temperature;
     return boundary_condition; 
 }
 
-Real MicroCellBoundaryCondition::getdTdr(const ExplicitSolverSettings::SolverOrder &order,const int &index,const std::vector<Real> &previous_solution, const std::vector<Real> &grid)
+Real MicroCellBoundaryCondition::getHeatFlux(MicroCell*  micro_cell, const Real &inward_heat_flux ) const
 {
-    size_t boundary_index = previous_solution.size() - 1;
-    Real delta_r = grid[boundary_index] - grid[boundary_index - 1];
-    
-    if(order == ExplicitSolverSettings::SolverOrder::SECOND)
+    switch(_boundary)
     {
-        switch(_boundary)
+        case BoundaryType::FixedHeatFlux :
         {
-            case BoundaryType::Fixed :
-            {
-                return  ( _fixed_temperature - previous_solution[boundary_index - 1] ) / ( 2 * delta_r);
-                break;
-            }
-            case BoundaryType::Reflected :
-            {
-                return 0;
-                break;
-            }
-            case BoundaryType::FixedDerivative :
-            {
-                return  -1 * _fixed_temperature_derivative ;
-                break;
-            }
-            default :
-            {
-                throw Error::UnknownBoundaryType;
-            }
+            return  this->_fixed_heat_flux;
+            break;
         }
-    }
-    //Fourth order spatial derivatives
-    else if(order == ExplicitSolverSettings::SolverOrder::FOURTH)
-    {
-        //one away from right hand boundary
-        if(index == -1)
+        case BoundaryType::ReflectedHeatFlux :
         {
-            
+            return  0;
+            break;
         }
-        //one away from right hand boundary
-        if(index == -2)
+        case BoundaryType::FixedTemperature :
         {
-            
+            return  -inward_heat_flux;
+            break;
         }
-    }
-}
-
-Real MicroCellBoundaryCondition::getd2Tdr2(const ExplicitSolverSettings::SolverOrder &order,const int &index,const std::vector<Real> &previous_solution, const std::vector<Real> &grid )
-{
-    size_t boundary_index = previous_solution.size() - 1;
-    
-    Real delta_r = grid[boundary_index] - grid[boundary_index - 1];
-    
-    if(order == ExplicitSolverSettings::SolverOrder::SECOND)
-    {
-        
-        switch(_boundary)
+        default :
         {
-            case BoundaryType::Fixed :
-            {
-                return  (previous_solution[boundary_index - 1] - 2 * previous_solution[boundary_index] + _fixed_temperature) / ( delta_r * delta_r );
-                break;
-            }
-            case BoundaryType::Reflected :
-            {
-                return  (2 * previous_solution[boundary_index - 1] - 2 * previous_solution[boundary_index] ) / ( delta_r * delta_r );
-                break;
-            }
-            case BoundaryType::FixedDerivative :
-            {
-                return  ( ( previous_solution[boundary_index - 1] - previous_solution[boundary_index] )/delta_r  -  -1 * _fixed_temperature_derivative ) / ( delta_r );
-                break;
-            }
-            default :
-            {
-                throw Error::UnknownBoundaryType;
-            }
+            throw Error::UnknownBoundaryType;
         }
-    }
-    //Fourth order spatial derivatives
-    else if(order == ExplicitSolverSettings::SolverOrder::FOURTH)
-    {
-        //one away from right hand boundary
-        if(index == -1)
-        {
-            
-        }
-        //one away from right hand boundary
-        if(index == -2)
-        {
-            
-        }
-    }
+    } 
 }

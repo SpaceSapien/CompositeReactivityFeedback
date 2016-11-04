@@ -15,6 +15,7 @@
 #define MATERIALIBRARY_H
 #include <vector>
 #include "EnumsAndFunctions.h"
+#include "MaterialDataPacket.h"
 
 class MaterialLibrary 
 {
@@ -27,23 +28,24 @@ public:
     
     MaterialLibrary();
     
-    std::pair<Real,Real> getThermalConductivityPair(const Materials &material, const Real &T, const Real &dpa);
-    std::pair<Real,Real> getDensityPair(const Materials &material,const Real &T,const Real &dpa);
-    std::pair<Real,Real> getSpecificHeatPair(const Materials &material,const Real &T,const Real &dpa);
+    std::pair<Real,Real> static getThermalConductivityPair(const Materials &material, const Real &T, const Real &dpa);
+    std::pair<Real,Real> static getDensityPair(const Materials &material,const Real &T,const Real &dpa);
+    std::pair<Real,Real> static getSpecificHeatPair(const Materials &material,const Real &T,const Real &dpa);
     
-    void getMcnpMaterialCard(const Materials &material, const unsigned int &zone, std::string &material_card_entry, std::string &doppler_card,const Real &enrichment_fraction);
+    void static getMcnpMaterialCard(const Materials &material, const unsigned int &zone, std::string &material_card_entry, std::string &doppler_card,const Real &enrichment_fraction);
  
     
-    Real getMeltingPoint(const Materials &material);
-    Real getLinearExpansionCoeifficient(const Materials &material,const Real &T,const Real &dpa);
+    Real static getMeltingPoint(const Materials &material);
+    Real static getLinearExpansionCoeifficient(const Materials &material,const Real &T,const Real &dpa);
+    MaterialDataPacket static getMaterialProperties(const Materials &material,const Real &T);
     
    
     
 private:
     
-    Real interpolateDataArrays(const std::vector<Real> &x_array,const std::vector<Real> &y_array,const Real &x);
-    std::pair<Real,Real> interpolateDataAndTemperatureArraysAndDerivative(const std::vector<Real> &x_array,const std::vector<Real> &y_array,const Real &x);
-
+    Real static interpolateDataArrays(const std::vector<Real> &x_array,const std::vector<Real> &y_array,const Real &x);
+    std::pair<Real,Real> static interpolateDataAndTemperatureArraysAndDerivative(const std::vector<Real> &x_array,const std::vector<Real> &y_array,const Real &x);
+    
 
 };
 

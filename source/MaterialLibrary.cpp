@@ -280,13 +280,13 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
         {
             const std::vector<Real> T_data = {298,  373,  473,  573,  673,  773,  873,  973,  1073, 1173, 1273, 1373, 1473, 1573, 1673, 1773, 1873, 1973, 2073, 2173, 2273, 2373, 2473, 2573, 2673};
             const std::vector<Real> k_data = {25.3, 24.5, 23.6, 23.1, 23.0, 23.1, 23.6, 24.4, 25.6, 27.0, 28.8, 30.9, 33.4, 36.1, 39.2, 42.6, 46.4, 50.4, 54.8, 59.6, 64.6, 70.0, 75.7, 81.7, 81.7};
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
         }
         case Materials::C :
         {
             const std::vector<Real> T_data = { 298,   400,  500,  530,  615,  733,  863,  989, 1113, 1315, 1423, 1575, 1717, 1890, 1982, 2155, 2318, 2410, 2503, 2615, 2705, 2810, 2933, 3273, 3523, 3773 };
             const std::vector<Real> k_data = { 100.5, 93.5, 86.5, 83.5, 77.2, 71.3, 66.2, 61,  57.4, 51.3, 48.6, 44.9, 43.2, 38.4, 39,   37.6, 34.5, 34.7, 31,   32.9, 29.2, 29.2, 30.4, 26,   18,   6 };
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
         }
         case Materials::Be :
         {
@@ -298,7 +298,7 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
         {
             const std::vector<Real> T_data = {303,   353,   373, 423,    473,  573,   673,   773,   873,   973,   1073,  1173,  1273,  1373,  1473,  1573,  1673,  1773,  1873,  1973,  2073,  2173,  2273,  2373,  2473 };
             const std::vector<Real> k_data = {255,   196.7, 177, 122.8,  89.9, 66.9,  54.1,  47.4,  40.8,  35.7,  30.6,  27,    24,    21,    18.8,  16.5,  15.5,  14,    12.5,  12,    11.9,  11.8,  11.7,  11.6,  11.5 };
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);            
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);            
         }
         
         case Materials::SiC :
@@ -315,7 +315,7 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
 
             const std::vector<Real> T_data = {100,  150, 200,  250,  273,  300,  350, 400,  500,  600,  700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600,1700,1800,1900, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400,3600 };
             const std::vector<Real> k_data = {235,  210, 197,  186,  182,  178,  170, 162,  149,  139,  133, 128, 124, 121,  118,  115,  113,  111,  109,  107, 105, 103, 102,  100,  98,   96,   94,   92.5, 91.5, 90.5, 90,  89.5 };
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
             
         }
         
@@ -325,7 +325,7 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
             //midpoint between the two sets of B4C
             const std::vector<Real> T_data = { 298, 500, 7000, 900, 1100, 1300, 1500, 1700, 2700 };
             const std::vector<Real> k_data = { 36,  15,  13,   11,  10,   9,    8,    7,    5    };
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
         }
         
         case Materials::Mo :
@@ -334,7 +334,7 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
             //point extrapolated
             const std::vector<Real> T_data = {298, 1673, 2893};
             const std::vector<Real> k_data = {138, 100,  60  };
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
         }
 
         case Materials::Nb :
@@ -343,14 +343,14 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
             //point extrapolated really need to find trend
             const std::vector<Real> T_data = { 298, 773, 873, 1473, 2741 };
             const std::vector<Real> k_data = { 50,  60,  62,  76,  76    };
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
         }
             
         case Materials::Zr :
         {
             const std::vector<Real> T_data = { 298,  300,  400,  500,  600,  700,  800,  900,  1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2128};
             const std::vector<Real> k_data = { 21.2, 21.2, 19.6, 19.0, 19.0, 19.3, 19.9, 20.6, 21.5, 22.4, 23.5, 24.6, 25.9, 27.2, 28.5, 30.0, 31.5, 33.0, 34.6, 36.3, 36.7}; 
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
         }
 
         case Materials::ZrB2 :
@@ -360,14 +360,14 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
             //Note last point extrapolated
             const std::vector<Real> T_data = { 25, 200,  400, 600, 800, 1000, 1200, 1500, 3516};
             const std::vector<Real> k_data = { 83, 81.5, 78,  77,  74,  72,   72,   71,   68 }; 
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
         }
                 
         case Materials::Graphene :
         {        
             const std::vector<Real> T_data = { 100, 200,  400, 800, 4000};
             const std::vector<Real> k_data = { 200, 1000, 2000,1000, 500}; 
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,k_data,T);
             
         }
         
@@ -589,7 +589,7 @@ std::pair<Real,Real> MaterialLibrary::getSpecificHeatPair(const Materials &mater
         {   
             const std::vector<Real> T_data =  { 298,  300,  350,  400,  459,   500, 600,   700,  800,   900,  1000,  1100,  1200,  1300,  1400,  1500,  1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300,  2400,  2500,  2600,  2700,  2800,  2900,  3000,  3100,  3200,  3300,  3400,  3500 };
             const std::vector<Real> Cp_data = { 711,  715,  848,  982, 1108,  1220, 1404, 1542, 1648,  1730,  1795,  1848,  1892,  1929,  1961,  1988,  2013, 2035, 2055, 2073, 2090, 2105, 2120, 2134,  2147,  2160, 2.172,  2183,  2195,  2206,  2216,  2227,  2237,  2247,  2257,  2267 };
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);              
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);              
         }
                
         case Materials::Be :
@@ -604,7 +604,7 @@ std::pair<Real,Real> MaterialLibrary::getSpecificHeatPair(const Materials &mater
         {
             const std::vector<Real> T_data =  {373,  473,  573,  673,  773,  873,  973,  1073, 1173, 1273, 1373, 1473, 1573, 1673, 1773, 1873, 1973, 2073, 2173, 2273, 2373, 2473};
             const std::vector<Real> Cp_data = {1229, 1464, 1617, 1731, 1826, 1910, 1988, 2014, 2036, 2057, 2079, 2101, 2122, 2144, 2166, 2187, 2209, 2231, 2253, 2274, 2296, 2318};
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);  
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);  
         }       
             
         case Materials::SiC :
@@ -655,7 +655,7 @@ std::pair<Real,Real> MaterialLibrary::getSpecificHeatPair(const Materials &mater
             //point extrapolated
             const std::vector<Real> T_data = { 298, 1673, 2893 };
             const std::vector<Real> Cp_data ={ 240, 330,  420 };
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);            
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);            
         }
        
         case Materials::Nb :
@@ -664,14 +664,14 @@ std::pair<Real,Real> MaterialLibrary::getSpecificHeatPair(const Materials &mater
             //point extrapolated
             const std::vector<Real> T_data =  {298, 1673, 2893};
             const std::vector<Real> Cp_data = {275, 350, 425};
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);                            
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);                            
         }
                    
         case Materials::Zr :
         {    
             const std::vector<Real> T_data = { 298, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2128};
             const std::vector<Real> Cp_data ={ 285, 285, 298, 210, 320, 331, 340, 350, 360,  370,  307,  313,  320,  327,  335,  344,  354,  366,  378,  392,  396 }; 
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);            
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);            
         }
                    
         case Materials::ZrB2 :
@@ -682,7 +682,7 @@ std::pair<Real,Real> MaterialLibrary::getSpecificHeatPair(const Materials &mater
             //Note last point extrapolated
             const std::vector<Real> T_data = { 100, 200, 300, 400, 500, 600, 1500, 3516};
             const std::vector<Real> Cp_data ={ 425, 510, 540, 565, 585, 600, 675,  825 }; 
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);            
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);            
         }
         
         case Materials::ZrO2 :
@@ -692,7 +692,7 @@ std::pair<Real,Real> MaterialLibrary::getSpecificHeatPair(const Materials &mater
             //http://onlinelibrary.wiley.com/doi/10.1111/j.1151-2916.2000.tb01506.x/pdf
             const std::vector<Real> T_data = { 300, 578, 1578, 2958 };
             const std::vector<Real> Cp_data ={ 500, 550, 610,  660 }; 
-            return this->interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);            
+            return MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,Cp_data,T);            
         }
         
         default :
@@ -817,7 +817,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
         {
             const std::vector<Real> T_data = {293,     373,     473,     573,     673,     942,     943,     973,     1000,    1049,    1050,    1073,    1173,    1273,    1383,    1406};
             const std::vector<Real> a_data = {10.2e-6, 10.6e-6, 10.8e-6, 10.9e-6, 10.8e-6, 10.2e-6, 11.6e-6, 11.8e-6, 12.0e-6, 12.4e-6, 13.7e-6, 13.9e-6, 14.5e-6, 15.6e-6, 16.5e-6, 16.5e-6 };
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
 
             break;
         }
@@ -825,7 +825,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
         {
             const std::vector<Real> T_data = {298,     373,     473,     573,     673,     773,     873,     973,     1073,    1173,    1273,    1373,    1473,    1573,     1673,     1773,     1873,     1973,     2073,     2173,     2273,    2373,    2473,    2573,    2673,    2773,    2873,    2973,    3073,    3100,    3140};
             const std::vector<Real> a_data = {9.76e-6, 9.76e-6, 9.82e-6, 9.90e-6, 10e-6,   10.1e-6, 10.4e-6, 10.5e-6, 10.7e-6, 11e-6,   11.4e-6, 11.9e-6, 12.4e-6, 13e-6,    13.7e-6,  14.4e-6,  15.2e-6,  16.1e-6,  17.0e-6,  18.1e-6,  19.1e-6, 20.3e-6, 21.5e-6, 22.8e-6, 24.1e-6, 25.5e-6, 27e-6,   28.5e-6, 30.1e-6, 30.9e-6, 30.9e-6};
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
 
             break;
         }
@@ -833,7 +833,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
         {
             const std::vector<Real> T_data = {298,    373,     473,     573,     673,     773,     873,     973,     1073,    1173,    1273,    1373,    1473,    1573,    1673,    1773,    1873,    1973,    2073,     2173,     2273,     2300   };
             const std::vector<Real> a_data = {7.5e-6, 7.62e-6, 7.76e-6, 7.90e-6, 8.04e-6, 8.19e-6, 8.29e-6, 8.33e-6, 8.47e-6, 8.75e-6, 8.89e-6, 9.03e-6, 9.17e-6, 9.31e-6, 9.45e-6, 9.59e-6, 9.74e-6, 9.86e-6, 10.02e-6, 10.16e-6, 10.30e-6, 10.34e-6 };
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first; 
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first; 
 
             break;
         }
@@ -841,7 +841,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
         {
             const std::vector<Real> T_data = {298,     373,     473,     573,     673,     773,     873,     973,     1073,    1173,    1273,    1373,    1473,    1573,    1673,    1773,    1873,    1973,    2073,    2173,    2273,    2373,    2473,    2573,    2638};
             const std::vector<Real> a_data = {10.1e-6, 10.2e-6, 10.3e-6, 10.4e-6, 10.5e-6, 10.7e-6, 10.8e-6, 10.9e-6, 11.0e-6, 11.1e-6, 11.2e-6, 11.4e-6, 11.5e-6, 11.6e-6, 11.7e-6, 11.8e-6, 11.9e-6, 12.1e-6, 12.2e-6, 12.3e-6, 12.4e-6, 12.5e-6, 12.6e-6, 12.8e-6, 12.9e-6};
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
             
             break;
         }
@@ -851,7 +851,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
             //note lots of extrapolation in the last number
             const std::vector<Real> T_data = {293,    373,    473,    573,    673,    773,    873,    973,    1073,    1173,    1273,    4000};
             const std::vector<Real> a_data = {4e-6,   4.2e-6, 5e-6,   5e-6,   5.1e-6, 5.2e-6, 5.3e-6, 5.6e-6, 5.6e-6, 5.7e-6,  5.8e-6,   6e-6};
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
             
             break;
         }
@@ -860,7 +860,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
             //last data point is extrapolation
             const std::vector<Real> T_data = {298,    400,    500,    600,    800,    1000,    1200,    1560};
             const std::vector<Real> a_data = {10e-6,  12e-6,  15e-6,  16e-6,  18e-6,  20e-6,   22e-6,   25e-6};
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
        
             break;
         }
@@ -869,7 +869,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
             //last data point is extrapolation
             const std::vector<Real> T_data = {298,    373,    473,     573,    673,     773,     873,     973,     1073,    1173,    1273,    1373,    1473,    1573,     1673,     1773,     1873,     1973,     2073,     2173,     2273,    2893,      4393};
             const std::vector<Real> a_data = {5.5e-6, 5.6e-6, 6.05e-6, 6.5e-6, 6.95e-6, 7.37e-6, 7.79e-6, 8.19e-6, 8.57e-6, 8.93e-6, 9.27e-6, 9.58e-6, 9.87e-6, 10.12e-6, 10.35e-6, 10.54e-6, 10.70e-6, 10.81e-6, 10.89e-6, 10.93e-6, 10.92e-6, 10.92e-6, 11e-6};
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
 
             break;
         }
@@ -878,7 +878,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
            //last data point is extrapolation
             const std::vector<Real> T_data = {150,     250,     350,     450,     550,     650,     750,     850,     950,     1050,    1150,    1250,    1350,    1450,    1550,    3000 };
             const std::vector<Real> a_data = {0.50e-6, 1.72e-6, 2.69e-6, 3.45e-6, 4.01e-6, 4.42e-6, 4.69e-6, 4.85e-6, 4.93e-6, 4.95e-6, 4.97e-6, 4.97e-6, 5.01e-6, 5.09e-6, 5.27e-6, 5.27e-6 };
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
 
             break;
         }
@@ -889,7 +889,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
                 const std::vector<Real> T_data = {298,    1673,    3695};
                 const std::vector<Real> a_data = {4.2e-6, 4.65e-6, 5.4e-6};
 
-                alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+                alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
 
            break;
         }
@@ -899,7 +899,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
             //valid for range 298 K to 1773 K
             const std::vector<Real> T_data = {280,     380,     480,     580,     680,     780,     880,     980,     1080,    1180,    1280,    1380,    1480,    1580,    1680,    1780,    1880,    1980,    2080,    2180,    2280,    2380,    2480,     2580,     2680,     2780,     2880,     2980,     3080,     3180,     3280,     3380,     3480 };
             const std::vector<Real> a_data = {2.31e-6, 2.66e-6, 3.04e-6, 3.40e-6, 3.77e-6, 4.13e-6, 4.50e-6, 4.86e-6, 5.23e-6, 5.59e-6, 5.96e-6, 6.32e-6, 6.69e-6, 7.05e-6, 7.42e-6, 7.78e-6, 8.15e-6, 8.52e-6, 8.88e-6, 9.25e-6, 9.61e-6, 9.98e-6, 10.35e-6, 10.71e-6, 10.11e-6, 11.44e-6, 11.81e-6, 12.18e-6, 12.55e-6, 12.91e-6, 13.28e-6, 13.65e-6, 14.01e-6};
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
 
             break;
         }
@@ -909,7 +909,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
             //point extrapolated
             const std::vector<Real> T_data = {298,    1673,    2893};
             const std::vector<Real> a_data = {5.2e-6, 6.3e-6,  7.4e-6};
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
 
             break;
         }
@@ -920,7 +920,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
             //point extrapolated
             const std::vector<Real> T_data = {300,    1673,    2893};
             const std::vector<Real> a_data = {7e-6,   9.2e-6,  11.4e-6};
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
 
            break;
         }
@@ -928,7 +928,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
         {
             const std::vector<Real> T_data ={ 298,      300,      400,      500,     600,     700,     800,     900,     1000,    1100,    1200,    1300,    1400,    1500,    1600,    1700,    1800,    1900,    2000,    2100,    2128 };
             const std::vector<Real> a_data ={ 11.46e-6, 11.42e-6, 10.13e-6, 9.50e-6, 9.19e-6, 9.09e-6, 9.10e-6, 9.20e-6, 9.35e-6, 9.53e-6, 8.30e-6, 8.11e-6, 7.90e-6, 7.66e-6, 7.40e-6, 7.11e-6, 6.80e-6, 6.47e-6, 6.12e-6, 5.76e-6, 5.66e-6}; 
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
 
             break;
         }
@@ -939,7 +939,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
             //range here...
             const std::vector<Real> T_data = {298,    3516};
             const std::vector<Real> a_data = {5.2e-6, 6.7e-6};
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
             
             break;
         }
@@ -950,7 +950,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
             //range here...
             const std::vector<Real> T_data = {298,    3516};
             const std::vector<Real> a_data = {12.5e-6, 12.5e-6};
-            alpha = this->interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
+            alpha = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(T_data,a_data,T).first;
             
             break;
         }
@@ -963,21 +963,23 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
     
 }
 
-
-/*
- %%
-        function alpha_integral = getIntegratedLinearExpansion(material,T_cold,T_hot,radiation)
-
-            integrating_function = @(T)  MaterialProperties.getLinearExpansion(material,T,radiation);
-
-            alpha_integral = integral(integrating_function,T_cold,T_hot);
-
-        end
-
+MaterialDataPacket MaterialLibrary::getMaterialProperties(const Materials &material,const Real &T)
+{
+    std::pair<Real,Real> specific_heat_pair =MaterialLibrary::getSpecificHeatPair(material,T,0);
+    //Fixed density ...
+    std::pair<Real,Real> density_pair = MaterialLibrary::getDensityPair(material,1000,0); 
+    std::pair<Real,Real> thermal_conductivity_pair = MaterialLibrary::getThermalConductivityPair(material,T,0);
+    
+    Real density = density_pair.first;
+    Real specific_heat = specific_heat_pair.first;
+    Real thermal_conductivity = thermal_conductivity_pair.first;
+            
+    Real thermal_conductivity_temperature_derivative = thermal_conductivity_pair.second;// this->_material_library.getThermalConductivityTemperatureDerivative(material,T,0);
+    Real specific_heat_temperature_derivative = thermal_conductivity_pair.second; //this->_material_library.getSpecificHeatTemperatureDerivative(material,T,0);
+    Real density_temperature_derivative = density_pair.second; //this->_material_library.getDensityTemperatureDerivative(material,T,0);
+    
+    MaterialDataPacket packet = MaterialDataPacket(thermal_conductivity, density, specific_heat, thermal_conductivity_temperature_derivative, specific_heat_temperature_derivative, density_temperature_derivative);
+    
       
-           
-    end
- 
- 
- */
-
+    return packet;   
+}

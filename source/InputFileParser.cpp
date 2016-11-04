@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <iostream>
 
-std::vector<std::string> InputFileParser::split(const std::string &str,const std::string &sep)
+std::vector<std::string> InputFileParser::split(const std::string &str,const std::string &sep) 
 {
     char* cstr=const_cast<char*>(str.c_str());
     char* current;

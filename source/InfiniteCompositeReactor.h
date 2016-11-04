@@ -27,7 +27,6 @@
 #include "MaterialLibrary.h"
 #include "EnumsAndFunctions.h"
 #include "MicroGeometry.h"
-#include "ExplicitSolverSettings.h"
 #include "MicroCell.h"
 #include "InputDataFunctions.h"
 #include "ReactorKinetics.h"

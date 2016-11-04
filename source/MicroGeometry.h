@@ -40,6 +40,7 @@ public:
     std::pair<Real,Real> getDensityPair(const Real &r,const  Real &T);
     std::pair<Real,Real> getThermalConductivityPair(const Real &r,const  Real &T);
     
+    
     MaterialDataPacket getMaterialProperties(const Real &r,const Real &T);
     Materials getMaterial(const Real &r);
     Dimension getOuterRadius() const;
@@ -52,8 +53,9 @@ public:
     static Materials _last_material;
     
     std::vector< std::pair<Materials,Dimension> > _geometry;
+   
     
-    MaterialLibrary _material_library;
+   
     
 private:
     

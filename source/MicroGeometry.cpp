@@ -17,6 +17,7 @@
 MicroGeometry::MicroGeometry(const std::vector<Materials> &materials,const std::vector<Dimension> &dimensions) 
 {
     
+    //Make sure the number of material equals the number of dimensions
     if( ! materials.size() == dimensions.size() )
     {
         throw Errors::IncorrectMaterialsDimensions;
@@ -24,6 +25,9 @@ MicroGeometry::MicroGeometry(const std::vector<Materials> &materials,const std::
     
     this->_geometry = std::vector< std::pair<Materials,Dimension> >();
     
+    
+    // Check to make sure that the dimensions are increasing, if so create the 
+    // material and dimensions vector
     Dimension last_dimension = 0;
     
     for( int index = 0; index < materials.size(); ++index )
@@ -35,10 +39,9 @@ MicroGeometry::MicroGeometry(const std::vector<Materials> &materials,const std::
         last_dimension = dimensions[ index ];
         
         std::pair<Materials,Dimension> boundary = { materials[index], dimensions[ index] };
-        this->_geometry.push_back( boundary );
-    }
-    
-    this->_material_library = MaterialLibrary();    
+        this->_geometry.push_back( boundary );        
+        
+    }   
 }
 
 MicroGeometry::MicroGeometry()
@@ -69,36 +72,9 @@ void MicroGeometry::printGeometry()
 MaterialDataPacket MicroGeometry::getMaterialProperties(const Real &r,const Real &T)
 {
     Materials material = this->getMaterial(r);
-    
-/*    if( material == MicroGeometry::_last_material && (T - 2) < MicroGeometry::_last_temperature && (T + 2) > MicroGeometry::_last_temperature )
-    {
-        return MicroGeometry::_last_packet;
-    }
-  */  
-    
-    std::pair<Real,Real> specific_heat_pair =this->_material_library.getSpecificHeatPair(material,T,0);
-    //Fixed density ...
-    std::pair<Real,Real> density_pair = this->_material_library.getDensityPair(material,1000,0); 
-    std::pair<Real,Real> thermal_conductivity_pair = this->_material_library.getThermalConductivityPair(material,T,0);
-    
-    Real density = density_pair.first;
-    Real specific_heat = specific_heat_pair.first;
-    Real thermal_conductivity = thermal_conductivity_pair.first;
-            
-    Real thermal_conductivity_temperature_derivative = thermal_conductivity_pair.second;// this->_material_library.getThermalConductivityTemperatureDerivative(material,T,0);
-    Real specific_heat_temperature_derivative = thermal_conductivity_pair.second; //this->_material_library.getSpecificHeatTemperatureDerivative(material,T,0);
-    Real density_temperature_derivative = density_pair.second; //this->_material_library.getDensityTemperatureDerivative(material,T,0);
-    
-    MaterialDataPacket packet = MaterialDataPacket(thermal_conductivity, density, specific_heat, thermal_conductivity_temperature_derivative, specific_heat_temperature_derivative, density_temperature_derivative);
-    
-    //MicroGeometry::_last_temperature = T;
-    //MicroGeometry::_last_material = material;
-    //MicroGeometry::_last_packet = packet;
-    
-    return packet;
+      
+    return  MaterialLibrary::getMaterialProperties(material,T);
 }
-
-
 
 Materials MicroGeometry::getMaterial(const Real &r)
 {

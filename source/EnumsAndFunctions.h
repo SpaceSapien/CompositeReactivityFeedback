@@ -56,5 +56,8 @@ enum FissionableIsotope
 std::string getMaterialName(const Materials &material);
 Materials getMaterialFromName(const std::string &material_name);
 
+Real sphere_volume(const Real &radius);
+Real sphere_surface_area(const Real &radius);
+
 #endif /* MATERIALENUM_H */
 

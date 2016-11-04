@@ -113,6 +113,8 @@ void MicroSolution::saveSolutions(const std::vector<MicroSolution> &plot_data_ve
     {
         output_file.open( save_folder + save_file_name,std::ios::out);
         
+        output_file << -1 << ", ";
+        
         for( size_t i_index = 0; i_index < grid_size; i_index++ )
         {
             output_file << plot_data_vector[0]._grid[i_index] << ", ";
@@ -131,6 +133,8 @@ void MicroSolution::saveSolutions(const std::vector<MicroSolution> &plot_data_ve
     {
         MicroSolution plot = plot_data_vector[i_index];  
 
+        output_file << plot._time << ", ";
+        
         for( size_t j_index = 0; j_index < grid_size; j_index++)
         {
             output_file << plot._solution[j_index] << ", ";

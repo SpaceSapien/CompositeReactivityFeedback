@@ -26,8 +26,6 @@
 #include "MaterialLibrary.h"
 #include "EnumsAndFunctions.h"
 #include "MicroGeometry.h"
-#include "ExplicitSolverSettings.h"
-#include "MicroCell.h"
 #include "InputDataFunctions.h"
 #include "ReactorKinetics.h"
 #include "PythonPlot.h"
@@ -353,16 +351,21 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     Real initial_power_density =  _input_file_reader->getInputFileParameter("Starting Power Density",static_cast<Real>(200e6) ); // W/m^3 averaged over the entire micro sphere
     Real initial_outer_shell_temperature = 800;//_input_file.getInputFileParameter("Kernel Outer Temperature",800); // Kelvin
     
-    MicroCellBoundaryCondition fixed_temperature_boundary_condition = MicroCellBoundaryCondition::getFixedBoundaryCondition(initial_outer_shell_temperature);
+    MicroCellBoundaryCondition* fixed_temperature_boundary_condition = MicroCellBoundaryCondition::getFixedTemperatureBoundaryConditionFactory(initial_outer_shell_temperature);
     
     this->_thermal_solver = new MicroCell(this, initial_outer_shell_temperature);
     this->_thermal_solver->setBoundaryCondition(fixed_temperature_boundary_condition);
     std::vector<MicroSolution> plot =  this->_thermal_solver->iterateInitialConditions(initial_power_density);
-    MicroSolution::plotSolutions(plot,0, this->_results_directory + "initial-solve.png");    
-    Real outer_boundary_spatial_derivate = this->_thermal_solver->getOuterDerivative();
-    MicroCellBoundaryCondition reflected_boundary_condition = MicroCellBoundaryCondition::getFixedDerivativeBoundaryCondition(outer_boundary_spatial_derivate);
+    
+    //Save solutions to output files
+    MicroSolution::plotSolutions(plot,0, this->_results_directory + "initial-solve.png");  
+    std::vector<MicroSolution> current_solution = { _thermal_solver->getCurrentMicrosolution() };
+    MicroSolution::saveSolutions( current_solution, this->_results_directory );
+    
+    Real outer_boundary_heat_flux = this->_thermal_solver->getOuterHeatFlux();
+    MicroCellBoundaryCondition* fixed_flux_boundary_condition = MicroCellBoundaryCondition::getFixedHeatFluxBoundaryConditionFactory(outer_boundary_heat_flux);
     //MicroCellBoundaryCondition reflected_boundary_condition = MicroCellBoundaryCondition::getRefelectedBoundaryCondition();
-    this->_thermal_solver->setBoundaryCondition(reflected_boundary_condition);
+    this->_thermal_solver->setBoundaryCondition(fixed_flux_boundary_condition);
     
     //Define the Monte Carlo Parameters
     Real starting_k_eff =  _input_file_reader->getInputFileParameter("Starting K-eff",static_cast<Real>(1.01) );    

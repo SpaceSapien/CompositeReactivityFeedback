@@ -36,7 +36,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/source/DelayedNeutronSet.o \
-	${OBJECTDIR}/source/ExplicitSolverSettings.o \
 	${OBJECTDIR}/source/InfiniteCompositeReactor.o \
 	${OBJECTDIR}/source/InputFileParser.o \
 	${OBJECTDIR}/source/MaterialDataPacket.o \
@@ -47,6 +46,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/source/MicroGeometry.o \
 	${OBJECTDIR}/source/MicroSolution.o \
 	${OBJECTDIR}/source/PythonPlot.o \
+	${OBJECTDIR}/source/RadialMesh.o \
 	${OBJECTDIR}/source/ReactorKinetics.o \
 	${OBJECTDIR}/source/ReactorMonteCarlo.o \
 	${OBJECTDIR}/source/SimulationResults.o \
@@ -82,11 +82,6 @@ ${OBJECTDIR}/source/DelayedNeutronSet.o: source/DelayedNeutronSet.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DACORITE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/DelayedNeutronSet.o source/DelayedNeutronSet.cpp
-
-${OBJECTDIR}/source/ExplicitSolverSettings.o: source/ExplicitSolverSettings.cpp
-	${MKDIR} -p ${OBJECTDIR}/source
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -DACORITE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/ExplicitSolverSettings.o source/ExplicitSolverSettings.cpp
 
 ${OBJECTDIR}/source/InfiniteCompositeReactor.o: source/InfiniteCompositeReactor.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
@@ -137,6 +132,11 @@ ${OBJECTDIR}/source/PythonPlot.o: source/PythonPlot.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DACORITE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/PythonPlot.o source/PythonPlot.cpp
+
+${OBJECTDIR}/source/RadialMesh.o: source/RadialMesh.cpp
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DACORITE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/RadialMesh.o source/RadialMesh.cpp
 
 ${OBJECTDIR}/source/ReactorKinetics.o: source/ReactorKinetics.cpp
 	${MKDIR} -p ${OBJECTDIR}/source

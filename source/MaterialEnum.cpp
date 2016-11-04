@@ -5,6 +5,7 @@
  */
 #include "EnumsAndFunctions.h"
 #include <string>
+#include <cmath>
 
 std::string getMaterialName(const Materials &material)
 {
@@ -154,3 +155,4 @@ Materials getMaterialFromName(const std::string &material_name)
     }
     throw -1;
 };
+

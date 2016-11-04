@@ -5,7 +5,7 @@ Run Name: Default-Case
 #Material options include
 # U, UO2, UN, UC, U3Si, SiC, C, Be, BeO, ZrB2, W, B4C, Mo, Nb, Zr, Graphene
 Materials: UO2 ZrO2 C
-Radaii: 4e-4 4.5e-4 2e-3 #m
+Radaii: 4e-4 4.5e-4 1.612e-3 #m
 
 #Starting Power Density 
 Starting Power Density: 200e6 # W/m^3
@@ -13,14 +13,14 @@ Starting K-eff: 1.001
 Kernel Outer Temperature: 800 K
 
 #Generally 100 is a good size
-Thermal Mesh Size: 100 
+Thermal Mesh Size: 200
 
 # Thermal Solver Order: Second | Fourth
 Thermal Solver Order: Second 
 
 #Before the program starts iterating the transient, it looks for the 
 #Steady State Transient
-Steady State Temperature Solution Max Residual: 0.2
+Steady State Temperature Solution Max Residual: 0.0002
 
 Uranium Enrichment Fraction: 0.2 
 Cells Per Zone: 3
@@ -34,8 +34,8 @@ MC Recalc Delta T: 10  # K
 #Monte Carlo Recalculation Timestep: 0.005      #s
 
 Kinetics Time Iteration: 10e-9                  #s
-Thermal Time Iteration: 100e-9                  #s
-Kinetics Thermal Data Sync: 20e-6               #s
+Thermal Time Iteration: 200e-9                 #s
+Kinetics Thermal Data Sync: 10e-6               #s
 Calculation End Time: 0.05                      #s
 Power Record: 0.0001                            #s  Time between recording power and the delayed neutron record
 

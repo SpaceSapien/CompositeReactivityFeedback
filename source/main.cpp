@@ -14,7 +14,6 @@
 #include "MaterialLibrary.h"
 #include "EnumsAndFunctions.h"
 #include "MicroGeometry.h"
-#include "ExplicitSolverSettings.h"
 #include "MicroCell.h"
 #include "InputDataFunctions.h"
 #include "ReactorKinetics.h"
@@ -150,4 +149,15 @@ std::string get_file_text(const std::string& file_path)
     
     
     return file_data.str();
+}
+
+
+Real sphere_volume(const Real &radius)
+{
+    return M_PI * (4.0/3.0) * std::pow(radius,3);
+}
+
+Real sphere_surface_area(const Real &radius)
+{
+    return M_PI * (4.0) * radius*radius;
 }

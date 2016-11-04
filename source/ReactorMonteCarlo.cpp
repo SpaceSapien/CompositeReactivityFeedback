@@ -188,6 +188,10 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     #endif
     
+     //Remove symbolic links to the Doppler broadened cross sections
+    std::string symbolic_link_command = "cd " + this->_run_directory + "; rm otf*txt .";
+    exec(symbolic_link_command);
+    
 
     //Read the output file
     SimulationResults results = SimulationResults(output_file_name, this->_run_directory );
@@ -211,7 +215,7 @@ std::string ReactorMonteCarlo::getMaterialCards()
         Materials material = geometry_data[index].first; 
         std::string material_card_entry;
         std::string doppler_card_entry;
-        _reactor->_micro_sphere_geometry->_material_library.getMcnpMaterialCard(material,current_zone,material_card_entry, doppler_card_entry, enrichment_fraction);
+        MaterialLibrary::getMcnpMaterialCard(material,current_zone,material_card_entry, doppler_card_entry, enrichment_fraction);
         
         material_cards << material_card_entry;
         otfdb_card << doppler_card_entry;        
@@ -239,7 +243,7 @@ std::string ReactorMonteCarlo::getSingleCellCard(const Materials &material, cons
     //For now we will assume that the density stays constant regardless of temperature change to perserve conservation of mass
     Real density_derived_temperature = 400;
     //First is the density, second is the density derivative which we don't need. Divide by 1000 to convert from kg/m^3 to g/cm^3
-    Real density = _reactor->_micro_sphere_geometry->_material_library.getDensityPair(material,density_derived_temperature,0).first/1000;
+    Real density = MaterialLibrary::getDensityPair(material,density_derived_temperature,0).first/1000;
 
     for( int current_cell_in_zone = 1; current_cell_in_zone <= _cells_per_zone; current_cell_in_zone++)
     {
@@ -248,25 +252,18 @@ std::string ReactorMonteCarlo::getSingleCellCard(const Materials &material, cons
         Real temperature;
         Real cell_volume;
         
-        if( _cells_per_zone == 1) 
-        {
-            _reactor->_thermal_solver->getAverageTemperature(current_zone - 1, temperature, cell_volume);
-        }
-        else
-        {
-            _reactor->_thermal_solver->getCellTemperature(current_zone - 1, _cells_per_zone, current_cell_in_zone, temperature, cell_volume );
-        }
-    
+        _reactor->_thermal_solver->getCellTemperature(current_zone - 1, _cells_per_zone, current_cell_in_zone, temperature, cell_volume );
+           
         cell_volume *= (100 * 100 * 100);
         
         //we want to put our reflecting boundary condition here
         if( cell_number == 1 )
         {
-            cell_card << " " << cell_number << " " << current_zone << " -" << density << " -"  << cell_number << " imp:n=1 TMP=" << temperature*MeVperK  << " $ " << getMaterialName(material) << " T = " << temperature << " K" << " Volume = " << cell_volume << " cm^3 " <<std::endl;
+            cell_card << " " << cell_number << " " << current_zone << " -" << density << " -"  << cell_number << " imp:n=1 TMP=" << temperature*MeVperK << " VOL=" << cell_volume << " $ " << getMaterialName(material) << " T = " << temperature << " K" << " Volume = " << cell_volume << " cm^3 " <<std::endl;
         }
         else
         {
-            cell_card << " " << cell_number << " " << current_zone << " -" << density << " " << ( cell_number -1 )  << " " << " -"  << cell_number << " imp:n=1 TMP=" << temperature*MeVperK <<" $ " << getMaterialName(material) << " T = " << temperature << " K" << " Volume = " << cell_volume << " cm^3 " << std::endl;
+            cell_card << " " << cell_number << " " << current_zone << " -" << density << " " << ( cell_number -1 )  << " " << " -"  << cell_number << " imp:n=1 TMP=" << temperature*MeVperK << " VOL=" << cell_volume <<" $ " << getMaterialName(material) << " T = " << temperature << " K" << " Volume = " << cell_volume << " cm^3 " << std::endl;
         }
 
         cell_number++;
@@ -329,59 +326,44 @@ std::string ReactorMonteCarlo::getSurfaceCards()
     int surface_card_number = 1;
     std::vector<std::pair<Materials, Dimension> > geometry_data = _reactor->_micro_sphere_geometry->_geometry;
     int number_zones = geometry_data.size();   
-            
+    //std::string shape_type;        
     
     for( int index = 0; index < number_zones  ; index++ )
     {
-        int current_zone = index + 1;
-        
-        if(this->_cells_per_zone == 1)
-        {    
-            //we want to put our reflecting boundary condition here
-            if( current_zone == number_zones)
-            {
-                surface_cards << "*";
-            }
-            else
-            {
-                surface_cards << " ";
-            }
-            //cm sphere radius
-            Real shell_radius = geometry_data[index].second * 100; 
+        int current_zone = index + 1;       
+        Real last_zone_shell_radius = 0;
 
-            surface_cards << current_zone << " SPH 0 0 0 " << shell_radius << std::endl;
-        }
-        else
+        if( index > 0)
         {
-            Real last_zone_shell_radius = 0;
+            last_zone_shell_radius = geometry_data[index -1 ].second * 100;
+        }
+
+        Real zone_shell_radius = geometry_data[index].second * 100; 
+
+        for( int current_surface = 1; current_surface <= _cells_per_zone; current_surface++ )
+        {
+           Real surface_radius = last_zone_shell_radius + (zone_shell_radius - last_zone_shell_radius ) * (static_cast<Real>(current_surface)/static_cast<Real>(_cells_per_zone));
             
-            if( index > 0)
-            {
-                last_zone_shell_radius = geometry_data[index -1 ].second * 100;
-            }
-            
-            Real zone_shell_radius = geometry_data[index].second * 100; 
-            
-            for( int current_surface = 1; current_surface <= _cells_per_zone; current_surface++ )
-            {
-                //we want to put our reflecting boundary condition here
-               if( current_zone == number_zones && current_surface == _cells_per_zone)
-               {
-                   surface_cards << "*";
-               }
-               else
-               {
-                   surface_cards << " ";
-               }
-               //cm sphere radius
-               
-               Real surface_radius = last_zone_shell_radius + (zone_shell_radius - last_zone_shell_radius ) * (static_cast<Real>(current_surface)/static_cast<Real>(_cells_per_zone));
-               
-               surface_cards << surface_card_number << " SPH 0 0 0 " << surface_radius << std::endl;
-               surface_card_number++;
-            }
-            
-            
+            //we want to put our reflecting boundary condition here
+           if( current_zone == number_zones && current_surface == _cells_per_zone)
+           {
+               Real box_edge = surface_radius*2;
+               Real half_box_edge = surface_radius;
+               surface_cards << "*" << surface_card_number << " BOX ";
+               surface_cards << -half_box_edge << " " << -half_box_edge << " " << -half_box_edge << "  ";
+               surface_cards << box_edge << " 0 0  ";
+               surface_cards << "0 " << box_edge << " 0  ";
+               surface_cards << "0 0  " << box_edge << std::endl;
+           }
+           else
+           {
+               surface_cards << " " << surface_card_number << " SPH 0 0 0 " << surface_radius << std::endl;
+           }
+           //cm sphere radius
+
+           
+           
+           surface_card_number++;         
         }
         
     }
