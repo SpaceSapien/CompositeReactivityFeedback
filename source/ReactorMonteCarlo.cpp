@@ -189,8 +189,8 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     #endif
     
      //Remove symbolic links to the Doppler broadened cross sections
-    std::string symbolic_link_command = "cd " + this->_run_directory + "; rm otf*txt .";
-    exec(symbolic_link_command);
+    std::string rm_symbolic_link_command = "cd " + this->_run_directory + "; rm otf*txt .";
+    exec(rm_symbolic_link_command);
     
 
     //Read the output file
