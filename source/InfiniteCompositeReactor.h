@@ -87,6 +87,8 @@ class InfiniteCompositeReactor
     
     
     InfiniteCompositeReactor(const std::string &input_file = "");
+    InfiniteCompositeReactor(const std::string resume_file, Real new_end_time);
+    
     virtual ~InfiniteCompositeReactor();
     std::string getSaveDirectory();
     std::string _results_directory;

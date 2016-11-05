@@ -9,7 +9,7 @@ Radaii: 4e-4 4.5e-4 1.612e-3 #m
 
 #Starting Power Density 
 Starting Power Density: 200e6 # W/m^3
-Starting K-eff: 1.001
+Starting K-eff: 1.01
 Kernel Outer Temperature: 800 K
 
 #Generally 100 is a good size

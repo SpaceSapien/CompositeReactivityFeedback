@@ -72,7 +72,7 @@ MicroSolution MicroCell::presolveSteadyStateAnalytical(const Real &average_power
         
         Real total_power = 0;
         
-        for( int power_index = 0; power_index <= radial_index + 1; power_index++ )
+        for( int power_index = 0; power_index <= radial_index; power_index++ )
         {
              Real volume = _mesh->_volume[power_index];
              total_power += volume * power_distribution[power_index];
@@ -241,7 +241,6 @@ MicroSolution MicroCell::solveSecondOrder(const Real &simulation_time_step, cons
             Materials current_material = _mesh->getMaterial(radial_index);
             MaterialDataPacket material_data = MaterialLibrary::getMaterialProperties(current_material,temperature);
             Dimension center_radius = _mesh->getNodeLocation(radial_index);         
-            Real thermal_inertia = material_data._density * material_data._specific_heat * _mesh->_volume[radial_index];
             Real internal_power = power_distribution[radial_index] * _mesh->_volume[radial_index];
             
             //Check for boundary conditions
@@ -261,23 +260,8 @@ MicroSolution MicroCell::solveSecondOrder(const Real &simulation_time_step, cons
                 
                 outward_heat_flux = - _mesh->_outer_surface[radial_index] * outward_dTdr * material_data._thermal_conductivity;                               
             }   
-            /*#ifdef VARIABLE_MATERIAL_PROPERTIES_DIFFERENTIAL
-
-                dSolution =  ( material_data._thermal_conductivity_temperature_derivative*dTdr*dTdr*radial_position*radial_position + material_data._thermal_conductivity*(2*radial_position*dTdr + radial_position*radial_position*d2Tdr2) + power*radial_position*radial_position)/(radial_position*radial_position * ( material_data._density * material_data._specific_heat + material_data._density * material_data._specific_heat_temperature_derivative * temperature ) );
-                /*std::cout<<radial_position<<"\n";
-                std::cout<<material_data._thermal_conductivity*(2*radial_position*dTdr + radial_position*radial_position*d2Tdr2)<<"\n";
-                std::cout<<material_data._thermal_conductivity_temperature_derivative*dTdr*dTdr*radial_position*radial_position << "\n";
-                std::cout<<power*radial_position*radial_position << "\n";
-                std::cout<<material_data._density * material_data._specific_heat << "\n";
-                std::cout<<material_data._density * material_data._specific_heat_temperature_derivative * temperature << "\n";
-                std::cout<<"\n";*//*
-
-            #else
-
-                dSolution =  0; //(material_data._thermal_conductivity*(2*radial_position*dTdr + radial_position*radial_position*d2Tdr2) + power*radial_position*radial_position)/(radial_position*radial_position * material_data._density * material_data._specific_heat  );
-
-            #endif*/            
-            //Heat Balance
+            
+            Real thermal_inertia = (material_data._density * material_data._specific_heat  + temperature * ( material_data._density * material_data._specific_heat_temperature_derivative + material_data._specific_heat * material_data._density_temperature_derivative) ) * _mesh->_volume[radial_index];
             
             net_heat_flux = inward_heat_flux + outward_heat_flux + internal_power;   
             dSolution = net_heat_flux / thermal_inertia;
@@ -559,26 +543,4 @@ std::vector<Real> MicroCell::getRespresentativeHomogenizedPowerDistribution(cons
     }
     
     return power_distribution;
-}
-
-Real MicroCell::getOuterDerivative()
-{
-    size_t solution_size_index = _solution.size() -1;
-    
-    //use a double cell spacing limit
-    Dimension radial_spacing = _mesh->getNodeLocation(solution_size_index) - _mesh->getNodeLocation(solution_size_index - 1);
-    Real solution_change = _solution[solution_size_index] - _solution[solution_size_index -1];
-    
-    return solution_change/radial_spacing;
-}
-
-Real MicroCell::getOuterHeatFlux()
-{
-    std::size_t index = _mesh->numberOfNodes() -1;
-    Materials material = _mesh->getMaterial(index);
-    Real temperature = _solution[index];
-    MaterialDataPacket data = MaterialLibrary::getMaterialProperties(material, temperature);
-    
-    Real heat_flux_out = -1 * this->getOuterDerivative() * data._thermal_conductivity * _mesh->_outer_surface[index-1];    
-    return heat_flux_out;
 }

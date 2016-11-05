@@ -66,10 +66,9 @@ public:
     std::vector<Real> getRepresentativeKernelPowerDistribution(const Real &average_power_density);
 
     void setBoundaryCondition(MicroCellBoundaryCondition* boundary_condition);
-    Real getOuterDerivative();
     void getAverageTemperature(const int &zone, Real &cell_temperature, Real &cell_volume);
     void getCellTemperature(const int &zone, const int &zone_divisions, const int &current_division, Real &cell_temperature, Real &cell_volume );
-    Real getOuterHeatFlux();
+
     
 private:
     

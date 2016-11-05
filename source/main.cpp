@@ -21,8 +21,6 @@
 #include "InfiniteCompositeReactor.h"
 
 
-
-
 int main(int argc, char** argv) 
 {
    /* int numprocs, rank, namelen;
@@ -59,6 +57,21 @@ int main(int argc, char** argv)
         
         InfiniteCompositeReactor reactor = InfiniteCompositeReactor(input_file_name);
         reactor.simulate();
+    }
+    //We are resuming a run
+    else if( argc == 4)
+    {
+        std::string resume_command = std::string(argv[1]);
+        
+        if(resume_command == "resume")
+        {
+            Real new_end_time = static_cast<Real>(std::stod(std::string(argv[2])));
+                        
+            std::string old_results_folder = std::string(argv[3]);
+
+            InfiniteCompositeReactor reactor = InfiniteCompositeReactor(old_results_folder, new_end_time);
+            reactor.simulate();
+        }
     }
 
 }

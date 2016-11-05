@@ -36,6 +36,14 @@ const std::time_t InfiniteCompositeReactor::_simulation_start_time = std::time(n
 InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file_name ) 
 {   
     
+    //Check to make sure the old dire
+    if( ! file_exists(input_file_name) )
+    {
+        std::cerr << "Input File: " + input_file_name + " doesn't exist";
+        throw 1;
+
+    }
+    
     //Initialize the input file reader
     this->_input_file_reader = new InputFileParser( input_file_name );
     
@@ -60,10 +68,69 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
     initializeInifiniteCompositeReactorProblem();
 }
 
+/**
+ * This constructor loads the conditions of a previously run program and continues it until the new end time
+ * @param old_results_folder  the folder with the old files in it
+ * @param new_end_time        the new end time (must be longer than the old one
+ */
+InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string old_results_folder, Real new_end_time)
+{
+    
+    //Check to make sure the old results folder exists 
+    if( ! file_exists(old_results_folder) )
+    {
+        std::cerr << "Results Directory: " + old_results_folder + " Doesn't exist";
+        throw 1;
+
+    }
+
+    //Then check for the files that are needed
+    std::string old_input_file = old_results_folder + "/input_file.inp";
+    std::string old_data_file = old_results_folder + "/datafile.csv";
+    std::string old_temeprature_file = old_results_folder + "/temperature-data.csv";
+
+    if( ! file_exists(old_input_file) || ! file_exists(old_data_file) || ! file_exists(old_temeprature_file))
+    {
+        std::cerr << "Missing Data Files " + old_input_file + " " + old_data_file + old_temeprature_file;
+        throw 1;
+    }
+    
+    //Initialize the input file reader
+    this->_input_file_reader = new InputFileParser( old_input_file );
+    
+    //Create the Results Folder
+    time_t run_identification_number = std::time(nullptr);
+    
+    std::string default_run_name = "Unnamed-Run";
+    _run_name = _input_file_reader->getInputFileParameter("Run Name", default_run_name);
+    
+    _results_directory =  "results/" + _run_name + "-" + std::to_string(run_identification_number) + "/";    
+    
+    _data_file = "datafile.csv";
+    std::string folder_command = "mkdir -p " + _results_directory;
+    exec( folder_command );
+    
+    //Copy the files to the new directory
+    std::string copy_input_file_command = "cp " + old_input_file + " " + _results_directory + "input_file.inp";
+    exec( copy_input_file_command );
+    
+    std::string copy_old_data_file = "cp " + old_data_file + " " + _results_directory + "input_file.inp";
+    exec( copy_old_data_file );
+    
+    std::string copy_temperature_file_command = "cp " + old_temeprature_file + " " + _results_directory + "input_file.inp";
+    exec( copy_temperature_file_command );
+    
+    _monte_carlo_number_iterations = 0;
+    _transient_time = 0;
+    
+    //initializeInifiniteCompositeReactorProblem();
+}
 
 void InfiniteCompositeReactor::simulate()
 {
-   
+    //Save the data for the initial timestep
+    this->monteCarloTimeStepSimulationProcessing();
+    
     //Simulate the transient the outer loop is the monte carlo simulation
     for( this->_transient_time = 0; _transient_time < _end_time; _transient_time += _inner_time_step)
     {
@@ -230,10 +297,11 @@ void InfiniteCompositeReactor::temperatureIterationInnerLoop()
 
     }
 
-    this->monteCarloTimeStepSimulationProcessing();
+    
     _monte_carlo_model->updateAdjustedCriticalityParameters();
     _monte_carlo_time_iteration = _inner_time_step;   
     _monte_carlo_number_iterations++;
+    this->monteCarloTimeStepSimulationProcessing();
 }
 
 void InfiniteCompositeReactor::timeIterationInnerLoop()
@@ -334,37 +402,41 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     //This command establishes the logging of python plot commands. Useful for debugging
     PythonPlot::_log_file = this->_results_directory + "graph_log.log";
     
-    Real sphere_outer_radius, fuel_kernel_outer_radius; 
-    
-    //Define our geometry
-    sphere_outer_radius = 2e-3;  //meters
-    fuel_kernel_outer_radius = 4e-4;
-    std::vector<Real> default_dimensions =  { fuel_kernel_outer_radius, sphere_outer_radius };
+    //Default geometry sizes
+    Real default_sphere_outer_radius = 2e-3;  //meters
+    Real default_fuel_kernel_outer_radius = 4e-4;
+    std::vector<Real> default_dimensions =  { default_fuel_kernel_outer_radius, default_sphere_outer_radius };
     std::vector<Materials> default_materials = { Materials::UO2, Materials::C }; 
     
+    //Grab geometry from input file
     std::vector<Dimension> dimensions = _input_file_reader->getInputFileParameter("Radaii", default_dimensions);
     std::vector<Materials> materials =   _input_file_reader->getInputFileParameter("Materials", default_materials);
     
+    //Create a new geometry
     this->_micro_sphere_geometry = new MicroGeometry(materials, dimensions);    
           
     //Define the heat transfer settings
     Real initial_power_density =  _input_file_reader->getInputFileParameter("Starting Power Density",static_cast<Real>(200e6) ); // W/m^3 averaged over the entire micro sphere
     Real initial_outer_shell_temperature = 800;//_input_file.getInputFileParameter("Kernel Outer Temperature",800); // Kelvin
     
+    //Set up a boundary condition 
     MicroCellBoundaryCondition* fixed_temperature_boundary_condition = MicroCellBoundaryCondition::getFixedTemperatureBoundaryConditionFactory(initial_outer_shell_temperature);
-    
+    //Then crate the MicoCell thermal solver, set the boundary condition and then iterate steady state condition 
     this->_thermal_solver = new MicroCell(this, initial_outer_shell_temperature);
     this->_thermal_solver->setBoundaryCondition(fixed_temperature_boundary_condition);
     std::vector<MicroSolution> plot =  this->_thermal_solver->iterateInitialConditions(initial_power_density);
     
-    //Save solutions to output files
+    //Save solutions to the graph log
     MicroSolution::plotSolutions(plot,0, this->_results_directory + "initial-solve.png");  
-    std::vector<MicroSolution> current_solution = { _thermal_solver->getCurrentMicrosolution() };
-    MicroSolution::saveSolutions( current_solution, this->_results_directory );
     
-    Real outer_boundary_heat_flux = this->_thermal_solver->getOuterHeatFlux();
+    //Reset the time to zero and then grab the current solution for the Problem
+    _thermal_solver->_current_time = 0;    
+     //Add the starting MicroSolution
+    _plot_solutions.push_back( _thermal_solver->getCurrentMicrosolution() );
+        
+    //Get the steady state heat flux and set it as the boundary condition
+    Real outer_boundary_heat_flux = sphere_volume(this->_thermal_solver->_mesh->_outer_radius[this->_thermal_solver->_mesh->numberOfNodes() -1]) * initial_power_density;
     MicroCellBoundaryCondition* fixed_flux_boundary_condition = MicroCellBoundaryCondition::getFixedHeatFluxBoundaryConditionFactory(outer_boundary_heat_flux);
-    //MicroCellBoundaryCondition reflected_boundary_condition = MicroCellBoundaryCondition::getRefelectedBoundaryCondition();
     this->_thermal_solver->setBoundaryCondition(fixed_flux_boundary_condition);
     
     //Define the Monte Carlo Parameters
@@ -378,12 +450,9 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     _power_and_delayed_neutron_record_time_step =  _input_file_reader->getInputFileParameter("Power Record", static_cast<Real>(0.0005) );  //How often to calculate keff and the prompt neutron lifetime
     _kinetics_thermal_sync_time_step = _input_file_reader->getInputFileParameter("Kinetics Thermal Data Sync", static_cast<Real>(20e-6) );      //How often to couple the kinetics and heat transfer routines    
     _end_time = _input_file_reader->getInputFileParameter("Calculation End Time", static_cast<Real>(1.00) );                                    //How many seconds should the simulation last 
-    
-    //Resetting the timer to zero so that the timer reads t = 0 when the transient starts
-    _kinetics_model->_current_time = 0;
-    
-    //Add the starting MicroSolution
-    _plot_solutions.push_back( _thermal_solver->getCurrentMicrosolution() );
+        
+   
+
 }
 
 void InfiniteCompositeReactor::createOutputFile()

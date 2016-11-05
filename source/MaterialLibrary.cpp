@@ -19,13 +19,8 @@
 #include <cmath>
 #include "MaterialLibrary.h"
 
-//Constructor
-MaterialLibrary::MaterialLibrary() 
-{
-    
-}
-
-
+// #define NO_MATERIAL_PROPERTIES_DIFFERENTIAL
+// #define CONSTANT_TEMPERATURE_PROPERTIES
 
 /**
  * Interpolates data from two vectors based on the x value
@@ -965,18 +960,41 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
 
 MaterialDataPacket MaterialLibrary::getMaterialProperties(const Materials &material,const Real &T)
 {
+    #ifdef CONSTANT_TEMPERATURE_PROPERTIES
+
+    std::pair<Real,Real> specific_heat_pair =MaterialLibrary::getSpecificHeatPair(material,300,0);
+    //Fixed density ...
+    std::pair<Real,Real> density_pair = MaterialLibrary::getDensityPair(material,300,0); 
+    std::pair<Real,Real> thermal_conductivity_pair = MaterialLibrary::getThermalConductivityPair(material,300,0);
+    
+    #else
+    
     std::pair<Real,Real> specific_heat_pair =MaterialLibrary::getSpecificHeatPair(material,T,0);
     //Fixed density ...
     std::pair<Real,Real> density_pair = MaterialLibrary::getDensityPair(material,1000,0); 
     std::pair<Real,Real> thermal_conductivity_pair = MaterialLibrary::getThermalConductivityPair(material,T,0);
     
+    #endif
+    
     Real density = density_pair.first;
     Real specific_heat = specific_heat_pair.first;
     Real thermal_conductivity = thermal_conductivity_pair.first;
-            
+    
+    #ifdef NO_MATERIAL_PROPERTIES_DIFFERENTIAL
+
+    Real thermal_conductivity_temperature_derivative = 0;// this->_material_library.getThermalConductivityTemperatureDerivative(material,T,0);
+    Real specific_heat_temperature_derivative = 0; //this->_material_library.getSpecificHeatTemperatureDerivative(material,T,0);
+    Real density_temperature_derivative = 0; //this->_material_library.getDensityTemperatureDerivative(material,T,0);
+        
+    #else
+
     Real thermal_conductivity_temperature_derivative = thermal_conductivity_pair.second;// this->_material_library.getThermalConductivityTemperatureDerivative(material,T,0);
     Real specific_heat_temperature_derivative = thermal_conductivity_pair.second; //this->_material_library.getSpecificHeatTemperatureDerivative(material,T,0);
     Real density_temperature_derivative = density_pair.second; //this->_material_library.getDensityTemperatureDerivative(material,T,0);
+    
+    #endif
+            
+            
     
     MaterialDataPacket packet = MaterialDataPacket(thermal_conductivity, density, specific_heat, thermal_conductivity_temperature_derivative, specific_heat_temperature_derivative, density_temperature_derivative);
     
