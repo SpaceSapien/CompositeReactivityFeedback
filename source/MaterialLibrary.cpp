@@ -989,7 +989,7 @@ MaterialDataPacket MaterialLibrary::getMaterialProperties(const Materials &mater
     #else
 
     Real thermal_conductivity_temperature_derivative = thermal_conductivity_pair.second;// this->_material_library.getThermalConductivityTemperatureDerivative(material,T,0);
-    Real specific_heat_temperature_derivative = thermal_conductivity_pair.second; //this->_material_library.getSpecificHeatTemperatureDerivative(material,T,0);
+    Real specific_heat_temperature_derivative = specific_heat_pair.second; //this->_material_library.getSpecificHeatTemperatureDerivative(material,T,0);
     Real density_temperature_derivative = density_pair.second; //this->_material_library.getDensityTemperatureDerivative(material,T,0);
     
     #endif

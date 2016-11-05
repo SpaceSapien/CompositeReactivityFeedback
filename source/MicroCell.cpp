@@ -243,6 +243,8 @@ MicroSolution MicroCell::solveSecondOrder(const Real &simulation_time_step, cons
             Dimension center_radius = _mesh->getNodeLocation(radial_index);         
             Real internal_power = power_distribution[radial_index] * _mesh->_volume[radial_index];
             
+           
+            
             //Check for boundary conditions
             //If we are at the last node
             if( radial_index == _mesh->numberOfNodes() - 1)
@@ -258,10 +260,12 @@ MicroSolution MicroCell::solveSecondOrder(const Real &simulation_time_step, cons
                 Real outward_distance = _mesh->getNodeLocation(radial_index + 1) - center_radius; 
                 Real outward_dTdr = outward_delta_T / outward_distance; 
                 
+                
                 outward_heat_flux = - _mesh->_outer_surface[radial_index] * outward_dTdr * material_data._thermal_conductivity;                               
             }   
             
-            Real thermal_inertia = (material_data._density * material_data._specific_heat  + temperature * ( material_data._density * material_data._specific_heat_temperature_derivative + material_data._specific_heat * material_data._density_temperature_derivative) ) * _mesh->_volume[radial_index];
+            Real base_thermal_inertia = material_data._density * material_data._specific_heat;
+            Real thermal_inertia = base_thermal_inertia * _mesh->_volume[radial_index];
             
             net_heat_flux = inward_heat_flux + outward_heat_flux + internal_power;   
             dSolution = net_heat_flux / thermal_inertia;
