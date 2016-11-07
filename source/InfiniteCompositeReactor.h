@@ -104,7 +104,7 @@ class InfiniteCompositeReactor
     
     void initializeInifiniteCompositeReactorProblem();
     void plotDelayedPrecursors();
-    void saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature);
+    void saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature, const Real &gamma);
     void createOutputFile();
     void postSimulationProcessing();
     void monteCarloTimeStepSimulationProcessing();

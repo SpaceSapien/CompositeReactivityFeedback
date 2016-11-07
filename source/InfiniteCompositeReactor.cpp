@@ -178,11 +178,11 @@ void InfiniteCompositeReactor::monteCarloTimeStepSimulationProcessing()
     _prompt_life_time_record.push_back(prompt_removal_lifetime_pair);
 
     Real reactivity = (k_eff - 1.0)/k_eff;
-    Real reactivity_uncertainty = std::sqrt( 2 ) * k_eff_sigma;
+    Real reactivity_uncertainty = std::abs( reactivity ) * ( std::abs(k_eff_sigma / ( k_eff - 1)) + std::abs( k_eff_sigma / k_eff ) );
     Real reactivity_pcm = 10000.0 * reactivity;
     Real reactivity_pcm_uncertainty = 10000.0 * reactivity_uncertainty; 
     Real reactivity_cents = reactivity / beta_eff;
-    Real reactivity_cents_uncertainty = std::sqrt( (reactivity_uncertainty / reactivity) * (reactivity_uncertainty / reactivity) + ( beta_eff_sigma / beta_eff) * ( beta_eff_sigma / beta_eff) );
+    Real reactivity_cents_uncertainty = std::abs( reactivity_cents ) * ( std::abs( beta_eff_sigma / beta_eff) + std::abs( reactivity_uncertainty / reactivity ));
 
     std::tuple<Real,Real,Real> reactivity_pcm_pair = std::make_tuple(_transient_time, reactivity_pcm, reactivity_pcm_uncertainty);
     _reactivity_pcm_record.push_back(reactivity_pcm_pair);        
@@ -191,8 +191,9 @@ void InfiniteCompositeReactor::monteCarloTimeStepSimulationProcessing()
    _reactivity_cents_record.push_back(reactivity_cents_pair);
 
     Real hottest_temperature = this->_thermal_solver->_solution[0]; 
-
-    this->saveCurrentData(_transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma, hottest_temperature);
+    Real gamma = this->_monte_carlo_model->_virtual_k_eff_multiplier;
+    
+    this->saveCurrentData(_transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma, hottest_temperature, gamma);
     
     MicroSolution solution = this->_thermal_solver->getCurrentMicrosolution();
     
@@ -218,6 +219,8 @@ void InfiniteCompositeReactor::postSimulationProcessing()
     PythonErrorPlot::plotData( _beta_eff_record,         "Time [s]", "Beta effective",    "",          "Beta-eff vs. Time",                this->_results_directory + "beta-eff-graph.png",                {0, _end_time} );
     PythonPlot::plotData(      _delayed_record,          "Time [s]", "Delayed Precursors",         {}, "Keff vs. Delayed Precursors",      this->_results_directory + "delayed-precursors.png",            {0, _end_time} );
     PythonPlot::createPlots();
+    
+    
 }
 
 bool InfiniteCompositeReactor::significantTemperatureDifference(MicroSolution* comparison)
@@ -460,7 +463,7 @@ void InfiniteCompositeReactor::createOutputFile()
     std::ofstream output_file;
     output_file.open( this->_results_directory + this->_data_file, std::ios::out);
     
-    output_file << "Iteration, Time [s], Timestep [s], Power [W/m^3], k_eff, k_eff sigma, neutron lifetime [s], Neutron Lifetime sigma [s], Beta_eff, Beta_eff sigma, Run Time [s], Edge Temp [K]";
+    output_file << "Iteration, Time [s], Timestep [s], Power [W/m^3], k_eff, k_eff sigma, neutron lifetime [s], Neutron Lifetime sigma [s], Beta_eff, Beta_eff sigma, Run Time [s], Edge Temp [K], Gamma";
     
     for(size_t index = 1; index <= 6; index++ )
     {
@@ -483,7 +486,7 @@ void InfiniteCompositeReactor::createOutputFile()
  * @param beta_eff_sigma
  * @param hot_temperature
  */
-void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature)
+void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature, const Real &gamma)
 {
     std::ofstream output_file;
     std::string file_path = this->_results_directory + this->_data_file;
@@ -499,7 +502,7 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
     std::time_t elapsed_time_since_start =  std::time(nullptr) - InfiniteCompositeReactor::_simulation_start_time;   
     
     
-    output_file << _monte_carlo_number_iterations << ", " << time << ", " << _monte_carlo_time_iteration << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma << ", " << elapsed_time_since_start << ", " << hot_temperature;
+    output_file << _monte_carlo_number_iterations << ", " << time << ", " << _monte_carlo_time_iteration << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma << ", " << elapsed_time_since_start << ", " << hot_temperature << ", " << gamma;
     
     size_t delayed_size = _delayed_record.size();
     

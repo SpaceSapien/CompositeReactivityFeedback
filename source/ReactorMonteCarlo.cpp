@@ -18,6 +18,7 @@
 #include "InputDataFunctions.h"
 #include <chrono>
 #include <thread>
+#include <iomanip>
 #include "InfiniteCompositeReactor.h"
 #include "ReactorMonteCarlo.h"
 #include "SimulationResults.h"
@@ -127,7 +128,7 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     std::string mctal_name =  file_root + ".mctal";
     
     //clean up the previous MCNP data files
-    std::string clean_mcnp_command = "rm " + this->_run_directory + input_file_name + " " + this->_run_directory + output_file_name + " " + this->_run_directory + runtpe_name + " " + this->_run_directory + srctpe_name + " " + this->_run_directory + mctal_name;
+    std::string clean_mcnp_command = "rm " + this->_run_directory + input_file_name + " " + this->_run_directory + output_file_name + " " + this->_run_directory + srctpe_name + " " + this->_run_directory + mctal_name;
     exec(clean_mcnp_command);
     
     //create a symbolic link to the Doppler broadened cross sections
@@ -188,11 +189,12 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     #endif
     
-     //Remove symbolic links to the Doppler broadened cross sections
-    std::string rm_symbolic_link_command = "cd " + this->_run_directory + "; rm otf*txt";
+    //Remove symbolic links to the Doppler broadened cross sections and the source tape
+    //These are the largest files and we don't need them so remove them now
+    std::string rm_symbolic_link_command = "cd " + this->_run_directory + "; rm otf*txt " + runtpe_name;
     exec(rm_symbolic_link_command);
     
-
+    
     //Read the output file
     SimulationResults results = SimulationResults(output_file_name, this->_run_directory );
     return results;
@@ -259,11 +261,11 @@ std::string ReactorMonteCarlo::getSingleCellCard(const Materials &material, cons
         //we want to put our reflecting boundary condition here
         if( cell_number == 1 )
         {
-            cell_card << " " << cell_number << " " << current_zone << " -" << density << " -"  << cell_number << " imp:n=1 TMP=" << temperature*MeVperK << " VOL=" << cell_volume << " $ " << getMaterialName(material) << " T = " << temperature << " K" << " Volume = " << cell_volume << " cm^3 " <<std::endl;
+            cell_card << std::left << " " << std::setw(2) << cell_number << " " << std::setw(2) << current_zone << " " << std::setw(9) << -density << " " << std::setw(3) <<                       "  " << std::setw(4)  << -cell_number << " imp:n=1 TMP=" << std::setw(11) << temperature*MeVperK << " VOL=" << std::setw(11) << cell_volume << " $ " << std::setw(6) << getMaterialName(material) << " T = " << std::setw(8) << temperature << " K" << " Volume = " << std::setw(11) << cell_volume << " cm^3 " << std::endl;
         }
         else
         {
-            cell_card << " " << cell_number << " " << current_zone << " -" << density << " " << ( cell_number -1 )  << " " << " -"  << cell_number << " imp:n=1 TMP=" << temperature*MeVperK << " VOL=" << cell_volume <<" $ " << getMaterialName(material) << " T = " << temperature << " K" << " Volume = " << cell_volume << " cm^3 " << std::endl;
+            cell_card << std::left << " " << std::setw(2) << cell_number << " " << std::setw(2) << current_zone << " " << std::setw(9) << -density << " " << std::setw(3) << ( cell_number -1 )  << " " << std::setw(4)  << -cell_number << " imp:n=1 TMP=" << std::setw(11) << temperature*MeVperK << " VOL=" << std::setw(11) << cell_volume << " $ " << std::setw(6) << getMaterialName(material) << " T = " << std::setw(8) << temperature << " K" << " Volume = " << std::setw(11) << cell_volume << " cm^3 " << std::endl;
         }
 
         cell_number++;
