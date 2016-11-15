@@ -63,7 +63,7 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
     exec( copy_input_file_command );
     
     _monte_carlo_number_iterations = 0;
-    _transient_time = 0;
+    _transient_time = -1;
     
     initializeInifiniteCompositeReactorProblem();
 }
@@ -538,10 +538,15 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
     //time elapsed since the simulation started
     std::time_t elapsed_time_since_start =  std::time(nullptr) - InfiniteCompositeReactor::_simulation_start_time;   
     
-    std::vector<std::vector<Real>> zones = this->_monte_carlo_model->getZoneCellRelativePowerDensity();
-    Real max = zones[0][zones[0].size() - 1];
-    Real min = zones[0][0];
-    Real power_peaking = min/max;
+    Real power_peaking = -1;
+    
+    if(_monte_carlo_model->_tally_cells)
+    {
+        std::vector<std::vector<Real>> zones = this->_monte_carlo_model->getZoneCellRelativePowerDensity();
+        Real max = zones[0][zones[0].size() - 1];
+        Real min = zones[0][0];
+        Real power_peaking = min/max;
+    }
     
     output_file << _monte_carlo_number_iterations << ", " << time << ", " << _monte_carlo_time_iteration << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma << ", " << elapsed_time_since_start << ", " << hot_temperature << ", " << gamma << ", " << power_peaking;
     

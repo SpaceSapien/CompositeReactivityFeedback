@@ -43,5 +43,5 @@ Number of MCNP Cycles: 33                      #cycles - number of cycles to run
 Number of MCNP Cycles for Beta: 33             #cycles - number of cycles to run in a beta effective calculation
 Number CPUs:  32
 
-Tally Cells: false                             #tally the cells in the problem
+Tally Cells: true                             #tally the cells in the problem
 
