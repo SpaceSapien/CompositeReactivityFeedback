@@ -274,14 +274,15 @@ void InfiniteCompositeReactor::temperatureIterationInnerLoop()
         Real current_power = _kinetics_model->solveForPower(_kinetics_thermal_sync_time_step);
         std::vector<Real> power_distribition;
         
+       
         if(_monte_carlo_model->_tally_cells)
         {
             //Get a vector representation of the radial power distribution
-            std::vector<Real> power_distribition = _thermal_solver->getTallyBasedRepresentativeKernelPowerDistribution(tally_power_density_map, current_power );
+            power_distribition = _thermal_solver->getTallyBasedRepresentativeKernelPowerDistribution(tally_power_density_map, current_power );
         }
         else
         {
-            std::vector<Real> power_distribition = _thermal_solver->getRespresentativePowerDistribution( current_power );
+            power_distribition = _thermal_solver->getRespresentativePowerDistribution( current_power );
         }
         //Get the thermal solution
         MicroSolution current_solution = _thermal_solver->solve( _kinetics_thermal_sync_time_step, power_distribition); 

@@ -466,7 +466,7 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const
         mcnp_file << tally_cards;
     }
     
-    mcnp_file << " KCODE 4000 1.5 3 " << number_of_cycles << "  $need at least 30 active cycles to print results" << std::endl;
+    mcnp_file << " KCODE 2000 1.5 3 " << number_of_cycles << "  $need at least 30 active cycles to print results" << std::endl;
     mcnp_file << " KSRC 0 0 0" << std::endl;
     mcnp_file << " print" << std::endl;
     mcnp_file << "c end data" << std::endl;
