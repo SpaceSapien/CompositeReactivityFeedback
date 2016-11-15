@@ -465,11 +465,10 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
             last_power_density = tally_power_density;
 
         } while( (max_relative_residual > 0.005 || average_residual > 0.003) && initial_power_iteration <= 4);
-
-        this->_monte_carlo_model->updateAdjustedCriticalityParameters();    
+            
     }    
         
-    
+    this->_monte_carlo_model->updateAdjustedCriticalityParameters();
      
     
     //Reset the time to zero and then grab the current solution for the Problem
