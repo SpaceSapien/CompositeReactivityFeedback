@@ -128,11 +128,12 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string old_results
 
 void InfiniteCompositeReactor::simulate()
 {
+    this->_transient_time = 0;
     //Save the data for the initial timestep
     this->monteCarloTimeStepSimulationProcessing();
     
     //Simulate the transient the outer loop is the monte carlo simulation
-    for( this->_transient_time = 0; _transient_time < _end_time; _transient_time += _inner_time_step)
+    for( ; _transient_time < _end_time; _transient_time += _inner_time_step)
     {
         if( _monte_carlo_reclaculation_type == MoneCarloRecalculation::Time)
         {
