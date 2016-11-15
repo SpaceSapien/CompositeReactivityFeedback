@@ -59,15 +59,16 @@ public:
     std::vector<Real> _solution; 
     std::vector<Real> _power_distribution; 
     MicroCellBoundaryCondition* _outer_boundary_condition;
-    std::vector<MicroSolution> iterateInitialConditions(const Real &initial_average_power_density);
+    std::vector<MicroSolution> iterateInitialConditions(const std::vector<Real> &initial_average_power_density);
     
     std::vector<Real> getRespresentativePowerDistribution(const Real &average_power_density);
     std::vector<Real> getRespresentativeHomogenizedPowerDistribution(const Real &average_power_density);
-    std::vector<Real> getRepresentativeKernelPowerDistribution(const Real &average_power_density);
-
+    
     void setBoundaryCondition(MicroCellBoundaryCondition* boundary_condition);
     void getAverageTemperature(const int &zone, Real &cell_temperature, Real &cell_volume);
     void getCellTemperature(const int &zone, const int &zone_divisions, const int &current_division, Real &cell_temperature, Real &cell_volume );
+
+    std::vector<Real> getTallyBasedRepresentativeKernelPowerDistribution(const std::vector<std::vector<Real>> &tally_cell_zone_data, const Real &average_power_density);
 
     
 private:
@@ -76,7 +77,7 @@ private:
     Real calculationMaximumResidual(const std::vector<Real> &vector_1, const std::vector<Real> &vector_2, const Real &time_step);
     MicroSolution solveSecondOrder(const Real &simulation_time_step, const std::vector<Real> &power_distribution);
     MicroSolution solveFourthOrder(const Real &simulation_time_step, const std::vector<Real> &power_distribution);
-    MicroSolution presolveSteadyStateAnalytical(const Real &average_power_density);
+    MicroSolution presolveSteadyStateAnalytical(const std::vector<Real> &radial_power_density);
     Real getCellInternalPower(const int &cell, const Real &volumetric_power);
     inline bool inMeshCell(const int &mesh_index, const Dimension &inner_radius,const Dimension &outer_radius) const;
     inline Real overlappingVolumeWithMeshCell(const int &mesh_index, const Dimension &inner_radius,const Dimension &outer_radius) const;

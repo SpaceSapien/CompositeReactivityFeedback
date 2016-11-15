@@ -146,6 +146,8 @@ void InfiniteCompositeReactor::simulate()
         {
             throw "Monte Carlo Iteration Type Unknown";
         }
+        
+        this->monteCarloTimeStepSimulationProcessing();
     }
     
     //Save data and create the graphs for the post simulation data
@@ -218,9 +220,7 @@ void InfiniteCompositeReactor::postSimulationProcessing()
     PythonErrorPlot::plotData( _reactivity_pcm_record,   "Time [s]", "Reactivity [pcm]",    "",        "Reactivity vs. Time",              this->_results_directory + "reactivity-pcm-graph.png",          {0, _end_time} );
     PythonErrorPlot::plotData( _beta_eff_record,         "Time [s]", "Beta effective",    "",          "Beta-eff vs. Time",                this->_results_directory + "beta-eff-graph.png",                {0, _end_time} );
     PythonPlot::plotData(      _delayed_record,          "Time [s]", "Delayed Precursors",         {}, "Keff vs. Delayed Precursors",      this->_results_directory + "delayed-precursors.png",            {0, _end_time} );
-    PythonPlot::createPlots();
-    
-    
+    PythonPlot::createPlots();        
 }
 
 bool InfiniteCompositeReactor::significantTemperatureDifference(MicroSolution* comparison)
@@ -264,16 +264,25 @@ bool InfiniteCompositeReactor::significantTemperatureDifference(MicroSolution* c
 void InfiniteCompositeReactor::temperatureIterationInnerLoop()
 {
     Real last_reported_time = 0;
+    
+    std::vector<std::vector<Real>> tally_power_density_map = _monte_carlo_model->getZoneCellRelativePowerDensity();
         
     //This loop iterates the kinetics and thermal model data
     for( _inner_time_step = 0 ; true /*infinite loop this and exit with a break*/ ; _inner_time_step += _kinetics_thermal_sync_time_step)
     {
         //Solve the kinetics model
         Real current_power = _kinetics_model->solveForPower(_kinetics_thermal_sync_time_step);
-
-        //Get a vector representation of the radial power distribution
-        std::vector<Real> power_distribition = _thermal_solver->getRespresentativePowerDistribution( current_power /* current shape */ );
-
+        std::vector<Real> power_distribition;
+        
+        if(_monte_carlo_model->_tally_cells)
+        {
+            //Get a vector representation of the radial power distribution
+            std::vector<Real> power_distribition = _thermal_solver->getTallyBasedRepresentativeKernelPowerDistribution(tally_power_density_map, current_power );
+        }
+        else
+        {
+            std::vector<Real> power_distribition = _thermal_solver->getRespresentativePowerDistribution( current_power );
+        }
         //Get the thermal solution
         MicroSolution current_solution = _thermal_solver->solve( _kinetics_thermal_sync_time_step, power_distribition); 
 
@@ -304,7 +313,6 @@ void InfiniteCompositeReactor::temperatureIterationInnerLoop()
     _monte_carlo_model->updateAdjustedCriticalityParameters();
     _monte_carlo_time_iteration = _inner_time_step;   
     _monte_carlo_number_iterations++;
-    this->monteCarloTimeStepSimulationProcessing();
 }
 
 void InfiniteCompositeReactor::timeIterationInnerLoop()
@@ -427,10 +435,42 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     //Then crate the MicoCell thermal solver, set the boundary condition and then iterate steady state condition 
     this->_thermal_solver = new MicroCell(this, initial_outer_shell_temperature);
     this->_thermal_solver->setBoundaryCondition(fixed_temperature_boundary_condition);
-    std::vector<MicroSolution> plot =  this->_thermal_solver->iterateInitialConditions(initial_power_density);
+    std::vector<Real> last_power_density = this->_thermal_solver->getRespresentativePowerDistribution(initial_power_density);
+    std::vector<MicroSolution> plot =  this->_thermal_solver->iterateInitialConditions(last_power_density);
+    MicroSolution::plotSolutions(plot,0, this->_results_directory + "initial-pre-tally-solve.png");
     
-    //Save solutions to the graph log
-    MicroSolution::plotSolutions(plot,0, this->_results_directory + "initial-solve.png");  
+    //Define the Monte Carlo Parameters
+    Real starting_k_eff =  _input_file_reader->getInputFileParameter("Starting K-eff",static_cast<Real>(1.01) );   
+    this->_monte_carlo_model = new ReactorMonteCarlo(this, starting_k_eff, this->_results_directory + "run/");   
+    
+    if(_monte_carlo_model->_tally_cells)
+    {
+        Real max_relative_residual, average_residual;
+        int initial_power_iteration = 1;
+
+        //Iterate the power distribution and thermal solutions until it 
+        do
+        {
+            //Run a k-effective calculation to get the tally values to get the power density
+            this->_monte_carlo_model->getRawKeff();
+            std::vector<std::vector<Real>> initial_tally_power_density = this->_monte_carlo_model->getZoneCellRelativePowerDensity();
+            std::vector<Real> tally_power_density = this->_thermal_solver->getTallyBasedRepresentativeKernelPowerDistribution(initial_tally_power_density, initial_power_density);
+            std::vector<MicroSolution> tally_plot =  this->_thermal_solver->iterateInitialConditions(tally_power_density);
+            vector_residuals(last_power_density, tally_power_density,max_relative_residual,average_residual);
+            std::cout<< "Max Power Residual: " << max_relative_residual << " Average Power Residual: " << average_residual << std::endl;
+            
+            //Save solutions to the graph log
+            MicroSolution::plotSolutions(tally_plot,0, this->_results_directory + "initial-solve-" + std::to_string(initial_power_iteration) + ".png"); 
+            ++initial_power_iteration;
+            last_power_density = tally_power_density;
+
+        } while( (max_relative_residual > 0.005 || average_residual > 0.003) && initial_power_iteration <= 4);
+
+        this->_monte_carlo_model->updateAdjustedCriticalityParameters();    
+    }    
+        
+    
+     
     
     //Reset the time to zero and then grab the current solution for the Problem
     _thermal_solver->_current_time = 0;    
@@ -442,9 +482,6 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     MicroCellBoundaryCondition* fixed_flux_boundary_condition = MicroCellBoundaryCondition::getFixedHeatFluxBoundaryConditionFactory(outer_boundary_heat_flux);
     this->_thermal_solver->setBoundaryCondition(fixed_flux_boundary_condition);
     
-    //Define the Monte Carlo Parameters
-    Real starting_k_eff =  _input_file_reader->getInputFileParameter("Starting K-eff",static_cast<Real>(1.01) );    
-    this->_monte_carlo_model = new ReactorMonteCarlo(this, starting_k_eff, this->_results_directory + "run/");   
     
     //Define the kinetics parameters
     this->_kinetics_model = new ReactorKinetics(this,initial_power_density, ReactorKinetics::DelayedPrecursorInitialState::EquilibriumPrecursors);    
@@ -463,7 +500,7 @@ void InfiniteCompositeReactor::createOutputFile()
     std::ofstream output_file;
     output_file.open( this->_results_directory + this->_data_file, std::ios::out);
     
-    output_file << "Iteration, Time [s], Timestep [s], Power [W/m^3], k_eff, k_eff sigma, neutron lifetime [s], Neutron Lifetime sigma [s], Beta_eff, Beta_eff sigma, Run Time [s], Edge Temp [K], Gamma";
+    output_file << "Iteration, Time [s], Timestep [s], Power [W/m^3], k_eff, k_eff sigma, neutron lifetime [s], Neutron Lifetime sigma [s], Beta_eff, Beta_eff sigma, Run Time [s], Edge Temp [K], Gamma, Power Peaking";
     
     for(size_t index = 1; index <= 6; index++ )
     {
@@ -501,8 +538,12 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
     //time elapsed since the simulation started
     std::time_t elapsed_time_since_start =  std::time(nullptr) - InfiniteCompositeReactor::_simulation_start_time;   
     
+    std::vector<std::vector<Real>> zones = this->_monte_carlo_model->getZoneCellRelativePowerDensity();
+    Real max = zones[0][zones[0].size() - 1];
+    Real min = zones[0][0];
+    Real power_peaking = min/max;
     
-    output_file << _monte_carlo_number_iterations << ", " << time << ", " << _monte_carlo_time_iteration << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma << ", " << elapsed_time_since_start << ", " << hot_temperature << ", " << gamma;
+    output_file << _monte_carlo_number_iterations << ", " << time << ", " << _monte_carlo_time_iteration << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma << ", " << elapsed_time_since_start << ", " << hot_temperature << ", " << gamma << ", " << power_peaking;
     
     size_t delayed_size = _delayed_record.size();
     

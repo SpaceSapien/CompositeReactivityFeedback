@@ -51,6 +51,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/source/ReactorMonteCarlo.o \
 	${OBJECTDIR}/source/SimulationResults.o \
 	${OBJECTDIR}/source/Tally.o \
+	${OBJECTDIR}/source/TallyGroup.o \
 	${OBJECTDIR}/source/main.o
 
 
@@ -157,6 +158,11 @@ ${OBJECTDIR}/source/Tally.o: source/Tally.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/Tally.o source/Tally.cpp
+
+${OBJECTDIR}/source/TallyGroup.o: source/TallyGroup.cpp
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/TallyGroup.o source/TallyGroup.cpp
 
 ${OBJECTDIR}/source/main.o: source/main.cpp
 	${MKDIR} -p ${OBJECTDIR}/source

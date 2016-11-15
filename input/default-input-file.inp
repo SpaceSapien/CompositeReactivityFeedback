@@ -20,7 +20,7 @@ Thermal Solver Order: Second
 
 #Before the program starts iterating the transient, it looks for the 
 #Steady State Transient
-Steady State Temperature Solution Max Residual: 0.0002
+Steady State Temperature Solution Max Residual: 0.02
 
 Uranium Enrichment Fraction: 0.2 
 Cells Per Zone: 3
@@ -43,5 +43,5 @@ Number of MCNP Cycles: 33                      #cycles - number of cycles to run
 Number of MCNP Cycles for Beta: 33             #cycles - number of cycles to run in a beta effective calculation
 Number CPUs:  32
 
-Tally Cells: true                             #tally the cells in the problem
+Tally Cells: false                             #tally the cells in the problem
 

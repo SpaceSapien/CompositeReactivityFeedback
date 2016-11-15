@@ -19,6 +19,8 @@
 #include "ReactorKinetics.h"
 #include "PythonPlot.h"
 #include "InfiniteCompositeReactor.h"
+#include "Tally.h"
+#include "TallyGroup.h"
 
 
 int main(int argc, char** argv) 
@@ -72,8 +74,7 @@ int main(int argc, char** argv)
             InfiniteCompositeReactor reactor = InfiniteCompositeReactor(old_results_folder, new_end_time);
             reactor.simulate();
         }
-    }
-
+    }    
 }
 
 
@@ -157,7 +158,7 @@ std::string get_file_text(const std::string& file_path)
     
     while( std::getline(infile,line))
     {
-        file_data << line;
+        file_data << line << std::endl;
     }
     
     
@@ -173,4 +174,54 @@ Real sphere_volume(const Real &radius)
 Real sphere_surface_area(const Real &radius)
 {
     return M_PI * (4.0) * radius*radius;
+}
+
+/**
+ * 
+ * @param vector1  vector of values that should be the same size as the second vector
+ * @param vector2
+ * @param max_relative_residual the normalized max residual of any element
+ * @param average_residual      the avg normalized residual  for all elements
+ */
+void vector_residuals(const std::vector<Real> &vector1, const std::vector<Real> &vector2, Real &max_relative_residual,Real &average_residual)
+{
+    max_relative_residual = 0;
+    average_residual = 0;
+    std::size_t size = vector1.size();
+    
+    if( size == vector2.size() )
+    {
+        for(std::size_t index = 0; index < size; ++index)
+        {
+            Real current_residual;
+            
+            if(vector1[index] != 0)
+            {
+                current_residual = std::abs(vector2[index]/vector1[index] - static_cast<Real>(1.0) );                
+            }
+            else if( vector2[index] == 0 )
+            {
+                current_residual = 0;
+            }
+            else
+            {
+                //might throw an exception here... maybe
+                current_residual = 0;
+            }
+            
+            average_residual += current_residual;
+            
+            if(current_residual > max_relative_residual)
+            {
+                max_relative_residual = current_residual;
+            }
+        }
+        
+        average_residual /= size;
+        
+    }
+    else
+    {
+        throw std::string("Vectors are different Sizes ") + std::to_string(__LINE__) + " " + __FILE__;
+    }
 }

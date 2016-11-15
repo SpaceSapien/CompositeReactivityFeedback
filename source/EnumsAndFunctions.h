@@ -58,6 +58,7 @@ Materials getMaterialFromName(const std::string &material_name);
 
 Real sphere_volume(const Real &radius);
 Real sphere_surface_area(const Real &radius);
+void vector_residuals(const std::vector<Real> &vector1, const std::vector<Real> &vector2, Real &max_relative_residual,Real &average_residual);
 
 #endif /* MATERIALENUM_H */
 

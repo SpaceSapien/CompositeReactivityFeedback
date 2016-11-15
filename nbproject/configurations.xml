@@ -21,6 +21,7 @@
       <itemPath>source/ReactorMonteCarlo.h</itemPath>
       <itemPath>source/SimulationResults.h</itemPath>
       <itemPath>source/Tally.h</itemPath>
+      <itemPath>source/TallyGroup.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -45,6 +46,7 @@
       <itemPath>source/ReactorMonteCarlo.cpp</itemPath>
       <itemPath>source/SimulationResults.cpp</itemPath>
       <itemPath>source/Tally.cpp</itemPath>
+      <itemPath>source/TallyGroup.cpp</itemPath>
       <itemPath>source/main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -177,6 +179,10 @@
       </item>
       <item path="source/Tally.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/TallyGroup.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/TallyGroup.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
@@ -292,6 +298,10 @@
       </item>
       <item path="source/Tally.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/TallyGroup.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/TallyGroup.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
@@ -402,6 +412,10 @@
       <item path="source/Tally.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/Tally.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/TallyGroup.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/TallyGroup.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/main.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -514,6 +528,10 @@
       </item>
       <item path="source/Tally.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/TallyGroup.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/TallyGroup.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
@@ -624,6 +642,10 @@
       <item path="source/Tally.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/Tally.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/TallyGroup.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/TallyGroup.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/main.cpp" ex="false" tool="1" flavor2="0">
       </item>

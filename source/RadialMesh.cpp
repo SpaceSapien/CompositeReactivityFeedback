@@ -2,7 +2,7 @@
 #include "RadialMesh.h"
 #include <cmath>
 
-RadialMesh::RadialMesh(MicroGeometry* geometry,const int &minimum_nodes, const int &total_nodes)
+RadialMesh::RadialMesh(MicroGeometry* geometry,const int &minimum_nodes, const int &total_nodes, const int &cells_per_zone)
 {
     std::size_t number_zones = geometry->_geometry.size();
     
@@ -10,27 +10,28 @@ RadialMesh::RadialMesh(MicroGeometry* geometry,const int &minimum_nodes, const i
     int left_over = total_nodes - number_zones * minimum_nodes;
     //Todo throw error for negative number
     
+    //Sphere square adjustment
     Dimension largest_dimension = geometry->_geometry.back().second * std::pow(6.0/M_PI, 1.0/3.0 );;
     int remaining_nodes = left_over;
     
     Dimension zone_start = 0;
     
-    for(std::size_t current_zone = 0; current_zone < number_zones; current_zone++ )
+    for(std::size_t current_zone = 1; current_zone <= number_zones; current_zone++ )
     {
         Dimension zone_end;
         
         //if we're in the last material zone set the zone_end radius to the equivalent sphere volume to the shell
-        if(current_zone == number_zones - 1)
+        if(current_zone == number_zones )
         {
             zone_end = largest_dimension;        
         }
         else
         {
-            zone_end = geometry->_geometry[current_zone].second;        
+            zone_end = geometry->_geometry[current_zone - 1].second;        
         }
         
         Dimension zone_range = zone_end - zone_start;
-        Materials current_material = geometry->_geometry[current_zone].first;
+        Materials current_material = geometry->_geometry[current_zone - 1].first;
         
         int extra_nodes = std::ceil(remaining_nodes * zone_range/ (largest_dimension - zone_start ) );
         remaining_nodes -= extra_nodes;
@@ -55,6 +56,9 @@ RadialMesh::RadialMesh(MicroGeometry* geometry,const int &minimum_nodes, const i
             _outer_surface.push_back(outer_surface_area);            
             _zone.push_back(current_zone);
             
+            Real fraction_range = ( current_node_location - zone_start) / zone_range ;
+            int current_cell = std::floor( cells_per_zone * fraction_range) + 1;
+            _cell_in_zone.push_back(current_cell);
         }
         
         zone_start = zone_end;

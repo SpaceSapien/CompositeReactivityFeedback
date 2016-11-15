@@ -19,7 +19,7 @@
 #include "MicroCell.h"
 #include "InfiniteCompositeReactor.h"
 #include "SimulationResults.h"
-
+#include "TallyGroup.h"
 
 class InfiniteCompositeReactor;
 
@@ -35,17 +35,24 @@ public:
     Real _current_prompt_neutron_lifetime_sigma;
     Real _current_beta_eff;
     Real _current_beta_eff_sigma;
+    Real _starting_k_eff;
     int _number_cpus;
     int _cells_per_zone;
+    int _number_zones;
     int _k_eff_number_cycles;
     int _beta_eff_number_cycles;
     int _calulate_beta_interval;
     int _number_of_keff_calculations;
+    
     bool _tally_cells;
+    int _tally_energy_bins;
+    
+    std::vector<TallyGroup*> _tally_groups;
     
     std::string _run_directory;
     
-    ReactorMonteCarlo();
+   
+    ~ReactorMonteCarlo();
     ReactorMonteCarlo(InfiniteCompositeReactor* reactor, const Real &starting_k_effective,const std::string &run_directory);
     void createMCNPOutputFile(const std::string &run_title, const std::string &file_name,const int &number_cycles, const bool &delated_neutrons = true);
     void updateAdjustedCriticalityParameters();
@@ -65,7 +72,10 @@ public:
     std::string getTallyCards();
     std::string getSingleCellCard(const Materials &material, const int &current_zone, int &cell_number );
     
+    void createTallyOutputFile(std::string file_name = "tally-data.csv");
+    void outputTalliesToFile(TallyGroup* tally_group, std::string file_name = "tally-data.csv");
     
+    std::vector< std::vector<Real> > getZoneCellRelativePowerDensity();
     
 private:
     

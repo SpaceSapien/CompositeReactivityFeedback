@@ -30,8 +30,9 @@ public :
     std::vector<Real> _inner_surface;
     std::vector<Real> _outer_surface;
     std::vector<int> _zone;
+    std::vector<int> _cell_in_zone;
     
-    RadialMesh(MicroGeometry* geometry,const int &minumum_nodes_per_cell,const int &total_cells);
+    RadialMesh(MicroGeometry* geometry,const int &minumum_nodes_per_cell,const int &total_cells, const int &cells_per_zone);
     
     std::size_t numberOfNodes() const;        
     void pushBack(const Dimension &dimension, const Materials &material);

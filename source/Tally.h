@@ -20,11 +20,22 @@ class Tally
 public:
     
     std::string _tally_name;
-    Real _time;
-    std::vector<Real> _energy_bin_tally_counts;
-    std::vector<Real> _energies_bins;
+   
+    std::vector<Real> _energy_bins;
+    std::vector<Real> _energy_bin_uncertainties;
+    std::vector<Real> _energy_bin_values;
+    Real _value;
+    Real _uncertainty;
     
-    Tally();
+    Tally(Real value, Real uncertainty, std::string tally_name);
+    Tally(Real value, Real uncertainty, std::vector<Real> energy_bins, std::vector<Real> energy_values, std::vector<Real> energy_uncertainty, std::string tally_name); 
+    
+    void printTallyInfo(bool display_energy_bins = false);
+    
+    int energyBinSize();
+    
+    static Tally* getMCNPTally(std::string tally_id, std::string mcnp_file);
+    static std::vector<Real> processMCTALData(std::string top_tag, std::string tally_string);
     
 private:
 

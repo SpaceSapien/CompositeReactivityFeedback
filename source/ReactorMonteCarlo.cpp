@@ -22,8 +22,15 @@
 #include "InfiniteCompositeReactor.h"
 #include "ReactorMonteCarlo.h"
 #include "SimulationResults.h"
+#include "TallyGroup.h"
 
-ReactorMonteCarlo::ReactorMonteCarlo() {}
+ReactorMonteCarlo::~ReactorMonteCarlo() 
+{
+    for(std::size_t index = 0; index < _tally_groups.size(); ++index)
+    {
+        delete _tally_groups[index];
+    }
+}
 
 ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Real &starting_k_eff, const  std::string &run_directory)
 {
@@ -36,20 +43,21 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
     
     //Cells per zone splits each zone up into multiple cells
     _cells_per_zone = this->_reactor->_input_file_reader->getInputFileParameter("Cells Per Zone", 1 );  
-    
+    _number_zones = _reactor->_micro_sphere_geometry->_geometry.size();
     //Cells per zone splits each zone up into multiple cells
     _number_cpus = this->_reactor->_input_file_reader->getInputFileParameter("Number CPUs", 32 );  
     _k_eff_number_cycles = this->_reactor->_input_file_reader->getInputFileParameter("Number of MCNP Cycles", 60 );  
     _beta_eff_number_cycles = this->_reactor->_input_file_reader->getInputFileParameter("Number of MCNP Cycles for Beta", 600 );  
     _calulate_beta_interval = this->_reactor->_input_file_reader->getInputFileParameter("Keff Calculation Per Beta Eff Calculation",0);
     _tally_cells = this->_reactor->_input_file_reader->getInputFileParameter("Tally Cells", false);
-        
-    BetaSimulationResults beta_results = getRawKeffAndBetaEff();
+    _tally_energy_bins = this->_reactor->_input_file_reader->getInputFileParameter("Tally Energy Bins", 40);   
+    _starting_k_eff = starting_k_eff;
     
+    _current_beta_eff = -1;
+    _current_beta_eff_sigma = -1;
+    _virtual_k_eff_multiplier = -1;
+    _number_of_keff_calculations = 0;
     
-    _virtual_k_eff_multiplier = starting_k_eff / beta_results._with_delayed_neutrons._k_eff;  
-    this->updateCurrentValuesFromResults(beta_results);
-    this->_number_of_keff_calculations = 1;
 }
 
 void ReactorMonteCarlo::updateCurrentValuesFromResults(const BetaSimulationResults &beta_results)
@@ -61,6 +69,12 @@ void ReactorMonteCarlo::updateCurrentValuesFromResults(const BetaSimulationResul
 
 void ReactorMonteCarlo::updateCurrentValuesFromResults(const SimulationResults &results)
 {
+    if( _virtual_k_eff_multiplier < 0)
+    {    
+        _virtual_k_eff_multiplier = _starting_k_eff / results._k_eff;  
+        _number_of_keff_calculations = 1;
+    }
+    
     _current_k_eff = results._k_eff * _virtual_k_eff_multiplier;
     _current_prompt_neutron_lifetime = results._prompt_neutron_lifetime;
     _current_k_eff_sigma = results._k_eff_sigma * _virtual_k_eff_multiplier;
@@ -75,7 +89,7 @@ void ReactorMonteCarlo::updateCurrentValuesFromResults(const SimulationResults &
  */
 void ReactorMonteCarlo::updateAdjustedCriticalityParameters()
 {
-    if( _calulate_beta_interval <= 0 || _number_of_keff_calculations % _calulate_beta_interval == 0 )
+    if( _calulate_beta_interval <= 0 || _number_of_keff_calculations % _calulate_beta_interval == 0 || _current_beta_eff < 0 )
     {
         BetaSimulationResults beta_results = this->getRawKeffAndBetaEff();
         this->updateCurrentValuesFromResults(beta_results);
@@ -189,6 +203,13 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     #endif
     
+    //If we have the tally set take the results of the tally
+    if(_tally_cells)
+    {  
+        TallyGroup* tally_group = TallyGroup::MCNPTallyGroupFactory( _run_directory + mctal_name, _number_zones, _cells_per_zone, _reactor->_transient_time);
+        _tally_groups.push_back(tally_group);
+        this->outputTalliesToFile(tally_group, _reactor->_results_directory + "tallydata.csv");
+    }
     //Remove symbolic links to the Doppler broadened cross sections and the source tape
     //These are the largest files and we don't need them so remove them now
     std::string rm_symbolic_link_command = "cd " + this->_run_directory + "; rm otf*txt " + runtpe_name;
@@ -201,6 +222,43 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
         
 }
 
+std::vector< std::vector<Real> > ReactorMonteCarlo::getZoneCellRelativePowerDensity()
+{
+    std::vector<std::vector<Real>> cell_zone_power_densities = std::vector<std::vector<Real>>();
+    
+    for(int zone = 1; zone <= _number_zones; zone++)
+    {
+        std::vector<Real> cell_power_densities = std::vector<Real>();
+
+        for( int cell = 1; cell <= _cells_per_zone; ++cell)
+        {   
+            if(! _tally_cells || _tally_groups.size() == 0)
+            {
+                
+                if( cell == 1 && zone == 1)
+                {
+                    cell_power_densities.push_back(static_cast<Real>(1.0));
+                }
+                else
+                {
+                    cell_power_densities.push_back(static_cast<Real>(0.0));
+                }
+            }
+            else
+            {
+                TallyGroup* latest_tally_group = this->_tally_groups.back();    
+                Real power_density = latest_tally_group->_fission_tallies[ (zone-1)*_cells_per_zone + (cell-1) ]->_value;
+                cell_power_densities.push_back(power_density);
+            }
+            
+        }
+        
+        cell_zone_power_densities.push_back(cell_power_densities);
+    }
+    
+    return cell_zone_power_densities;
+}
+
 std::string ReactorMonteCarlo::getMaterialCards()
 {
     std::stringstream material_cards, otfdb_card;
@@ -208,9 +266,9 @@ std::string ReactorMonteCarlo::getMaterialCards()
     Real enrichment_fraction = _reactor->_input_file_reader->getInputFileParameter("Uranium Enrichment Fraction", static_cast<Real>(0.2) );
 
     std::vector<std::pair<Materials, Dimension> > geometry_data = _reactor->_micro_sphere_geometry->_geometry;
-    size_t number_zones = geometry_data.size();   
+     
        
-    for( size_t index = 0; index < number_zones  ; index++ )
+    for( size_t index = 0; index < _number_zones  ; index++ )
     {
         size_t current_zone = index + 1;
     
@@ -315,7 +373,7 @@ std::string ReactorMonteCarlo::getTallyCards()
         }
     }
     
-    tally_cards << " E0 0.00000001 45ILOG 10" << std::endl;
+    tally_cards << " E0 0.000000001 " + std::to_string(_tally_energy_bins - 2) + "ILOG 10" << std::endl;
     tally_cards << " PRDMP   j j 1 		$write mctal file" << std::endl;
     
     return tally_cards.str(); 
@@ -327,10 +385,10 @@ std::string ReactorMonteCarlo::getSurfaceCards()
     
     int surface_card_number = 1;
     std::vector<std::pair<Materials, Dimension> > geometry_data = _reactor->_micro_sphere_geometry->_geometry;
-    int number_zones = geometry_data.size();   
+    
     //std::string shape_type;        
     
-    for( int index = 0; index < number_zones  ; index++ )
+    for( int index = 0; index < _number_zones  ; index++ )
     {
         int current_zone = index + 1;       
         Real last_zone_shell_radius = 0;
@@ -347,7 +405,7 @@ std::string ReactorMonteCarlo::getSurfaceCards()
            Real surface_radius = last_zone_shell_radius + (zone_shell_radius - last_zone_shell_radius ) * (static_cast<Real>(current_surface)/static_cast<Real>(_cells_per_zone));
             
             //we want to put our reflecting boundary condition here
-           if( current_zone == number_zones && current_surface == _cells_per_zone)
+           if( current_zone == _number_zones && current_surface == _cells_per_zone)
            {
                Real box_edge = surface_radius*2;
                Real half_box_edge = surface_radius;
@@ -408,7 +466,7 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const
         mcnp_file << tally_cards;
     }
     
-    mcnp_file << " KCODE 1000 1.5 3 " << number_of_cycles << "  $need at least 30 active cycles to print results" << std::endl;
+    mcnp_file << " KCODE 4000 1.5 3 " << number_of_cycles << "  $need at least 30 active cycles to print results" << std::endl;
     mcnp_file << " KSRC 0 0 0" << std::endl;
     mcnp_file << " print" << std::endl;
     mcnp_file << "c end data" << std::endl;
@@ -419,4 +477,30 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const
     mcnp_input_file.close();
     
     std::cout<<mcnp_file.str();
+}
+
+void ReactorMonteCarlo::createTallyOutputFile(std::string tally_file_name)
+{
+    std::ofstream output_file;
+    output_file.open( tally_file_name, std::ios::out);
+    
+    output_file << "Time [s], Zone, Cell, Value, Sigma";
+    
+    for(size_t index = 0; index < _tally_energy_bins; index++ )
+    {
+        output_file << ",Energy-" << index <<" [MeV],value-" << index << ",sigma-" << index;
+    }
+    
+    output_file << std::endl;    
+    output_file.close();
+}
+
+void ReactorMonteCarlo::outputTalliesToFile(TallyGroup* tally_group, std::string file_path)
+{
+    if(!file_exists(file_path))
+    {
+        this->createTallyOutputFile(file_path);
+    }
+    
+    tally_group->outputToFile(file_path);
 }

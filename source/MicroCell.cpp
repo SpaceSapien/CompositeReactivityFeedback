@@ -42,7 +42,9 @@ MicroCell::MicroCell(InfiniteCompositeReactor* reactor,const Real &initial_tempe
     //Mesh Setup
     _number_mesh_nodes = _reactor->_input_file_reader->getInputFileParameter("Thermal Mesh Size", static_cast<int>(100) );
     Real min_nodes_per_zone = _reactor->_input_file_reader->getInputFileParameter("Minimum Elements Per Zone", static_cast<int>(6) );
-    _mesh = new RadialMesh(_reactor->_micro_sphere_geometry,min_nodes_per_zone, _number_mesh_nodes);
+    
+    int cells_per_zone = this->_reactor->_input_file_reader->getInputFileParameter("Cells Per Zone", 1 );
+    _mesh = new RadialMesh(_reactor->_micro_sphere_geometry,min_nodes_per_zone, _number_mesh_nodes, cells_per_zone);
     _solution.resize( _mesh->numberOfNodes(), initial_temperature );
     
     //Boundary Condition   
@@ -57,11 +59,8 @@ MicroCell::~MicroCell()
 }
 
 
-MicroSolution MicroCell::presolveSteadyStateAnalytical(const Real &average_power_density)
+MicroSolution MicroCell::presolveSteadyStateAnalytical(const std::vector<Real> &power_distribution)
 {
-
-    std::vector<Real> power_distribution = this->getRepresentativeKernelPowerDistribution(average_power_density);
-    
     for( int radial_index = _number_mesh_nodes - 2; radial_index >= 0; --radial_index )
     {
         Dimension radial_position = _mesh->getNodeLocation(radial_index);
@@ -311,11 +310,10 @@ MaterialDataPacket MicroCell::testMaterialProperties(const Real &radius)
 }
 
 
-std::vector<MicroSolution> MicroCell::iterateInitialConditions(const Real &initial_average_power_density)
+std::vector<MicroSolution> MicroCell::iterateInitialConditions(const std::vector<Real> &power_distribution)
 {
-    MicroSolution initial_solution = this->presolveSteadyStateAnalytical(initial_average_power_density);
+    MicroSolution initial_solution = this->presolveSteadyStateAnalytical(power_distribution);
     
-    std::vector<Real> power_distribution =  this->getRespresentativePowerDistribution(initial_average_power_density);    
     std::vector<MicroSolution> solutions = std::vector<MicroSolution>();
     solutions.push_back(initial_solution);
     
@@ -490,19 +488,6 @@ void MicroCell::getAverageTemperature(const int &zone, Real &cell_temperature, R
 
 std::vector<Real> MicroCell::getRespresentativePowerDistribution(const Real &average_power_density)
 {
-    #ifdef HOMOGENIZE_POWER
-
-    return this->getRespresentativeHomogenizedPowerDistribution(average_power_density);
-    
-    #else
-
-    return this->getRepresentativeKernelPowerDistribution(average_power_density);
-    
-    #endif
-}
-
-std::vector<Real> MicroCell::getRepresentativeKernelPowerDistribution(const Real &average_power_density)
-{
     //Allocate the space for the power distribution
     std::vector<Real> power_distribution = std::vector<Real>();
     Dimension number_points = _mesh->numberOfNodes();
@@ -514,9 +499,10 @@ std::vector<Real> MicroCell::getRepresentativeKernelPowerDistribution(const Real
     Real kernel_power = average_power_density * 8 * pow(half_box_edge,3)/sphere_volume(fuel_kernel_radius);
     Real power = 0;
     
+    
     for( size_t index = 0; index < number_points; ++index)
     {
-        if( _mesh->_zone[index] == 0  )
+        if( _mesh->_zone[index] == 1  )
         {
             power = kernel_power;           
         }
@@ -529,6 +515,44 @@ std::vector<Real> MicroCell::getRepresentativeKernelPowerDistribution(const Real
     }
     
     return power_distribution;
+    
+    
+    
+}
+
+std::vector<Real> MicroCell::getTallyBasedRepresentativeKernelPowerDistribution(const std::vector<std::vector<Real>> &tally_cell_zone_data, const Real &average_power_density)
+{
+    //Allocate the space for the power distribution
+    std::vector<Real> power_distribution = std::vector<Real>();
+    Dimension number_points = _mesh->numberOfNodes();
+    
+    power_distribution.reserve( number_points);    
+    
+    Real total_volume = 0;
+    Real proportional_power = 0;
+    
+    for( size_t index = 0; index < number_points; ++index)
+    {
+        int cell_in_zone = _mesh->_cell_in_zone[index];
+        int zone = _mesh->_zone[index];
+        
+        Real node_power_density = tally_cell_zone_data[zone - 1][cell_in_zone - 1];
+        Real node_volume = _mesh->_volume[index];
+        Real node_proportional_power = node_power_density * node_volume;
+        power_distribution.push_back(tally_cell_zone_data[zone - 1][cell_in_zone - 1]);  
+        proportional_power += node_proportional_power;
+        total_volume += node_volume;
+    }
+    
+    const Real power_multiplier = average_power_density * total_volume / proportional_power;
+    
+    for( size_t index = 0; index < number_points; ++index)
+    {
+         power_distribution[index] *= power_multiplier;
+    }    
+    
+    return power_distribution;
+    
 }
 
 
