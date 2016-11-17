@@ -225,3 +225,18 @@ void vector_residuals(const std::vector<Real> &vector1, const std::vector<Real> 
         throw std::string("Vectors are different Sizes ") + std::to_string(__LINE__) + " " + __FILE__;
     }
 }
+
+Real vector_max(const std::vector<Real> &vector)
+{
+    Real max = vector[0];
+
+    for(std::size_t index = 1; index < vector.size(); ++index )
+    {
+        if( vector[index] > max)
+        {
+            max = vector[index];
+        }
+    }
+    
+    return max;    
+}

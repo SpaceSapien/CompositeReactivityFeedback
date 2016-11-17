@@ -226,35 +226,55 @@ std::vector< std::vector<Real> > ReactorMonteCarlo::getZoneCellRelativePowerDens
 {
     std::vector<std::vector<Real>> cell_zone_power_densities = std::vector<std::vector<Real>>();
     
+    Real maximum_power_density = -1;
+    
+    //Go through each zone and each cell in each zone 
     for(int zone = 1; zone <= _number_zones; zone++)
     {
         std::vector<Real> cell_power_densities = std::vector<Real>();
 
         for( int cell = 1; cell <= _cells_per_zone; ++cell)
         {   
+            Real power_density;
+            
+            //If no tallies set up so that the first zone is powered
             if(! _tally_cells || _tally_groups.size() == 0)
             {
                 
                 if( cell == 1 && zone == 1)
                 {
-                    cell_power_densities.push_back(static_cast<Real>(1.0));
+                    power_density = 1.0;
                 }
                 else
                 {
-                    cell_power_densities.push_back(static_cast<Real>(0.0));
+                    power_density = 0.0;
                 }
             }
+            //Otherwise use tallies
             else
             {
                 TallyGroup* latest_tally_group = this->_tally_groups.back();    
-                Real power_density = latest_tally_group->_fission_tallies[ (zone-1)*_cells_per_zone + (cell-1) ]->_value;
-                cell_power_densities.push_back(power_density);
+                power_density = latest_tally_group->_fission_tallies[ (zone-1)*_cells_per_zone + (cell-1) ]->_value;               
             }
             
+            if(power_density > maximum_power_density)
+            {
+                maximum_power_density = power_density;
+            }
+            
+            cell_power_densities.push_back(power_density);            
         }
         
         cell_zone_power_densities.push_back(cell_power_densities);
     }
+    
+    for(int zone = 0; zone < _number_zones; ++zone)
+    {
+        for( int cell = 0; cell < _cells_per_zone; ++cell)
+        {               
+            cell_zone_power_densities[zone][cell] = cell_zone_power_densities[zone][cell]/maximum_power_density;
+        }
+     }
     
     return cell_zone_power_densities;
 }
@@ -484,7 +504,7 @@ void ReactorMonteCarlo::createTallyOutputFile(std::string tally_file_name)
     std::ofstream output_file;
     output_file.open( tally_file_name, std::ios::out);
     
-    output_file << "Time [s], Zone, Cell, Value, Sigma";
+    output_file << "Time [s], Name, Zone, Cell, Value, Sigma";
     
     for(size_t index = 0; index < _tally_energy_bins; index++ )
     {

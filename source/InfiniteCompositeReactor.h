@@ -103,6 +103,7 @@ class InfiniteCompositeReactor
     bool significantTemperatureDifference(MicroSolution* comparison);
     
     void initializeInifiniteCompositeReactorProblem();
+    void solveForSteadyStatePowerDistribution(const std::vector<Real> &homogenous_power_density, const Real &initial_power_density);
     void plotDelayedPrecursors();
     void saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature, const Real &gamma);
     void createOutputFile();

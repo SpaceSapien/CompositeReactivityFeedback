@@ -319,6 +319,7 @@ std::vector<MicroSolution> MicroCell::iterateInitialConditions(const std::vector
     
     Real solution_time_step = 0.05;
     Real max_residual = 1;
+    Real avg_residual = 0;
     Real index = 0;
     Real desired_residual = _reactor->_input_file_reader->getInputFileParameter("Steady State Temperature Solution Max Residual", static_cast<Real>(0.005) );
     
@@ -330,7 +331,7 @@ std::vector<MicroSolution> MicroCell::iterateInitialConditions(const std::vector
        if(index > 0)
        {
             //calculate the maximum change in solution from previous to new 
-            max_residual =  calculationMaximumResidual(solution._solution, solutions.back()._solution, solution_time_step);
+            vector_residuals(solution._solution, solutions.back()._solution, max_residual, avg_residual);
             std::cout<<"Residual: " << max_residual << " Time Step: " << solution_time_step << std::endl;
        }
        solutions.push_back(solution);
@@ -340,33 +341,6 @@ std::vector<MicroSolution> MicroCell::iterateInitialConditions(const std::vector
     }
        
     return solutions;
-}
-
-Real MicroCell::calculationMaximumResidual(const std::vector<Real> &vector_1, const std::vector<Real> &vector_2, const Real &time_step)
-{
-    size_t vector_1_size = vector_1.size();
-    size_t vector_2_size = vector_2.size();
-    
-    if( vector_1_size == vector_2_size )
-    {
-        Real maximum_residual = 0;    
-        
-        for(int index = 0; index < vector_1_size; index++)
-        {
-            Real index_residual = std::abs( 1.0 - 1.0 * vector_2[index]/vector_1[index] );
-            
-            if( index_residual > maximum_residual)
-            {
-                maximum_residual = index_residual;
-            }
-        }
-        
-        return maximum_residual;
-    }
-    else
-    {
-        return -1;
-    }
 }
 
 void MicroCell::getCellTemperature(const int &zone, const int &zone_divisions, const int &current_division, Real &cell_temperature, Real &cell_volume )
@@ -571,4 +545,47 @@ std::vector<Real> MicroCell::getRespresentativeHomogenizedPowerDistribution(cons
     }
     
     return power_distribution;
+}
+
+void MicroCell::logPowerDensity( const std::string &output_file_name)
+{
+    std::vector<std::vector<Real>> power_density_data = this->_reactor->_monte_carlo_model->getZoneCellRelativePowerDensity();
+    
+    std::string output_file_path = this->_reactor->_results_directory + output_file_name;
+    std::ofstream output_file;
+    
+    //If the file exists append to it else create it
+    if(! file_exists(output_file_path) )
+    {
+        output_file.open( output_file_path,std::ios::out);
+        output_file << "Time [s] ";
+        
+        
+        for(std::size_t i_index=0; i_index < power_density_data.size(); ++i_index)
+        {
+            for(std::size_t j_index=0; j_index < power_density_data[i_index].size(); ++j_index)
+            {
+                output_file << ", Zone-" << (i_index + 1) << "-" << (j_index + 1);
+            }
+        }
+        
+        output_file << std::endl;
+    }
+    //the file exists just append to it
+    else
+    {
+        output_file.open( output_file_path, std::ios::app);
+    }
+        
+    output_file << this->_reactor->_transient_time;
+    
+    for(std::size_t i_index=0; i_index < power_density_data.size(); ++i_index)
+    {
+        for(std::size_t j_index=0; j_index < power_density_data[i_index].size(); ++j_index)
+        {
+            output_file << ", " << power_density_data[i_index][j_index] ;
+        }
+    }    
+    output_file << std::endl;
+    output_file.close();    
 }

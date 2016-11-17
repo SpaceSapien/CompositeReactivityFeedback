@@ -206,6 +206,8 @@ void InfiniteCompositeReactor::monteCarloTimeStepSimulationProcessing()
     //Save the current thermal solution to the output file
     std::vector<MicroSolution> current_solution = { solution };
     MicroSolution::saveSolutions( current_solution, this->_results_directory );
+    
+    this->_thermal_solver->logPowerDensity();
         
 }
 
@@ -437,8 +439,8 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     //Then crate the MicoCell thermal solver, set the boundary condition and then iterate steady state condition 
     this->_thermal_solver = new MicroCell(this, initial_outer_shell_temperature);
     this->_thermal_solver->setBoundaryCondition(fixed_temperature_boundary_condition);
-    std::vector<Real> last_power_density = this->_thermal_solver->getRespresentativePowerDistribution(initial_power_density);
-    std::vector<MicroSolution> plot =  this->_thermal_solver->iterateInitialConditions(last_power_density);
+    std::vector<Real> homogenous_power_density = this->_thermal_solver->getRespresentativePowerDistribution(initial_power_density);
+    std::vector<MicroSolution> plot =  this->_thermal_solver->iterateInitialConditions(homogenous_power_density);
     MicroSolution::plotSolutions(plot,0, this->_results_directory + "initial-pre-tally-solve.png");
     
     //Define the Monte Carlo Parameters
@@ -447,27 +449,7 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     
     if(_monte_carlo_model->_tally_cells)
     {
-        Real max_relative_residual, average_residual;
-        int initial_power_iteration = 1;
-
-        //Iterate the power distribution and thermal solutions until it 
-        do
-        {
-            //Run a k-effective calculation to get the tally values to get the power density
-            this->_monte_carlo_model->getRawKeff();
-            std::vector<std::vector<Real>> initial_tally_power_density = this->_monte_carlo_model->getZoneCellRelativePowerDensity();
-            std::vector<Real> tally_power_density = this->_thermal_solver->getTallyBasedRepresentativeKernelPowerDistribution(initial_tally_power_density, initial_power_density);
-            std::vector<MicroSolution> tally_plot =  this->_thermal_solver->iterateInitialConditions(tally_power_density);
-            vector_residuals(last_power_density, tally_power_density,max_relative_residual,average_residual);
-            std::cout<< "Max Power Residual: " << max_relative_residual << " Average Power Residual: " << average_residual << std::endl;
-            
-            //Save solutions to the graph log
-            MicroSolution::plotSolutions(tally_plot,0, this->_results_directory + "initial-solve-" + std::to_string(initial_power_iteration) + ".png"); 
-            ++initial_power_iteration;
-            last_power_density = tally_power_density;
-
-        } while( (max_relative_residual > 0.005 || average_residual > 0.003) && initial_power_iteration <= 4);
-            
+        this->solveForSteadyStatePowerDistribution(homogenous_power_density,initial_power_density);            
     }    
         
     this->_monte_carlo_model->updateAdjustedCriticalityParameters();
@@ -494,6 +476,31 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
         
    
 
+}
+
+void InfiniteCompositeReactor::solveForSteadyStatePowerDistribution(const std::vector<Real> &homogenous_power_density, const Real &initial_power_density)
+{
+    std::vector<Real> last_power_density(homogenous_power_density);
+    Real max_relative_residual, average_residual;
+    int initial_power_iteration = 1;
+
+    //Iterate the power distribution and thermal solutions until it 
+    do
+    {
+        //Run a k-effective calculation to get the tally values to get the power density
+        this->_monte_carlo_model->getRawKeff();
+        std::vector<std::vector<Real>> initial_tally_power_density = this->_monte_carlo_model->getZoneCellRelativePowerDensity();
+        std::vector<Real> tally_power_density = this->_thermal_solver->getTallyBasedRepresentativeKernelPowerDistribution(initial_tally_power_density, initial_power_density);
+        std::vector<MicroSolution> tally_plot =  this->_thermal_solver->iterateInitialConditions(tally_power_density);
+        vector_residuals(last_power_density, tally_power_density,max_relative_residual,average_residual);
+        std::cout<< "Max Power Residual: " << max_relative_residual << " Average Power Residual: " << average_residual << std::endl;
+
+        //Save solutions to the graph log
+        MicroSolution::plotSolutions(tally_plot,0, this->_results_directory + "initial-solve-" + std::to_string(initial_power_iteration) + ".png"); 
+        ++initial_power_iteration;
+        last_power_density = tally_power_density;
+
+    } while( (max_relative_residual > 0.005 || average_residual > 0.003) && initial_power_iteration <= 4);
 }
 
 void InfiniteCompositeReactor::createOutputFile()

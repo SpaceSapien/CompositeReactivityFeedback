@@ -187,15 +187,20 @@ std::string PythonPlot::commandLinePlotData(const std::vector<std::vector<Real>>
  */
 std::string PythonPlot::commandLinePlotData(const std::vector<Real> &data_set)
 {
-    std::string data_string;
+    std::stringstream data_stream;
+    data_stream << std::scientific;
     
     //print the data
-    for( int index = 0; index < data_set.size(); index++ )
+    for( std::size_t index = 1; index < data_set.size(); index++ )
     {
-        data_string += doubleToScientificString( data_set[index] ) + " ";
+        Real data = data_set[index];
+        std::string data_str = std::to_string(data) + " ";
+        data_stream << data_str;        
     }  
 
+    std::string data_string = data_stream.str();    
     return data_string;
+            
 }
 
 /**

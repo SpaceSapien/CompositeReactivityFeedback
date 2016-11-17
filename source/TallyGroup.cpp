@@ -50,8 +50,12 @@ void TallyGroup::outputToFile(const std::string &file_path)
         {
             int current_zone = index / _cells_per_zone + 1;
             int current_cell = index % _cells_per_zone + 1;
-            std::string flux_location =  "Flux-" + std::to_string(current_zone) + "-" + std::to_string(current_cell);
-            std::string fission_location =  "Fission-" + std::to_string(current_zone) + "-" + std::to_string(current_cell);
+            std::string zone_str = std::to_string(current_zone);
+            std::string cell_str = std::to_string(current_cell);
+            
+            
+            std::string flux_location =  "Flux-" + zone_str + "-" + cell_str + ", " + zone_str + ", " + cell_str;
+            std::string fission_location =  "Fission-" + zone_str + "-" +cell_str + ", " + zone_str + ", " + cell_str; ;
             
             Tally *flux_tally = _flux_tallies[index];
             Tally *fission_tally = _fission_tallies[index];
