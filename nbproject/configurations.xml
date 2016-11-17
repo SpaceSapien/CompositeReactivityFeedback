@@ -64,7 +64,6 @@
     <itemPath>input/default-input-file.inp</itemPath>
     <itemPath>job-submission/mc-submission-script.sh</itemPath>
     <itemPath>job-submission/practice-cluster-submission-script.sh</itemPath>
-    <itemPath>python/recreate-plot.py</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>source</Elem>
@@ -101,8 +100,6 @@
             ex="false"
             tool="3"
             flavor2="0">
-      </item>
-      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -221,8 +218,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
@@ -335,8 +330,6 @@
             ex="false"
             tool="3"
             flavor2="0">
-      </item>
-      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -451,8 +444,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
@@ -565,8 +556,6 @@
             ex="false"
             tool="3"
             flavor2="0">
-      </item>
-      <item path="python/recreate-plot.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>

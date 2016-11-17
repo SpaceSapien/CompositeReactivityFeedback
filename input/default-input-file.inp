@@ -30,7 +30,7 @@ Keff Calculation Per Beta Eff Calculation: 20   # calculating the beta is expens
 
 #Options: Time and Temperature
 Monte Carlo Recalculation Type: Temperature
-MC Recalc Delta T: 10  # K
+MC Recalc Delta T: 25  # K
 #Monte Carlo Recalculation Timestep: 0.005      #s
 
 Kinetics Time Iteration: 1e-9                   #s
