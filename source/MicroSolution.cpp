@@ -113,11 +113,11 @@ void MicroSolution::saveSolutions(const std::vector<MicroSolution> &plot_data_ve
     {
         output_file.open( save_folder + save_file_name,std::ios::out);
         
-        output_file << -1 << ", ";
+        output_file << "-1";
         
         for( size_t i_index = 0; i_index < grid_size; i_index++ )
         {
-            output_file << plot_data_vector[0]._grid[i_index] << ", ";
+            output_file << ", " << plot_data_vector[0]._grid[i_index];
         }
         
         output_file << std::endl;

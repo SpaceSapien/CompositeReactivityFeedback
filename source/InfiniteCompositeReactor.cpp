@@ -130,11 +130,13 @@ void InfiniteCompositeReactor::simulate()
 {
     this->_transient_time = 0;
     //Save the data for the initial timestep
-    this->monteCarloTimeStepSimulationProcessing();
+    
     
     //Simulate the transient the outer loop is the monte carlo simulation
     for( ; _transient_time < _end_time; _transient_time += _inner_time_step)
     {
+        this->monteCarloTimeStepSimulationProcessing();
+        
         if( _monte_carlo_reclaculation_type == MoneCarloRecalculation::Time)
         {
             this->timeIterationInnerLoop();        
@@ -147,8 +149,6 @@ void InfiniteCompositeReactor::simulate()
         {
             throw "Monte Carlo Iteration Type Unknown";
         }
-        
-        this->monteCarloTimeStepSimulationProcessing();
     }
     
     //Save data and create the graphs for the post simulation data
@@ -200,7 +200,7 @@ void InfiniteCompositeReactor::monteCarloTimeStepSimulationProcessing()
     
     MicroSolution solution = this->_thermal_solver->getCurrentMicrosolution();
     
-    solution.plot( this->_results_directory + "solution-" + std::to_string( _transient_time )  + ".png", 800, 3000);
+    solution.plot( this->_results_directory + "solution-" + std::to_string( _transient_time )  + ".png", 800, 2000);
     _plot_solutions.push_back(solution); 
     
     //Save the current thermal solution to the output file
@@ -215,7 +215,7 @@ void InfiniteCompositeReactor::postSimulationProcessing()
 {
     //Post Processing graph creation
     //MicroSolution::saveSolutions( _plot_solutions, this->_results_directory );
-    MicroSolution::plotSolutions( _plot_solutions, 4 , this->_results_directory + "solutions-graph.png");
+    MicroSolution::plotSolutions( _plot_solutions, 6 , this->_results_directory + "solutions-graph.png");
     PythonPlot::plotData(      _power_record,            "Time [s]", "Power Density [W/m^3]",      "", "Power vs. Time",                   this->_results_directory + "power-graph.png",                   {0, _end_time} );
     PythonErrorPlot::plotData( _prompt_life_time_record, "Time [s]", "Prompt Neutron Lifetime [s]","", "Prompt Neutron Lifetime vs. Time", this->_results_directory + "prompt-neutron-lifetime-graph.png", {0, _end_time} );
     PythonErrorPlot::plotData( _k_eff_record,            "Time [s]", "K effective",    "",             "K-eff vs. Time",                   this->_results_directory + "k-eff-graph.png",                   {0, _end_time} );
@@ -553,7 +553,7 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
         std::vector<std::vector<Real>> zones = this->_monte_carlo_model->getZoneCellRelativePowerDensity();
         Real max = zones[0][zones[0].size() - 1];
         Real min = zones[0][0];
-        Real power_peaking = min/max;
+        power_peaking = min/max;
     }
     
     output_file << _monte_carlo_number_iterations << ", " << time << ", " << _monte_carlo_time_iteration << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma << ", " << elapsed_time_since_start << ", " << hot_temperature << ", " << gamma << ", " << power_peaking;
