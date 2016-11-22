@@ -508,11 +508,11 @@ void InfiniteCompositeReactor::createOutputFile()
     std::ofstream output_file;
     output_file.open( this->_results_directory + this->_data_file, std::ios::out);
     
-    output_file << "Iteration, Time [s], Timestep [s], Power [W/m^3], k_eff, k_eff sigma, neutron lifetime [s], Neutron Lifetime sigma [s], Beta_eff, Beta_eff sigma, Run Time [s], Edge Temp [K], Gamma, Power Peaking";
+    output_file << "Iteration,Time [s],Timestep [s],Power [W/m^3],k_eff,k_eff sigma,neutron lifetime [s],Neutron Lifetime sigma [s],Beta_eff,Beta_eff sigma,Run Time [s],Edge Temp [K],Gamma,Power Peaking";
     
     for(size_t index = 1; index <= 6; index++ )
     {
-        output_file << ", Group " << index;
+        output_file << ",Group " << index;
     }
     
     output_file << std::endl;    
@@ -556,20 +556,15 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
         power_peaking = min/max;
     }
     
-    output_file << _monte_carlo_number_iterations << ", " << time << ", " << _monte_carlo_time_iteration << ", " << power << ", " <<  k_eff << ", " << k_eff_sigma << ", " << neutron_lifetime << ", " << neutron_lifetime_sigma << ", " << beta_eff << ", " << beta_eff_sigma << ", " << elapsed_time_since_start << ", " << hot_temperature << ", " << gamma << ", " << power_peaking;
+    output_file << _monte_carlo_number_iterations << "," << time << "," << _monte_carlo_time_iteration << "," << power << "," <<  k_eff << "," << k_eff_sigma << "," << neutron_lifetime << "," << neutron_lifetime_sigma << "," << beta_eff << "," << beta_eff_sigma << "," << elapsed_time_since_start << "," << hot_temperature << "," << gamma << "," << power_peaking;
     
-    size_t delayed_size = _delayed_record.size();
+    auto delayed_precursors = _kinetics_model->_delayed_precursors;
     
-    if(delayed_size > 0 )
+    for(size_t index = 0; index < delayed_precursors.size(); index++ )
     {
-    
-        auto delayed_precursors = _delayed_record[delayed_size -1].second;
-
-        for(size_t index = 0; index < delayed_precursors.size(); index++ )
-        {
-            output_file << ", " << delayed_precursors[index];
-        }
+        output_file << "," << delayed_precursors[index];
     }
+
     output_file << std::endl;    
     output_file.close();
 }

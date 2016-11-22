@@ -6,21 +6,6 @@
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/results/Default-Case-1479245775/datafile.csv</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/source/PythonPlot.cpp</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/source/EnumsAndFunctions.h</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/source/ReactorMonteCarlo.h</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/source/main.cpp</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/source/InfiniteCompositeReactor.cpp</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/source/MicroCell.cpp</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/results/Default-Case-1479245775/tallydata.csv</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/input/default-input-file.inp</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/source/ReactorMonteCarlo.cpp</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/source/MaterialEnum.cpp</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/source/MicroCell.h</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/source/MicroSolution.cpp</file>
-            <file>file:/home/chris/PhD/PromptDopplerFeedback/source/InfiniteCompositeReactor.h</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
