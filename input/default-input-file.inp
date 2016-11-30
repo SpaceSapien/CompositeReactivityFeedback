@@ -16,7 +16,9 @@ Kernel Outer Temperature: 800 K
 Thermal Mesh Size: 200
 
 # Thermal Solver Order: Second | Fourth
-Thermal Solver Order: Second 
+Thermal Solver Order: Second
+# BC FixedHeatFlux, FixedTemperature, ReflectedHeatFlux 
+Transient BC: FixedTemperature
 
 #Before the program starts iterating the transient, it looks for the 
 #Steady State Transient

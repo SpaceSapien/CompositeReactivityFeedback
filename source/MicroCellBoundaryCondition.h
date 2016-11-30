@@ -44,6 +44,8 @@ public:
     static MicroCellBoundaryCondition* getReflectedHeatFluxBoundaryConditionFactory();
     static MicroCellBoundaryCondition* getFixedTemperatureBoundaryConditionFactory(const Real &fixed_temperature);
     static MicroCellBoundaryCondition* getFixedHeatFluxBoundaryConditionFactory(const Real &fixed_heat_flux);
+    static BoundaryType getBoudaryTypeFromString(const std::string &boundary_type);
+    
     
     MicroCellBoundaryCondition();
     

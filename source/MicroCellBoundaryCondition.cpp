@@ -73,3 +73,26 @@ Real MicroCellBoundaryCondition::getHeatFlux(MicroCell*  micro_cell, const Real 
         }
     } 
 }
+
+/**
+ * 
+ * @param boundary_type FixedTemperature, ReflectexdHeatFlux, or FixedHeatFlux
+ * @return the boundary type
+ */
+MicroCellBoundaryCondition::BoundaryType MicroCellBoundaryCondition::getBoudaryTypeFromString(const std::string &boundary_type)
+{
+    if(boundary_type == "FixedTemperature")
+    {
+        return MicroCellBoundaryCondition::FixedTemperature;
+    }
+    if(boundary_type == "ReflectedHeatFlux")
+    {
+        return MicroCellBoundaryCondition::ReflectedHeatFlux;
+    }
+    if(boundary_type == "FixedHeatFlux")
+    {
+        return MicroCellBoundaryCondition::FixedHeatFlux;
+    }
+    
+    throw "Unknown Boundary Condition: " + boundary_type + " line " + std::to_string(__LINE__) + " file " + __FILE__;
+}

@@ -31,8 +31,13 @@
 #include "PythonPlot.h"
 #include "InputFileParser.h"
 
+/** The computer start time for the calculation */
 const std::time_t InfiniteCompositeReactor::_simulation_start_time = std::time(nullptr);;
 
+/**
+ * Setup the directory structure of the problem then run the pre transient calculations
+ * @param input_file_name the name and path of the input file
+ */
 InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file_name ) 
 {   
     
@@ -68,7 +73,7 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
     initializeInifiniteCompositeReactorProblem();
 }
 
-/**
+/** **Incomplete**
  * This constructor loads the conditions of a previously run program and continues it until the new end time
  * @param old_results_folder  the folder with the old files in it
  * @param new_end_time        the new end time (must be longer than the old one
@@ -126,14 +131,13 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string old_results
     //initializeInifiniteCompositeReactorProblem();
 }
 
+/**
+ * Start a simulation at transient time zero and continue at inner time steps according to the keignevalue recalculation methods
+ */
 void InfiniteCompositeReactor::simulate()
 {
-    this->_transient_time = 0;
-    //Save the data for the initial timestep
-    
-    
     //Simulate the transient the outer loop is the monte carlo simulation
-    for( ; _transient_time < _end_time; _transient_time += _inner_time_step)
+    for( _transient_time = 0; _transient_time < _end_time; _transient_time += _inner_time_step)
     {
         this->monteCarloTimeStepSimulationProcessing();
         
@@ -155,6 +159,9 @@ void InfiniteCompositeReactor::simulate()
     this->postSimulationProcessing();
 }
 
+/**
+ * Complete the data recording logs for the eignevalue timestep
+ */
 void InfiniteCompositeReactor::monteCarloTimeStepSimulationProcessing()
 {
     //Set the current power
@@ -211,10 +218,16 @@ void InfiniteCompositeReactor::monteCarloTimeStepSimulationProcessing()
         
 }
 
+/**
+ * Complete the data recording tasks for the last time step
+ */
 void InfiniteCompositeReactor::postSimulationProcessing()
 {
+    
+    //Fill in the data logs for the last time step
+    this->monteCarloTimeStepSimulationProcessing();
+    
     //Post Processing graph creation
-    //MicroSolution::saveSolutions( _plot_solutions, this->_results_directory );
     MicroSolution::plotSolutions( _plot_solutions, 6 , this->_results_directory + "solutions-graph.png");
     PythonPlot::plotData(      _power_record,            "Time [s]", "Power Density [W/m^3]",      "", "Power vs. Time",                   this->_results_directory + "power-graph.png",                   {0, _end_time} );
     PythonErrorPlot::plotData( _prompt_life_time_record, "Time [s]", "Prompt Neutron Lifetime [s]","", "Prompt Neutron Lifetime vs. Time", this->_results_directory + "prompt-neutron-lifetime-graph.png", {0, _end_time} );
@@ -223,9 +236,16 @@ void InfiniteCompositeReactor::postSimulationProcessing()
     PythonErrorPlot::plotData( _reactivity_pcm_record,   "Time [s]", "Reactivity [pcm]",    "",        "Reactivity vs. Time",              this->_results_directory + "reactivity-pcm-graph.png",          {0, _end_time} );
     PythonErrorPlot::plotData( _beta_eff_record,         "Time [s]", "Beta effective",    "",          "Beta-eff vs. Time",                this->_results_directory + "beta-eff-graph.png",                {0, _end_time} );
     PythonPlot::plotData(      _delayed_record,          "Time [s]", "Delayed Precursors",         {}, "Keff vs. Delayed Precursors",      this->_results_directory + "delayed-precursors.png",            {0, _end_time} );
+    
     PythonPlot::createPlots();        
 }
 
+/**
+ * Comparing the current microsolution to the one on record as the last k-eignvalue time step microsolution
+ * 
+ * @param comparison the current microsolution
+ * @return true or false if there is a significant enought temperature change to warrant a new k-eignevalue calc
+ */
 bool InfiniteCompositeReactor::significantTemperatureDifference(MicroSolution* comparison)
 {
      MicroSolution* reference = &_plot_solutions.back();
@@ -264,6 +284,9 @@ bool InfiniteCompositeReactor::significantTemperatureDifference(MicroSolution* c
      }     
 }
 
+/**
+ * Perform all steps and logic associated with a temperature based MC eignvalue timestep
+ */
 void InfiniteCompositeReactor::temperatureIterationInnerLoop()
 {
     Real last_reported_time = 0;
@@ -319,6 +342,9 @@ void InfiniteCompositeReactor::temperatureIterationInnerLoop()
     _monte_carlo_number_iterations++;
 }
 
+/**
+ * Perform all steps and logic associated with a time based MC eignvalue timestep
+ */
 void InfiniteCompositeReactor::timeIterationInnerLoop()
 {
     Real last_reported_time = 0;
@@ -389,6 +415,9 @@ void InfiniteCompositeReactor::timeIterationInnerLoop()
     
 }
 
+/**
+ * Deconstructor - self explanitory
+ */
 InfiniteCompositeReactor::~InfiniteCompositeReactor()
 {
     delete _micro_sphere_geometry;
@@ -397,10 +426,15 @@ InfiniteCompositeReactor::~InfiniteCompositeReactor()
     delete _monte_carlo_model;
     delete _input_file_reader;
 }
-    
+
+/**
+ * Create objects, solve for initial conditions, and otherwise do all work
+ * related to solving for pre-transient conditions
+ */
 void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
 {
-    
+    //Are we recalculating the k-eignvalue on a timestep or on a temperature bases
+    //Temperature is the newer better way to do it
     std::string mc_recalc_type = _input_file_reader->getInputFileParameter(std::string("Monte Carlo Recalculation Type"), std::string("Temperature"));
     _monte_carlo_reclaculation_type = InfiniteCompositeReactor::getRecalculationType(mc_recalc_type);
     
@@ -453,18 +487,37 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     }    
         
     this->_monte_carlo_model->updateAdjustedCriticalityParameters();
-     
     
     //Reset the time to zero and then grab the current solution for the Problem
     _thermal_solver->_current_time = 0;    
      //Add the starting MicroSolution
     _plot_solutions.push_back( _thermal_solver->getCurrentMicrosolution() );
         
-    //Get the steady state heat flux and set it as the boundary condition
-    Real outer_boundary_heat_flux = sphere_volume(this->_thermal_solver->_mesh->_outer_radius[this->_thermal_solver->_mesh->numberOfNodes() -1]) * initial_power_density;
-    MicroCellBoundaryCondition* fixed_flux_boundary_condition = MicroCellBoundaryCondition::getFixedHeatFluxBoundaryConditionFactory(outer_boundary_heat_flux);
-    this->_thermal_solver->setBoundaryCondition(fixed_flux_boundary_condition);
     
+    //Setting Up the Transient BC    
+    std::string transient_boundary_condition = _input_file_reader->getInputFileParameter(std::string("Transient BC"), std::string("FixedHeatFlux") );
+    MicroCellBoundaryCondition::BoundaryType transient_boundary_type = MicroCellBoundaryCondition::getBoudaryTypeFromString(transient_boundary_condition);
+    
+    if(transient_boundary_type == MicroCellBoundaryCondition::BoundaryType::FixedHeatFlux )
+    {
+        //Get the steady state heat flux and set it as the boundary condition
+        Real outer_boundary_heat_flux = sphere_volume(this->_thermal_solver->_mesh->_outer_radius[this->_thermal_solver->_mesh->numberOfNodes() -1]) * initial_power_density;
+        MicroCellBoundaryCondition* fixed_flux_boundary_condition = MicroCellBoundaryCondition::getFixedHeatFluxBoundaryConditionFactory(outer_boundary_heat_flux);
+        this->_thermal_solver->setBoundaryCondition(fixed_flux_boundary_condition);
+    }
+    else if(transient_boundary_type == MicroCellBoundaryCondition::BoundaryType::FixedTemperature )
+    {
+        //do nothing as this BC is already set
+    }
+    else if(transient_boundary_type == MicroCellBoundaryCondition::BoundaryType::ReflectedHeatFlux )
+    {
+        MicroCellBoundaryCondition* reflected_boundary = MicroCellBoundaryCondition::getReflectedHeatFluxBoundaryConditionFactory();
+        this->_thermal_solver->setBoundaryCondition(reflected_boundary);
+    }
+    else
+    {
+        throw "Unknown BC for transient";
+    }
     
     //Define the kinetics parameters
     this->_kinetics_model = new ReactorKinetics(this,initial_power_density, ReactorKinetics::DelayedPrecursorInitialState::EquilibriumPrecursors);    
@@ -473,11 +526,15 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     _power_and_delayed_neutron_record_time_step =  _input_file_reader->getInputFileParameter("Power Record", static_cast<Real>(0.0005) );  //How often to calculate keff and the prompt neutron lifetime
     _kinetics_thermal_sync_time_step = _input_file_reader->getInputFileParameter("Kinetics Thermal Data Sync", static_cast<Real>(20e-6) );      //How often to couple the kinetics and heat transfer routines    
     _end_time = _input_file_reader->getInputFileParameter("Calculation End Time", static_cast<Real>(1.00) );                                    //How many seconds should the simulation last 
-        
-   
-
+  
 }
 
+/**
+ * Solve for the power density and the steady state temperature for that power density. Then feed that into a MC run to get
+ * another power density. If the power density has converged then we have the proper power density
+ * @param homogenous_power_density
+ * @param initial_power_density
+ */
 void InfiniteCompositeReactor::solveForSteadyStatePowerDistribution(const std::vector<Real> &homogenous_power_density, const Real &initial_power_density)
 {
     std::vector<Real> last_power_density(homogenous_power_density);
@@ -520,6 +577,7 @@ void InfiniteCompositeReactor::createOutputFile()
 }
 
 /**
+ * Create an output file if not created and then write the current eigenvalue's timestep
  * 
  * @param time
  * @param power
@@ -569,6 +627,11 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
     output_file.close();
 }
 
+/**
+ * Helper function to turn the string of the input file into the enum
+ * @param string_type the input file's string for the recalculation type
+ * @return enum of the recalculation type
+ */
 InfiniteCompositeReactor::MoneCarloRecalculation InfiniteCompositeReactor::getRecalculationType(const std::string &string_type)
 {
     if(string_type == "Temperature")
