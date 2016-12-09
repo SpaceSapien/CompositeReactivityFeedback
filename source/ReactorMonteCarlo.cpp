@@ -504,7 +504,7 @@ void ReactorMonteCarlo::createTallyOutputFile(std::string tally_file_name)
     std::ofstream output_file;
     output_file.open( tally_file_name, std::ios::out);
     
-    output_file << "Time [s], Name, Zone, Cell, Value, Sigma";
+    output_file << "Time [s],Name,Zone,Cell,Value,Sigma";
     
     for(size_t index = 0; index < _tally_energy_bins; index++ )
     {
