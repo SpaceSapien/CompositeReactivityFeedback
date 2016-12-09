@@ -320,7 +320,7 @@ std::vector<MicroSolution> MicroCell::iterateInitialConditions(const std::vector
     std::vector<MicroSolution> solutions = std::vector<MicroSolution>();
     solutions.push_back(initial_solution);
     
-    Real solution_time_step = 0.05;
+    Real solution_time_step = _time_step * 50000;
     Real max_residual = 1;
     Real avg_residual = 0;
     Real index = 0;
