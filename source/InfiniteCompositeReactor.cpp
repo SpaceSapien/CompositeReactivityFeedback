@@ -56,19 +56,16 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
     time_t run_identification_number = std::time(nullptr);
     
     std::string default_run_name = "Unnamed-Run";
-    _run_name = _input_file_reader->getInputFileParameter("Run Name", default_run_name);
+    _run_name = _input_file_reader->getInputFileParameter("Run Name", default_run_name);    
+    _results_directory =  "results/" + _run_name + "-" + std::to_string(run_identification_number) + "/";        
+    _data_file = "datafile.csv";    
     
-    _results_directory =  "results/" + _run_name + "-" + std::to_string(run_identification_number) + "/";    
-    
-    _data_file = "datafile.csv";
     std::string folder_command = "mkdir -p " + _results_directory;
     exec( folder_command );
     
+    //Copy the input file to the run folder
     std::string copy_input_file_command = "cp " + input_file_name + " " + _results_directory + "input_file.inp";
     exec( copy_input_file_command );
-    
-    _monte_carlo_number_iterations = 0;
-    _transient_time = -1;
     
     initializeInifiniteCompositeReactorProblem();
 }
@@ -136,6 +133,8 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string old_results
  */
 void InfiniteCompositeReactor::simulate()
 {
+    this->_thermal_solver->_outward_energy_flux = 0;
+    
     //Simulate the transient the outer loop is the monte carlo simulation
     for( _transient_time = 0; _transient_time < _end_time; _transient_time += _inner_time_step)
     {
@@ -202,8 +201,10 @@ void InfiniteCompositeReactor::monteCarloTimeStepSimulationProcessing()
 
     Real hottest_temperature = this->_thermal_solver->_solution[0]; 
     Real gamma = this->_monte_carlo_model->_virtual_k_eff_multiplier;
+    Real boundary_volume = sphere_volume(_thermal_solver->_mesh->_outer_radius.back());
+    long double outward_energy_flux = _thermal_solver->_outward_energy_flux / boundary_volume;
     
-    this->saveCurrentData(_transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma, hottest_temperature, gamma);
+    this->saveCurrentData(_transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma, hottest_temperature, gamma, outward_energy_flux);
     
     MicroSolution solution = this->_thermal_solver->getCurrentMicrosolution();
     
@@ -433,6 +434,9 @@ InfiniteCompositeReactor::~InfiniteCompositeReactor()
  */
 void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
 {
+    _monte_carlo_number_iterations = 0;
+    _transient_time = -1;
+    
     //Are we recalculating the k-eignvalue on a timestep or on a temperature bases
     //Temperature is the newer better way to do it
     std::string mc_recalc_type = _input_file_reader->getInputFileParameter(std::string("Monte Carlo Recalculation Type"), std::string("Temperature"));
@@ -565,7 +569,7 @@ void InfiniteCompositeReactor::createOutputFile()
     std::ofstream output_file;
     output_file.open( this->_results_directory + this->_data_file, std::ios::out);
     
-    output_file << "Iteration,Time [s],Timestep [s],Power [W/m^3],k_eff,k_eff sigma,neutron lifetime [s],Neutron Lifetime sigma [s],Beta_eff,Beta_eff sigma,Run Time [s],Edge Temp [K],Gamma,Power Peaking";
+    output_file << "Iteration,Time [s],Timestep [s],Power [W/m^3],k_eff,k_eff sigma,neutron lifetime [s],Neutron Lifetime sigma [s],Beta_eff,Beta_eff sigma,Run Time [s],Edge Temp [K],Gamma,Power Peaking,Outward Energy [W*s/m^3]";
     
     for(size_t index = 1; index <= 6; index++ )
     {
@@ -589,7 +593,7 @@ void InfiniteCompositeReactor::createOutputFile()
  * @param beta_eff_sigma
  * @param hot_temperature
  */
-void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature, const Real &gamma)
+void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature, const Real &gamma, const long double &outward_energy_flux)
 {
     std::ofstream output_file;
     std::string file_path = this->_results_directory + this->_data_file;
@@ -614,7 +618,9 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
         power_peaking = min/max;
     }
     
-    output_file << _monte_carlo_number_iterations << "," << time << "," << _monte_carlo_time_iteration << "," << power << "," <<  k_eff << "," << k_eff_sigma << "," << neutron_lifetime << "," << neutron_lifetime_sigma << "," << beta_eff << "," << beta_eff_sigma << "," << elapsed_time_since_start << "," << hot_temperature << "," << gamma << "," << power_peaking;
+    output_file << _monte_carlo_number_iterations << "," << time << "," << _monte_carlo_time_iteration << "," << power << "," <<  k_eff << "," << k_eff_sigma
+                << "," << neutron_lifetime << "," << neutron_lifetime_sigma << "," << beta_eff << "," << beta_eff_sigma << "," << elapsed_time_since_start 
+                << "," << hot_temperature << "," << gamma << "," << power_peaking << "," << outward_energy_flux;
     
     auto delayed_precursors = _kinetics_model->_delayed_precursors;
     

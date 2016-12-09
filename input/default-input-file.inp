@@ -9,7 +9,7 @@ Radaii: 4e-4 4.5e-4 1.612e-3 #m
 
 #Starting Power Density 
 Starting Power Density: 200e6 # W/m^3
-Starting K-eff: 1.01
+Starting K-eff: 1.001
 Kernel Outer Temperature: 800 K
 
 #Generally 100 is a good size
@@ -18,7 +18,7 @@ Thermal Mesh Size: 200
 # Thermal Solver Order: Second | Fourth
 Thermal Solver Order: Second
 # BC FixedHeatFlux, FixedTemperature, ReflectedHeatFlux 
-Transient BC: FixedTemperature
+Transient BC: FixedHeatFlux
 
 #Before the program starts iterating the transient, it looks for the 
 #Steady State Transient
@@ -45,5 +45,5 @@ Number of MCNP Cycles: 33                      #cycles - number of cycles to run
 Number of MCNP Cycles for Beta: 33             #cycles - number of cycles to run in a beta effective calculation
 Number CPUs:  32
 
-Tally Cells: true                             #tally the cells in the problem
+Tally Cells: false                             #tally the cells in the problem
 

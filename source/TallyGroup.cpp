@@ -30,11 +30,11 @@ void TallyGroup::outputTallyToFile(const std::string &file_path, Tally* tally,co
     std::ofstream output_file;
     output_file.open( file_path, std::ios::app);
     
-    output_file << _time << ", " << location << "," << tally->_value << "," << tally->_uncertainty;
+    output_file << _time << "," << location << "," << tally->_value << "," << tally->_uncertainty;
 
     for(std::size_t energy_index = 0; energy_index < tally->energyBinSize(); ++energy_index )
     {    
-         output_file << ", " << tally->_energy_bins[energy_index] << ", " << tally->_energy_bin_values[energy_index] << ", " << tally->_energy_bin_uncertainties[energy_index];
+         output_file << "," << tally->_energy_bins[energy_index] << "," << tally->_energy_bin_values[energy_index] << "," << tally->_energy_bin_uncertainties[energy_index];
     }
     
     output_file << std::endl; 

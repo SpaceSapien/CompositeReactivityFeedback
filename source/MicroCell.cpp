@@ -37,6 +37,7 @@ MicroCell::MicroCell(InfiniteCompositeReactor* reactor,const Real &initial_tempe
     _time_step = _reactor->_input_file_reader->getInputFileParameter("Thermal Time Iteration", static_cast<Real>(100e-9) );
     _solver_order = SolverOrder::SECOND;
     _start_time = 0;
+    _outward_energy_flux = 0;
     _current_time = _start_time;    
     
     //Mesh Setup
@@ -250,6 +251,7 @@ MicroSolution MicroCell::solveSecondOrder(const Real &simulation_time_step, cons
             {
                 //no outward heat flux
                 outward_heat_flux = this->_outer_boundary_condition->getHeatFlux(this,inward_heat_flux + internal_power);
+                _outward_energy_flux += outward_heat_flux * _time_step;
             }            
             else
             {   
@@ -558,14 +560,14 @@ void MicroCell::logPowerDensity( const std::string &output_file_name)
     if(! file_exists(output_file_path) )
     {
         output_file.open( output_file_path,std::ios::out);
-        output_file << "Time [s] ";
+        output_file << "Time [s]";
         
         
         for(std::size_t i_index=0; i_index < power_density_data.size(); ++i_index)
         {
             for(std::size_t j_index=0; j_index < power_density_data[i_index].size(); ++j_index)
             {
-                output_file << ", Zone-" << (i_index + 1) << "-" << (j_index + 1);
+                output_file << ",Zone-" << (i_index + 1) << "-" << (j_index + 1);
             }
         }
         
@@ -583,7 +585,7 @@ void MicroCell::logPowerDensity( const std::string &output_file_name)
     {
         for(std::size_t j_index=0; j_index < power_density_data[i_index].size(); ++j_index)
         {
-            output_file << ", " << power_density_data[i_index][j_index] ;
+            output_file << "," << power_density_data[i_index][j_index] ;
         }
     }    
     output_file << std::endl;

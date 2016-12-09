@@ -61,6 +61,7 @@ int main(int argc, char** argv)
         reactor.simulate();
     }
     //We are resuming a run
+    // (1) ./executable (2) "resume" (3) float new end time (4) old_results_folder 
     else if( argc == 4)
     {
         std::string resume_command = std::string(argv[1]);
