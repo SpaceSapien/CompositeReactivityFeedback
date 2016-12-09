@@ -133,7 +133,9 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string old_results
  */
 void InfiniteCompositeReactor::simulate()
 {
-    this->_thermal_solver->_outward_energy_flux = 0;
+    //Reset the integrated power out and integrated power metrics in preparation for the transient
+    this->_thermal_solver->_outward_integrated_power = 0;
+    this->_thermal_solver->_integrated_power = 0;
     
     //Simulate the transient the outer loop is the monte carlo simulation
     for( _transient_time = 0; _transient_time < _end_time; _transient_time += _inner_time_step)
@@ -202,9 +204,10 @@ void InfiniteCompositeReactor::monteCarloTimeStepSimulationProcessing()
     Real hottest_temperature = this->_thermal_solver->_solution[0]; 
     Real gamma = this->_monte_carlo_model->_virtual_k_eff_multiplier;
     Real boundary_volume = sphere_volume(_thermal_solver->_mesh->_outer_radius.back());
-    long double outward_energy_flux = _thermal_solver->_outward_energy_flux / boundary_volume;
+    long double outward_energy_flux = _thermal_solver->_outward_integrated_power / boundary_volume;
+    long double integrated_power = _thermal_solver->_integrated_power / boundary_volume;
     
-    this->saveCurrentData(_transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma, hottest_temperature, gamma, outward_energy_flux);
+    this->saveCurrentData(_transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma, hottest_temperature, gamma, outward_energy_flux, integrated_power);
     
     MicroSolution solution = this->_thermal_solver->getCurrentMicrosolution();
     
@@ -569,7 +572,7 @@ void InfiniteCompositeReactor::createOutputFile()
     std::ofstream output_file;
     output_file.open( this->_results_directory + this->_data_file, std::ios::out);
     
-    output_file << "Iteration,Time [s],Timestep [s],Power [W/m^3],k_eff,k_eff sigma,neutron lifetime [s],Neutron Lifetime sigma [s],Beta_eff,Beta_eff sigma,Run Time [s],Edge Temp [K],Gamma,Power Peaking,Outward Energy [W*s/m^3]";
+    output_file << "Iteration,Time [s],Timestep [s],Power [W/m^3],k_eff,k_eff sigma,neutron lifetime [s],Neutron Lifetime sigma [s],Beta_eff,Beta_eff sigma,Run Time [s],Edge Temp [K],Gamma,Power Peaking,Integrated Outward Power [W*s/m^3],Integrated Power [W*s/m^3]";
     
     for(size_t index = 1; index <= 6; index++ )
     {
@@ -593,7 +596,7 @@ void InfiniteCompositeReactor::createOutputFile()
  * @param beta_eff_sigma
  * @param hot_temperature
  */
-void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature, const Real &gamma, const long double &outward_energy_flux)
+void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature, const Real &gamma, const long double &integrated_power_out, const long double &integrated_power)
 {
     std::ofstream output_file;
     std::string file_path = this->_results_directory + this->_data_file;
@@ -620,7 +623,7 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
     
     output_file << _monte_carlo_number_iterations << "," << time << "," << _monte_carlo_time_iteration << "," << power << "," <<  k_eff << "," << k_eff_sigma
                 << "," << neutron_lifetime << "," << neutron_lifetime_sigma << "," << beta_eff << "," << beta_eff_sigma << "," << elapsed_time_since_start 
-                << "," << hot_temperature << "," << gamma << "," << power_peaking << "," << outward_energy_flux;
+                << "," << hot_temperature << "," << gamma << "," << power_peaking << "," << integrated_power_out << "," << integrated_power;
     
     auto delayed_precursors = _kinetics_model->_delayed_precursors;
     

@@ -37,7 +37,8 @@ MicroCell::MicroCell(InfiniteCompositeReactor* reactor,const Real &initial_tempe
     _time_step = _reactor->_input_file_reader->getInputFileParameter("Thermal Time Iteration", static_cast<Real>(100e-9) );
     _solver_order = SolverOrder::SECOND;
     _start_time = 0;
-    _outward_energy_flux = 0;
+    _outward_integrated_power = 0;
+    _integrated_power = 0;
     _current_time = _start_time;    
     
     //Mesh Setup
@@ -242,16 +243,16 @@ MicroSolution MicroCell::solveSecondOrder(const Real &simulation_time_step, cons
             MaterialDataPacket material_data = MaterialLibrary::getMaterialProperties(current_material,temperature);
             Dimension center_radius = _mesh->getNodeLocation(radial_index);         
             Real internal_power = power_distribution[radial_index] * _mesh->_volume[radial_index];
+            _integrated_power += internal_power * _time_step;
             
-           
             
             //Check for boundary conditions
             //If we are at the last node
             if( radial_index == _mesh->numberOfNodes() - 1)
             {
-                //no outward heat flux
+                //use the boundary condition to determine the outward heat flux
                 outward_heat_flux = this->_outer_boundary_condition->getHeatFlux(this,inward_heat_flux + internal_power);
-                _outward_energy_flux += outward_heat_flux * _time_step;
+                _outward_integrated_power += outward_heat_flux * _time_step;
             }            
             else
             {   
