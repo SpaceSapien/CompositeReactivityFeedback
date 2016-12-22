@@ -416,7 +416,7 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
             material_cards << "     " << U235_cs << "   " << U235_fraction << std::endl;
             material_cards << "     " << U238_cs << "   " << U238_fraction << std::endl;
             material_cards << " mt" << zone << " o2-u.27t           $S(a,b) UO2 @ 1200 K" << std::endl;
-            material_cards << "     u-o2.27t" << std::endl;
+            material_cards << "     u-o2.37t" << std::endl;
             break;
                             
         }

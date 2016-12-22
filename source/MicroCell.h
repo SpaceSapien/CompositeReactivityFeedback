@@ -73,6 +73,7 @@ public:
 
     std::vector<Real> getTallyBasedRepresentativeKernelPowerDistribution(const std::vector<std::vector<Real>> &tally_cell_zone_data, const Real &average_power_density);
     void logPowerDensity(const std::string &output_file_name = "power-density.csv");
+    void setOuterMaterialTemperature(const Real &outer_temperature);
     
 private:
     

@@ -97,7 +97,8 @@ class InfiniteCompositeReactor
     
     const static std::time_t _simulation_start_time;
     
-    void simulate();
+    void simulateTransient();
+    void worthStudy();
     void timeIterationInnerLoop();
     void temperatureIterationInnerLoop();
     bool significantTemperatureDifference(MicroSolution* comparison);

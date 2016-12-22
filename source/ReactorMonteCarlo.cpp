@@ -157,8 +157,10 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     #ifdef LAPTOP
     
     //We are just running MPI here
-    std::string mcnp_path = "/media/chris/DoubleSpace/MCNP/MCNP_CODE/MCNP6/bin/mcnp6.mpi";
-    std::string command = "cd " + this->_run_directory + "; PATH=/home/chris/Programs/openmpi/bin:$PATH;LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/chris/Programs/openmpi/lib; mpirun -np  7 " + mcnp_path + " i=\"" + input_file_name + "\" o=\"" + output_file_name + "\" runtpe=\"" + runtpe_name + "\" srctp=\"" + srctpe_name + "\" mctal=\"" + mctal_name + "\" | tee \"" + command_line_log_file + "\"";
+    std::string mcnp_path = "/media/chris/DoubleSpace/MCNP/MCNP_CODE/MCNP611/bin/mcnp6.mpi";
+    std::string datapath_command = "export DATAPATH=/media/chris/DoubleSpace/MCNP/MCNP_DATA/";
+    //std::string xsdir = "/media/chris/DoubleSpace/MCNP/MCNP_DATA/xsdir_mcnp6.1";
+    std::string command = datapath_command + ";cd " + this->_run_directory + "; PATH=/home/chris/Programs/openmpi/bin:$PATH;LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/chris/Programs/openmpi/lib; mpirun -np  7 " + mcnp_path + " i=\"" + input_file_name + "\" o=\"" + output_file_name + "\" runtpe=\"" + runtpe_name + "\" srctp=\"" + srctpe_name + "\" mctal=\"" + mctal_name + "\" | tee \"" + command_line_log_file + "\"";
     exec(command);
     
     #else

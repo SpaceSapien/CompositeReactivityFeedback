@@ -65,7 +65,6 @@ MicroSolution MicroCell::presolveSteadyStateAnalytical(const std::vector<Real> &
 {
     for( int radial_index = _number_mesh_nodes - 2; radial_index >= 0; --radial_index )
     {
-        Dimension radial_position = _mesh->getNodeLocation(radial_index);
         
         //Averaged material properties in the cell assuming right side temperature material properties
         Real temperature_to_the_right =  _solution[radial_index + 1];
@@ -591,4 +590,15 @@ void MicroCell::logPowerDensity( const std::string &output_file_name)
     }    
     output_file << std::endl;
     output_file.close();    
+}
+
+void MicroCell::setOuterMaterialTemperature(const Real &outer_temperature)
+{
+    for(int index = 0; index < _mesh->numberOfNodes(); ++index)
+    {
+        if(_mesh->_zone[index] != 1)
+        {
+            _solution[index] = outer_temperature;
+        }
+    }
 }

@@ -74,6 +74,26 @@ int InputFileParser::getInputFileParameter(const std::string &name, const int &d
 }
 
 
+std::pair<Real,Real> InputFileParser::getInputFileParameter(const std::string &name, const std::pair<Real,Real> &default_value)
+{
+    std::string input_file_data = this->getInputFileTextEntry(name);
+    
+    if(input_file_data == "")
+    {
+        return default_value;
+    }
+    else
+    {
+        std::vector<std::string> split_string = this->split(input_file_data," ");
+        std::pair<Real,Real> return_pair;
+        
+        return_pair.first = std::stod(split_string[0]);
+        return_pair.second = std::stod(split_string[1]); 
+        
+        return return_pair;
+    }
+}
+
 std::vector<Real> InputFileParser::getInputFileParameter(const std::string &name, const std::vector<Real> &default_value)
 {
     std::string input_file_data = this->getInputFileTextEntry(name);

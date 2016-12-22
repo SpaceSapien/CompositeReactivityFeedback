@@ -43,7 +43,7 @@ int main(int argc, char** argv)
     {
         //If no input file
         InfiniteCompositeReactor reactor = InfiniteCompositeReactor();
-        reactor.simulate();
+        reactor.simulateTransient();
     }
     //Input File Specified
     else if( argc == 2)
@@ -53,28 +53,56 @@ int main(int argc, char** argv)
         if( ! file_exists(input_file_name) )
         {
             std::cerr << "input_file_name: " + input_file_name + " Doesn't exist";
-            input_file_name = "input/default-input-file.inp";
-            
+            input_file_name = "input/default-input-file.inp";            
         }
         
         InfiniteCompositeReactor reactor = InfiniteCompositeReactor(input_file_name);
-        reactor.simulate();
+        reactor.simulateTransient();
+    }
+    // Only do a worth calculation
+    // (1) ./executable (2) "worth" (3) input_file
+    else if(argc == 3)
+    {
+        std::string command = std::string(argv[1]);
+        
+        if(command == "worth")
+        {
+            std::string input_file_name = std::string(argv[2]);    
+            if( ! file_exists(input_file_name) )
+            {
+                std::cerr << "input_file_name: " + input_file_name + " Doesn't exist";
+                input_file_name = "input/default-input-file.inp";            
+            }
+            
+            InfiniteCompositeReactor reactor = InfiniteCompositeReactor(input_file_name);
+            reactor.worthStudy();
+        }
+        else
+        {
+            std::cerr << "Unknown Command " << command << std::endl;
+        }
+        
     }
     //We are resuming a run
     // (1) ./executable (2) "resume" (3) float new end time (4) old_results_folder 
     else if( argc == 4)
     {
-        std::string resume_command = std::string(argv[1]);
+        std::string command = std::string(argv[1]);
         
-        if(resume_command == "resume")
+        if(command == "resume")
         {
             Real new_end_time = static_cast<Real>(std::stod(std::string(argv[2])));
                         
             std::string old_results_folder = std::string(argv[3]);
+            
+            if( ! file_exists(old_results_folder) )
+            {
+                std::cerr << "input_file_name: " + old_results_folder + " Doesn't exist";
+            }
 
             InfiniteCompositeReactor reactor = InfiniteCompositeReactor(old_results_folder, new_end_time);
-            reactor.simulate();
-        }
+            reactor.simulateTransient();
+        }        
     }    
 }
 

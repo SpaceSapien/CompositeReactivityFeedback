@@ -30,6 +30,7 @@
 #include "ReactorKinetics.h"
 #include "PythonPlot.h"
 #include "InputFileParser.h"
+#include "WorthStudy.h"
 
 /** The computer start time for the calculation */
 const std::time_t InfiniteCompositeReactor::_simulation_start_time = std::time(nullptr);;
@@ -67,7 +68,7 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string &input_file
     std::string copy_input_file_command = "cp " + input_file_name + " " + _results_directory + "input_file.inp";
     exec( copy_input_file_command );
     
-    initializeInifiniteCompositeReactorProblem();
+    
 }
 
 /** **Incomplete**
@@ -122,17 +123,41 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string old_results
     std::string copy_temperature_file_command = "cp " + old_temeprature_file + " " + _results_directory + "input_file.inp";
     exec( copy_temperature_file_command );
     
-    _monte_carlo_number_iterations = 0;
-    _transient_time = 0;
+    _monte_carlo_number_iterations = -1;
+    _transient_time = -1;
     
-    //initializeInifiniteCompositeReactorProblem();
+    
+}
+
+
+void InfiniteCompositeReactor::worthStudy()
+{
+    std::cout<<"Starting Worth Study"<<std::endl;
+    
+    WorthStudy* study = new WorthStudy(this);
+    study->startStudy();
+    delete study;
+    
 }
 
 /**
  * Start a simulation at transient time zero and continue at inner time steps according to the keignevalue recalculation methods
  */
-void InfiniteCompositeReactor::simulate()
+void InfiniteCompositeReactor::simulateTransient()
 {
+    
+    bool worth_study = _input_file_reader->getInputFileParameter("Worth", false);
+    
+    if(worth_study)
+    {
+        this->worthStudy();
+    }
+    
+    _monte_carlo_number_iterations = 0;
+    _transient_time = 0;
+    
+    initializeInifiniteCompositeReactorProblem();
+    
     //Reset the integrated power out and integrated power metrics in preparation for the transient
     this->_thermal_solver->_outward_integrated_power = 0;
     this->_thermal_solver->_integrated_power = 0;
