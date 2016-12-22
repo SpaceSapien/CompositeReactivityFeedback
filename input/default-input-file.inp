@@ -47,7 +47,7 @@ Number CPUs:  32
 
 Tally Cells: false                             #tally the cells in the problem
 #default false
-Worth: true
+
 #Worth divisions
 Worth Temperature Divisions: 12
 #Worth Temperature Range
