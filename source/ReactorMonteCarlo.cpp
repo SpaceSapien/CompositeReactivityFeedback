@@ -185,6 +185,10 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     std::string submission_script = "acorite-submission-script.sh";
     
+    #elif NEAMS
+
+    std::string submission_script = "neams-submission-script.sh";
+    
     #endif
     
     

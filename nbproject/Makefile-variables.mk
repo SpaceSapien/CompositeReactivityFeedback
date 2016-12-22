@@ -54,6 +54,14 @@ CND_ARTIFACT_PATH_Laptop_Worth=dist/Laptop_Worth/GNU-Linux/promptdopplerfeedback
 CND_PACKAGE_DIR_Laptop_Worth=dist/Laptop_Worth/GNU-Linux/package
 CND_PACKAGE_NAME_Laptop_Worth=promptdopplerfeedback.tar
 CND_PACKAGE_PATH_Laptop_Worth=dist/Laptop_Worth/GNU-Linux/package/promptdopplerfeedback.tar
+# NEAMS configuration
+CND_PLATFORM_NEAMS=GNU-Linux
+CND_ARTIFACT_DIR_NEAMS=dist/NEAMS/GNU-Linux
+CND_ARTIFACT_NAME_NEAMS=promptdopplerfeedback
+CND_ARTIFACT_PATH_NEAMS=dist/NEAMS/GNU-Linux/promptdopplerfeedback
+CND_PACKAGE_DIR_NEAMS=dist/NEAMS/GNU-Linux/package
+CND_PACKAGE_NAME_NEAMS=promptdopplerfeedback.tar
+CND_PACKAGE_PATH_NEAMS=dist/NEAMS/GNU-Linux/package/promptdopplerfeedback.tar
 #
 # include compiler specific variables
 #
