@@ -17,6 +17,7 @@
 #include "MicroCell.h"
 #include "MicroGeometry.h"
 #include "ReactorMonteCarlo.h"
+#include "SimulationResults.h"
 
 class WorthStudy 
 {
