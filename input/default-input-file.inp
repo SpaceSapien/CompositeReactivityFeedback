@@ -46,4 +46,10 @@ Number of MCNP Cycles for Beta: 33             #cycles - number of cycles to run
 Number CPUs:  32
 
 Tally Cells: false                             #tally the cells in the problem
+#default false
+Worth: true
+#Worth divisions
+Worth Temperature Divisions: 12
+#Worth Temperature Range
+Worth Range: 300 3300
 

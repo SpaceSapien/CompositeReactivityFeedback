@@ -52,6 +52,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/source/SimulationResults.o \
 	${OBJECTDIR}/source/Tally.o \
 	${OBJECTDIR}/source/TallyGroup.o \
+	${OBJECTDIR}/source/WorthStudy.o \
 	${OBJECTDIR}/source/main.o
 
 
@@ -163,6 +164,11 @@ ${OBJECTDIR}/source/TallyGroup.o: source/TallyGroup.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DPRACTICE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/TallyGroup.o source/TallyGroup.cpp
+
+${OBJECTDIR}/source/WorthStudy.o: source/WorthStudy.cpp
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DPRACTICE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/WorthStudy.o source/WorthStudy.cpp
 
 ${OBJECTDIR}/source/main.o: source/main.cpp
 	${MKDIR} -p ${OBJECTDIR}/source

@@ -46,6 +46,14 @@ CND_ARTIFACT_PATH_ACORITE=dist/ACORITE/GNU-Linux/promptdopplerfeedback
 CND_PACKAGE_DIR_ACORITE=dist/ACORITE/GNU-Linux/package
 CND_PACKAGE_NAME_ACORITE=promptdopplerfeedback.tar
 CND_PACKAGE_PATH_ACORITE=dist/ACORITE/GNU-Linux/package/promptdopplerfeedback.tar
+# Laptop_Worth configuration
+CND_PLATFORM_Laptop_Worth=GNU-Linux
+CND_ARTIFACT_DIR_Laptop_Worth=dist/Laptop_Worth/GNU-Linux
+CND_ARTIFACT_NAME_Laptop_Worth=promptdopplerfeedback
+CND_ARTIFACT_PATH_Laptop_Worth=dist/Laptop_Worth/GNU-Linux/promptdopplerfeedback
+CND_PACKAGE_DIR_Laptop_Worth=dist/Laptop_Worth/GNU-Linux/package
+CND_PACKAGE_NAME_Laptop_Worth=promptdopplerfeedback.tar
+CND_PACKAGE_PATH_Laptop_Worth=dist/Laptop_Worth/GNU-Linux/package/promptdopplerfeedback.tar
 #
 # include compiler specific variables
 #

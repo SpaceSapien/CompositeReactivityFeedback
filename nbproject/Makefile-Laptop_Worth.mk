@@ -23,7 +23,7 @@ AS=as
 # Macros
 CND_PLATFORM=GNU-Linux
 CND_DLIB_EXT=so
-CND_CONF=MC
+CND_CONF=Laptop_Worth
 CND_DISTDIR=dist
 CND_BUILDDIR=build
 
@@ -83,97 +83,97 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/promptdopplerfeedback: ${OBJECTFILES}
 ${OBJECTDIR}/source/DelayedNeutronSet.o: source/DelayedNeutronSet.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/DelayedNeutronSet.o source/DelayedNeutronSet.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/DelayedNeutronSet.o source/DelayedNeutronSet.cpp
 
 ${OBJECTDIR}/source/InfiniteCompositeReactor.o: source/InfiniteCompositeReactor.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/InfiniteCompositeReactor.o source/InfiniteCompositeReactor.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/InfiniteCompositeReactor.o source/InfiniteCompositeReactor.cpp
 
 ${OBJECTDIR}/source/InputFileParser.o: source/InputFileParser.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/InputFileParser.o source/InputFileParser.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/InputFileParser.o source/InputFileParser.cpp
 
 ${OBJECTDIR}/source/MaterialDataPacket.o: source/MaterialDataPacket.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MaterialDataPacket.o source/MaterialDataPacket.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MaterialDataPacket.o source/MaterialDataPacket.cpp
 
 ${OBJECTDIR}/source/MaterialEnum.o: source/MaterialEnum.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MaterialEnum.o source/MaterialEnum.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MaterialEnum.o source/MaterialEnum.cpp
 
 ${OBJECTDIR}/source/MaterialLibrary.o: source/MaterialLibrary.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MaterialLibrary.o source/MaterialLibrary.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MaterialLibrary.o source/MaterialLibrary.cpp
 
 ${OBJECTDIR}/source/MicroCell.o: source/MicroCell.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MicroCell.o source/MicroCell.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MicroCell.o source/MicroCell.cpp
 
 ${OBJECTDIR}/source/MicroCellBoundaryCondition.o: source/MicroCellBoundaryCondition.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MicroCellBoundaryCondition.o source/MicroCellBoundaryCondition.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MicroCellBoundaryCondition.o source/MicroCellBoundaryCondition.cpp
 
 ${OBJECTDIR}/source/MicroGeometry.o: source/MicroGeometry.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MicroGeometry.o source/MicroGeometry.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MicroGeometry.o source/MicroGeometry.cpp
 
 ${OBJECTDIR}/source/MicroSolution.o: source/MicroSolution.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MicroSolution.o source/MicroSolution.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/MicroSolution.o source/MicroSolution.cpp
 
 ${OBJECTDIR}/source/PythonPlot.o: source/PythonPlot.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/PythonPlot.o source/PythonPlot.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/PythonPlot.o source/PythonPlot.cpp
 
 ${OBJECTDIR}/source/RadialMesh.o: source/RadialMesh.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/RadialMesh.o source/RadialMesh.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/RadialMesh.o source/RadialMesh.cpp
 
 ${OBJECTDIR}/source/ReactorKinetics.o: source/ReactorKinetics.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/ReactorKinetics.o source/ReactorKinetics.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/ReactorKinetics.o source/ReactorKinetics.cpp
 
 ${OBJECTDIR}/source/ReactorMonteCarlo.o: source/ReactorMonteCarlo.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/ReactorMonteCarlo.o source/ReactorMonteCarlo.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/ReactorMonteCarlo.o source/ReactorMonteCarlo.cpp
 
 ${OBJECTDIR}/source/SimulationResults.o: source/SimulationResults.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/SimulationResults.o source/SimulationResults.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/SimulationResults.o source/SimulationResults.cpp
 
 ${OBJECTDIR}/source/Tally.o: source/Tally.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/Tally.o source/Tally.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/Tally.o source/Tally.cpp
 
 ${OBJECTDIR}/source/TallyGroup.o: source/TallyGroup.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/TallyGroup.o source/TallyGroup.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/TallyGroup.o source/TallyGroup.cpp
 
 ${OBJECTDIR}/source/WorthStudy.o: source/WorthStudy.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/WorthStudy.o source/WorthStudy.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/WorthStudy.o source/WorthStudy.cpp
 
 ${OBJECTDIR}/source/main.o: source/main.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DMC_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/main.o source/main.cpp
+	$(COMPILE.cc) -g -DLAPTOP -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/main.o source/main.cpp
 
 # Subprojects
 .build-subprojects:

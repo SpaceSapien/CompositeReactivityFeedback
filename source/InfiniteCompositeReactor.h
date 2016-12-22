@@ -32,6 +32,7 @@
 #include "ReactorKinetics.h"
 #include "PythonPlot.h"
 #include "InputFileParser.h"
+#include "WorthStudy.h"
 
 class MicroCell;
 class ReactorKinetics;
