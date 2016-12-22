@@ -19,6 +19,11 @@
 #include "ReactorMonteCarlo.h"
 #include "SimulationResults.h"
 
+class ReactorMonteCarlo;
+class MicroCell;
+class MicroGeometry;
+class InfiniteCompositeReactor;
+
 class WorthStudy 
 {
 public:
