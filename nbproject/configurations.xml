@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>source/BetaSimulationResults.h</itemPath>
       <itemPath>source/DelayedNeutronSet.h</itemPath>
       <itemPath>source/EnumsAndFunctions.h</itemPath>
       <itemPath>source/InfiniteCompositeReactor.h</itemPath>
@@ -32,6 +33,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>source/BetaSimulationResults.cpp</itemPath>
       <itemPath>source/DelayedNeutronSet.cpp</itemPath>
       <itemPath>source/InfiniteCompositeReactor.cpp</itemPath>
       <itemPath>source/InputFileParser.cpp</itemPath>
@@ -66,7 +68,7 @@
     <itemPath>job-submission/acorite-submission-script.sh</itemPath>
     <itemPath>input/default-input-file.inp</itemPath>
     <itemPath>job-submission/mc-submission-script.sh</itemPath>
-    <itemPath>job-submission/neams-submission-script.sh.sh</itemPath>
+    <itemPath>job-submission/neams-submission-script.sh</itemPath>
     <itemPath>job-submission/practice-cluster-submission-script.sh</itemPath>
   </logicalFolder>
   <sourceRootList>
@@ -100,7 +102,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="job-submission/neams-submission-script.sh.sh"
+      <item path="job-submission/neams-submission-script.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -109,6 +111,10 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -231,7 +237,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="job-submission/neams-submission-script.sh.sh"
+      <item path="job-submission/neams-submission-script.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -240,6 +246,10 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -358,7 +368,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="job-submission/neams-submission-script.sh.sh"
+      <item path="job-submission/neams-submission-script.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -367,6 +377,10 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -485,7 +499,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="job-submission/neams-submission-script.sh.sh"
+      <item path="job-submission/neams-submission-script.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -494,6 +508,10 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -612,7 +630,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="job-submission/neams-submission-script.sh.sh"
+      <item path="job-submission/neams-submission-script.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -621,6 +639,10 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -739,7 +761,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="job-submission/neams-submission-script.sh.sh"
+      <item path="job-submission/neams-submission-script.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -748,6 +770,10 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -866,7 +892,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="job-submission/neams-submission-script.sh.sh"
+      <item path="job-submission/neams-submission-script.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -875,6 +901,10 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>

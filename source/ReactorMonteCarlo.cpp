@@ -46,8 +46,20 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
     _number_zones = _reactor->_micro_sphere_geometry->_geometry.size();
     //Cells per zone splits each zone up into multiple cells
     _number_cpus = this->_reactor->_input_file_reader->getInputFileParameter("Number CPUs", 32 );  
-    _k_eff_number_cycles = this->_reactor->_input_file_reader->getInputFileParameter("Number of MCNP Cycles", 60 );  
-    _beta_eff_number_cycles = this->_reactor->_input_file_reader->getInputFileParameter("Number of MCNP Cycles for Beta", 600 );  
+    
+    
+    _k_eff_number_particles = this->_reactor->_input_file_reader->getInputFileParameter("Keff Number of Particles", 33000 );  
+    _beta_eff_number_particles = this->_reactor->_input_file_reader->getInputFileParameter("Beff Number of Particles", 33000 );  
+    _particles_per_cycle = this->_reactor->_input_file_reader->getInputFileParameter("Particles Per Cycle", 1000 );
+    
+    _beta_eff_number_cycles = std::ceil(static_cast<Real>(_k_eff_number_particles)/static_cast<Real>(_particles_per_cycle));
+    _k_eff_number_cycles = std::ceil(static_cast<Real>(_beta_eff_number_particles)/static_cast<Real>(_particles_per_cycle));
+    
+    if(_beta_eff_number_cycles < 33 || _k_eff_number_cycles < 33)
+    {
+        throw std::string("Need at least 33 cycles for MCNP to run correctly");
+    }
+    
     _calulate_beta_interval = this->_reactor->_input_file_reader->getInputFileParameter("Keff Calculation Per Beta Eff Calculation",0);
     _tally_cells = this->_reactor->_input_file_reader->getInputFileParameter("Tally Cells", false);
     _tally_energy_bins = this->_reactor->_input_file_reader->getInputFileParameter("Tally Energy Bins", 40);   
@@ -57,6 +69,7 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
     _current_beta_eff_sigma = -1;
     _virtual_k_eff_multiplier = -1;
     _number_of_keff_calculations = 0;
+    _current_mc_exection_elapsed_time = -1;
     
 }
 
@@ -65,6 +78,8 @@ void ReactorMonteCarlo::updateCurrentValuesFromResults(const BetaSimulationResul
     _current_beta_eff = beta_results._beta;
     _current_beta_eff_sigma = beta_results._beta_sigma;
     this->updateCurrentValuesFromResults( beta_results._with_delayed_neutrons);
+    _current_mc_exection_elapsed_time = beta_results._elapsed_time;
+    _current_number_particles = _beta_eff_number_particles*2.0;
 }
 
 void ReactorMonteCarlo::updateCurrentValuesFromResults(const SimulationResults &results)
@@ -79,6 +94,8 @@ void ReactorMonteCarlo::updateCurrentValuesFromResults(const SimulationResults &
     _current_prompt_neutron_lifetime = results._prompt_neutron_lifetime;
     _current_k_eff_sigma = results._k_eff_sigma * _virtual_k_eff_multiplier;
     _current_prompt_neutron_lifetime_sigma = results._prompt_neutron_lifetime_sigma;
+    _current_mc_exection_elapsed_time = results._elapsed_time;
+    _current_number_particles = _k_eff_number_particles;
 }
 
 
@@ -106,8 +123,8 @@ void ReactorMonteCarlo::updateAdjustedCriticalityParameters()
 BetaSimulationResults ReactorMonteCarlo::getRawKeffAndBetaEff()
 {
     //Run the simulation to get the results for both delated and non delayed to do the beta calculation
-    SimulationResults k_eff_with_delayed = getRawCriticalityParameters( "keffective-calc", _beta_eff_number_cycles, true);
-    SimulationResults k_eff_without_delayed = getRawCriticalityParameters( "keffective-no-delayed-calc", _beta_eff_number_cycles, false);    
+    SimulationResults k_eff_with_delayed = getRawCriticalityParameters( "keffective-calc", _particles_per_cycle, _beta_eff_number_cycles, true);
+    SimulationResults k_eff_without_delayed = getRawCriticalityParameters( "keffective-no-delayed-calc", _particles_per_cycle, _beta_eff_number_cycles, false);    
     //Create the BetaSimulationResults Object
     BetaSimulationResults beta_results = BetaSimulationResults(k_eff_with_delayed,k_eff_without_delayed);
     return beta_results;
@@ -117,7 +134,7 @@ BetaSimulationResults ReactorMonteCarlo::getRawKeffAndBetaEff()
 SimulationResults ReactorMonteCarlo::getRawKeff()
 {
     //return the simulation results
-    return this->getRawCriticalityParameters("k-effective-calc", _k_eff_number_cycles, true);    
+    return this->getRawCriticalityParameters("k-effective-calc", this->_particles_per_cycle, _k_eff_number_cycles, true);    
 }
 
 /**
@@ -131,8 +148,10 @@ SimulationResults ReactorMonteCarlo::getRawKeff()
  * @param number_cycles
  * @param delayed_neutrons
  */
-SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::string &file_root, const int &number_cycles, const bool &delayed_neutrons)
+SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::string &file_root, const int &particles_per_cycle, const int &number_cycles, const bool &delayed_neutrons)
 {
+    
+    
     //create the MCNP input file
     std::string run_title = this->_reactor->_run_name + " Time = "  + std::to_string(this->_reactor->_thermal_solver->_current_time);
     std::string input_file_name = file_root + ".inp";
@@ -150,8 +169,10 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     exec(symbolic_link_command);
     
     
-    this->createMCNPOutputFile(run_title, input_file_name, number_cycles, delayed_neutrons);
+    this->createMCNPOutputFile(run_title, input_file_name, particles_per_cycle, number_cycles, delayed_neutrons);
     std::string command_line_log_file = "mcnp_run_log.txt";
+    
+    std::time_t mc_start_time = std::time(nullptr);
     
     //Run the file
     #ifdef LAPTOP
@@ -203,11 +224,14 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     {   
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
         is_done = exec(search_lock);
-    }while(is_done == "");
-    
+    }
+    while(is_done == "");
     
     
     #endif
+    
+    std::time_t mc_end_time = std::time(nullptr);    
+    std::time_t mc_elapased_time = mc_end_time - mc_start_time;
     
     //If we have the tally set take the results of the tally
     if(_tally_cells)
@@ -223,7 +247,7 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     
     //Read the output file
-    SimulationResults results = SimulationResults(output_file_name, this->_run_directory );
+    SimulationResults results = SimulationResults(output_file_name, this->_run_directory, mc_elapased_time );
     return results;
         
 }
@@ -458,7 +482,7 @@ std::string ReactorMonteCarlo::getSurfaceCards()
 }
 
 
-void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const std::string &file_name,const int &number_of_cycles, const bool &delayed_neutrons)
+void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const std::string &file_name,const int &paticles_per_cycle,const int &number_of_cycles, const bool &delayed_neutrons)
 {
     
     std::stringstream mcnp_file;
@@ -492,7 +516,7 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const
         mcnp_file << tally_cards;
     }
     
-    mcnp_file << " KCODE 2000 1.5 3 " << number_of_cycles << "  $need at least 30 active cycles to print results" << std::endl;
+    mcnp_file << " KCODE " << paticles_per_cycle << " 1.5 3 " << number_of_cycles << "  $need at least 30 active cycles to print results" << std::endl;
     mcnp_file << " KSRC 0 0 0" << std::endl;
     mcnp_file << " print" << std::endl;
     mcnp_file << "c end data" << std::endl;

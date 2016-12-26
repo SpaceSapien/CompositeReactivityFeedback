@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/source/BetaSimulationResults.o \
 	${OBJECTDIR}/source/DelayedNeutronSet.o \
 	${OBJECTDIR}/source/InfiniteCompositeReactor.o \
 	${OBJECTDIR}/source/InputFileParser.o \
@@ -79,6 +80,11 @@ LDLIBSOPTIONS=
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/promptdopplerfeedback: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/promptdopplerfeedback ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/source/BetaSimulationResults.o: source/BetaSimulationResults.cpp
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DACORITE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/BetaSimulationResults.o source/BetaSimulationResults.cpp
 
 ${OBJECTDIR}/source/DelayedNeutronSet.o: source/DelayedNeutronSet.cpp
 	${MKDIR} -p ${OBJECTDIR}/source

@@ -72,7 +72,7 @@ void WorthStudy::createOutputFile()
 {
     std::ofstream output_file;
     output_file.open( _reactor->_results_directory + _output_file, std::ios::out);    
-    output_file << "Fuel Temperature [K],Non Fissile Temperature [K],Power Peaking,K-eigenvalue,K-eigenvalue Sigma,Prompt Neutron Lifetime [s],Prompt Neutron Lifetime Sigma [s],Elapsed Time [s]";
+    output_file << "Fuel Temperature [K],Non Fissile Temperature [K],Power Peaking,K-eigenvalue,K-eigenvalue Sigma,Prompt Neutron Lifetime [s],Prompt Neutron Lifetime Sigma [s],Elapsed Time [s],MC Execution Time [s],Time Per Particle [ms]";
     output_file << std::endl;    
     output_file.close();
 }
@@ -91,7 +91,6 @@ void WorthStudy::log(const SimulationResults &results)
     
     //time elapsed since the simulation started
     std::time_t elapsed_time_since_start =  std::time(nullptr) - InfiniteCompositeReactor::_simulation_start_time;   
-    
     Real power_peaking = -1;
     
     if(_monte_carlo_model->_tally_cells)
@@ -105,8 +104,13 @@ void WorthStudy::log(const SimulationResults &results)
     //Get the fuel and matrix temperature 
     Real fuel_temperature = this->_thermal_solver->_solution.front();
     Real matrix_temperature = this->_thermal_solver->_solution.back();
+    std::time_t elapsed_mc_time = results._elapsed_time;
+    Real time_per_particle = 1000.0*static_cast<Real>(elapsed_mc_time) / static_cast<Real>( _monte_carlo_model->_k_eff_number_particles); 
     
-    output_file << fuel_temperature << "," << matrix_temperature << "," << power_peaking << "," << results._k_eff << "," << results._k_eff_sigma << "," << results._prompt_neutron_lifetime << "," << results._prompt_neutron_lifetime_sigma << "," << elapsed_time_since_start;
+    
+    output_file << fuel_temperature << "," << matrix_temperature << "," << power_peaking << "," << results._k_eff << "," 
+                << results._k_eff_sigma << "," << results._prompt_neutron_lifetime << "," 
+                << results._prompt_neutron_lifetime_sigma << "," << elapsed_time_since_start << "," << elapsed_mc_time << "," << time_per_particle;
 
     output_file << std::endl;    
     output_file.close();

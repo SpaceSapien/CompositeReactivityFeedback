@@ -597,7 +597,7 @@ void InfiniteCompositeReactor::createOutputFile()
     std::ofstream output_file;
     output_file.open( this->_results_directory + this->_data_file, std::ios::out);
     
-    output_file << "Iteration,Time [s],Timestep [s],Power [W/m^3],k_eff,k_eff sigma,neutron lifetime [s],Neutron Lifetime sigma [s],Beta_eff,Beta_eff sigma,Run Time [s],Edge Temp [K],Gamma,Power Peaking,Integrated Outward Power [W*s/m^3],Integrated Power [W*s/m^3]";
+    output_file << "Iteration,Time [s],Timestep [s],Power [W/m^3],k_eff,k_eff sigma,neutron lifetime [s],Neutron Lifetime sigma [s],Beta_eff,Beta_eff sigma,Run Time [s],Edge Temp [K],Gamma,Power Peaking,Integrated Outward Power [W*s/m^3],Integrated Power [W*s/m^3],MC Execution Time [s],Time Per Particle [ms]";
     
     for(size_t index = 1; index <= 6; index++ )
     {
@@ -635,6 +635,9 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
     
     //time elapsed since the simulation started
     std::time_t elapsed_time_since_start =  std::time(nullptr) - InfiniteCompositeReactor::_simulation_start_time;   
+    std::time_t mc_execution_time = _monte_carlo_model->_current_mc_exection_elapsed_time;
+    
+    Real time_per_particle = 1000.0*static_cast<Real>(mc_execution_time) / static_cast<Real>( _monte_carlo_model->_current_number_particles); 
     
     Real power_peaking = -1;
     
@@ -648,7 +651,8 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
     
     output_file << _monte_carlo_number_iterations << "," << time << "," << _monte_carlo_time_iteration << "," << power << "," <<  k_eff << "," << k_eff_sigma
                 << "," << neutron_lifetime << "," << neutron_lifetime_sigma << "," << beta_eff << "," << beta_eff_sigma << "," << elapsed_time_since_start 
-                << "," << hot_temperature << "," << gamma << "," << power_peaking << "," << integrated_power_out << "," << integrated_power;
+                << "," << hot_temperature << "," << gamma << "," << power_peaking << "," << integrated_power_out << "," << integrated_power 
+                << "," << mc_execution_time << "," << time_per_particle;
     
     auto delayed_precursors = _kinetics_model->_delayed_precursors;
     

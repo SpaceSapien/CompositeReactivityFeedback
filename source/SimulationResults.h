@@ -13,29 +13,14 @@
 
 #ifndef SIMULATIONRESULTS_H
 #define SIMULATIONRESULTS_H
+#include <ctime>
 #include <string>
 #include <vector>
 #include "EnumsAndFunctions.h"
 
 
-class TallyResults 
-{
-    
-public:
-    
-    void readTallyFile(const std::string &output_file, const std::string &directory);
-    TallyResults(const std::string &output_file, const std::string &directory );
-    TallyResults();
-    
-private:
-
-};
-
-
 /**
  * This class represents the data that can be represented from an output file
- * 
- * 
  */
 class SimulationResults 
 {
@@ -45,30 +30,19 @@ public:
     Real _k_eff_sigma;
     Real _prompt_neutron_lifetime;
     Real _prompt_neutron_lifetime_sigma;
+    std::time_t _elapsed_time;
     
     void readOutputFile(const std::string &output_file, const std::string &directory);
-    SimulationResults(const std::string &output_file, const std::string &directory );
-    SimulationResults();
+    SimulationResults(const std::string &output_file, const std::string &directory, const std::time_t &elapsed_time );
     SimulationResults(const SimulationResults &results);
+    SimulationResults();
+    
     
 private:
 
 };
 
-class BetaSimulationResults : SimulationResults
-{
-public: 
-    
-    Real _beta;
-    Real _beta_sigma;
-    
-    SimulationResults _with_delayed_neutrons;
-    SimulationResults _without_delayed_neutrons;
-    
-    BetaSimulationResults(const SimulationResults &with_delayed_neutrons, const SimulationResults &without_delayed_neutrons);
-    static Real getBetaEffSigma(const Real &k_eff,const Real &k_eff_sigma,const Real &nd_k_eff,const Real &nd_k_eff_sigma);
-    
-};
+
 
 
 #endif /* SIMULATIONRESULTS_H */
