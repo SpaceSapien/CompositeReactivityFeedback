@@ -1,5 +1,5 @@
 //Input File 
-Run Name: Default-Case
+Run Name: BC-Worth-1
 
 # Materials and radaii mus have the same number of entries
 #Material options include
@@ -9,49 +9,44 @@ Radaii: 4e-4 4.5e-4 1.612e-3 #m
 
 #Starting Power Density 
 Starting Power Density: 200e6 # W/m^3
-Starting K-eff: 1.001
+Starting K-eff: 1.01
 Kernel Outer Temperature: 800 K
 
 #Generally 100 is a good size
 Thermal Mesh Size: 200
 
 # Thermal Solver Order: Second | Fourth
-Thermal Solver Order: Second
-# BC FixedHeatFlux, FixedTemperature, ReflectedHeatFlux 
-Transient BC: FixedHeatFlux
+Thermal Solver Order: Second 
 
 #Before the program starts iterating the transient, it looks for the 
 #Steady State Transient
-Steady State Temperature Solution Max Residual: 0.02
+Steady State Temperature Solution Max Residual: 0.0001
 
-Uranium Enrichment Fraction: 0.2 
-Cells Per Zone: 3
+Uranium Enrichment Fraction: 0.15 
+Cells Per Zone: 4
 
 #Timer iteration data
-Keff Calculation Per Beta Eff Calculation: 20   # calculating the beta is expensive so we only calculate it once for ever so may keff calculations zero means only calculate at the beginning of the simulation
+Keff Calculation Per Beta Eff Calculation: 25   # calculating the beta is expensive so we only calculate it once for ever so may keff calculations zero means only calculate at the beginning of the simulation
 
 #Options: Time and Temperature
 Monte Carlo Recalculation Type: Temperature
-MC Recalc Delta T: 25  # K
+MC Recalc Delta T: 7.5  # K
 #Monte Carlo Recalculation Timestep: 0.005      #s
 
-Kinetics Time Iteration: 1e-9                   #s
-Thermal Time Iteration: 200e-9                  #s
+Kinetics Time Iteration: 1e-9                  #s
+Thermal Time Iteration: 200e-9                 #s
 Kinetics Thermal Data Sync: 10e-6               #s
-Calculation End Time: 0.05                      #s
+Calculation End Time: 2.0                     #s
 Power Record: 0.0001                            #s  Time between recording power and the delayed neutron record
 
-# Number Particles / Particles Per Cycle >= 33
-Keff Number of Particles: 33000
-Beff Number of Particles: 33000
-Particles Per Cycle: 1000
-Number CPUs:  32
+Keff Number of Particles: 10e6
+Beff Number of Particles: 10e6
+Particles Per Cycle: 10000
+Number CPUs:  128
 
-Tally Cells: false                             #tally the cells in the problem
-#default false
+Tally Cells: true                             #tally the cells in the problem
 
 #Worth divisions
 Worth Temperature Divisions: 12
 #Worth Temperature Range
-Worth Range: 300 3300
-
+Worth Range: 4e2  4100 #jnsfdk
