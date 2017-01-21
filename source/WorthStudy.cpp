@@ -106,7 +106,7 @@ void WorthStudy::log(const SimulationResults &results)
     Real matrix_temperature = this->_thermal_solver->_solution.back();
     std::time_t elapsed_mc_time = results._elapsed_time;
     Real time_per_particle = 1000.0*static_cast<Real>(elapsed_mc_time) / static_cast<Real>( _monte_carlo_model->_k_eff_number_particles); 
-    Real time_per_particle_cpu = time_per_particle / this->_monte_carlo_model->_number_cpus;
+    Real time_per_particle_cpu = time_per_particle * this->_monte_carlo_model->_number_cpus;
     
     output_file << fuel_temperature << "," << matrix_temperature << "," << power_peaking << "," << results._k_eff << "," 
                 << results._k_eff_sigma << "," << results._prompt_neutron_lifetime << "," 

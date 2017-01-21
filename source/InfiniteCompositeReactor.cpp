@@ -638,7 +638,7 @@ void InfiniteCompositeReactor::saveCurrentData(const Real &time, const Real &pow
     std::time_t mc_execution_time = _monte_carlo_model->_current_mc_exection_elapsed_time;
     
     Real time_per_particle = 1000.0*static_cast<Real>(mc_execution_time) / static_cast<Real>( _monte_carlo_model->_current_number_particles); 
-    Real time_per_particle_cpu = time_per_particle / this->_monte_carlo_model->_number_cpus;
+    Real time_per_particle_cpu = time_per_particle * this->_monte_carlo_model->_number_cpus;
     
     Real power_peaking = -1;
     
