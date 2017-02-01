@@ -196,8 +196,8 @@ void InfiniteCompositeReactor::monteCarloTimeStepSimulationProcessing()
     //Gather the parameters from the monte carlo model 
     //The Monte Carlo model is run on the outer loop
     Real prompt_removal_lifetime = _monte_carlo_model->_current_prompt_neutron_lifetime;
-    Real k_eff = _monte_carlo_model->_current_k_eff; 
-    Real k_eff_sigma = _monte_carlo_model->_current_k_eff_sigma;
+    Real k_eff = _reactivity_insertion_model->getCurrentKeff(_transient_time); 
+    Real k_eff_sigma = _reactivity_insertion_model->getCurrentKeffSigma(_transient_time);
     Real beta_eff = _monte_carlo_model->_current_beta_eff;
     Real beta_eff_sigma = _monte_carlo_model->_current_beta_eff_sigma;        
     Real lambda = prompt_removal_lifetime/k_eff;
@@ -227,7 +227,7 @@ void InfiniteCompositeReactor::monteCarloTimeStepSimulationProcessing()
    _reactivity_cents_record.push_back(reactivity_cents_pair);
 
     Real hottest_temperature = this->_thermal_solver->_solution[0]; 
-    Real gamma = this->_monte_carlo_model->_virtual_k_eff_multiplier;
+    Real gamma = this->_reactivity_insertion_model->getCurrentVirtualKeffMultiplier(_transient_time);
     Real boundary_volume = sphere_volume(_thermal_solver->_mesh->_outer_radius.back());
     long double outward_energy_flux = _thermal_solver->_outward_integrated_power / boundary_volume;
     long double integrated_power = _thermal_solver->_integrated_power / boundary_volume;
@@ -358,7 +358,8 @@ void InfiniteCompositeReactor::temperatureIterationInnerLoop()
             _delayed_record.push_back(delayed_entry);
         }
         
-        if( this->significantTemperatureDifference(&current_solution))
+        //If there has been a significant temperature change or if there was a ramp function and it just ended
+        if( this->significantTemperatureDifference(&current_solution) || this->_reactivity_insertion_model->rampJustEnded(_transient_time + _inner_time_step) )
         {
             break;
         }
@@ -412,19 +413,18 @@ void InfiniteCompositeReactor::timeIterationInnerLoop()
     //if there is still enough time left to do another monte carlo time iteration
     if( _transient_time + _inner_time_step < _end_time)
     {
-        Real last_k_eff = _monte_carlo_model->_current_k_eff;
-
+        Real last_k_eff = _reactivity_insertion_model->getCurrentKeff(_transient_time);
         
         _monte_carlo_model->updateAdjustedCriticalityParameters();
 
-        Real current_k_eff =  _monte_carlo_model->_current_k_eff;
+        Real current_k_eff =  _reactivity_insertion_model->getCurrentKeff(_transient_time);
 
         Real difference = current_k_eff - last_k_eff;
 
         Real k_eff_change = std::abs( difference);
 
 
-        Real k_eff_sigma = _monte_carlo_model->_current_k_eff_sigma;
+        Real k_eff_sigma = _reactivity_insertion_model->getCurrentKeffSigma(_transient_time);
         Real min_k_eff_change = k_eff_sigma*2/3;
         Real max_k_eff_change = k_eff_sigma*2.5;
 
@@ -454,6 +454,7 @@ InfiniteCompositeReactor::~InfiniteCompositeReactor()
     delete _kinetics_model;
     delete _monte_carlo_model;
     delete _input_file_reader;
+    delete _reactivity_insertion_model;
 }
 
 /**
@@ -510,8 +511,7 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     MicroSolution::plotSolutions(plot,0, this->_results_directory + "initial-pre-tally-solve.png");
     
     //Define the Monte Carlo Parameters
-    Real starting_k_eff =  _input_file_reader->getInputFileParameter("Starting K-eff",static_cast<Real>(1.01) );   
-    this->_monte_carlo_model = new ReactorMonteCarlo(this, starting_k_eff, this->_results_directory + "run/");   
+    this->_monte_carlo_model = new ReactorMonteCarlo(this, this->_results_directory + "run/");   
     
     if(_monte_carlo_model->_tally_cells)
     {
@@ -554,6 +554,9 @@ void InfiniteCompositeReactor::initializeInifiniteCompositeReactorProblem()
     //Define the kinetics parameters
     this->_kinetics_model = new ReactorKinetics(this,initial_power_density, ReactorKinetics::DelayedPrecursorInitialState::EquilibriumPrecursors);    
     
+    //Define the transient parameters
+    this->_reactivity_insertion_model = new ReactivityInsertion(this);
+    
     //Time stepping parameters
     _power_and_delayed_neutron_record_time_step =  _input_file_reader->getInputFileParameter("Power Record", static_cast<Real>(0.0005) );  //How often to calculate keff and the prompt neutron lifetime
     _kinetics_thermal_sync_time_step = _input_file_reader->getInputFileParameter("Kinetics Thermal Data Sync", static_cast<Real>(20e-6) );      //How often to couple the kinetics and heat transfer routines    
@@ -572,6 +575,8 @@ void InfiniteCompositeReactor::solveForSteadyStatePowerDistribution(const std::v
     std::vector<Real> last_power_density(homogenous_power_density);
     Real max_relative_residual, average_residual;
     int initial_power_iteration = 1;
+    
+     Real power_residual = _input_file_reader->getInputFileParameter("Initial Solve Power Residual", static_cast<Real>(0.005) );
 
     //Iterate the power distribution and thermal solutions until it 
     do
@@ -589,7 +594,7 @@ void InfiniteCompositeReactor::solveForSteadyStatePowerDistribution(const std::v
         ++initial_power_iteration;
         last_power_density = tally_power_density;
 
-    } while( (max_relative_residual > 0.005 || average_residual > 0.003) && initial_power_iteration <= 4);
+    } while( (max_relative_residual > power_residual || average_residual > (power_residual /2) ) && initial_power_iteration <= 4);
 }
 
 void InfiniteCompositeReactor::createOutputFile()

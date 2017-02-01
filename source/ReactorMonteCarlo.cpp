@@ -32,7 +32,7 @@ ReactorMonteCarlo::~ReactorMonteCarlo()
     }
 }
 
-ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Real &starting_k_eff, const  std::string &run_directory)
+ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor, const  std::string &run_directory)
 {
     _run_directory = run_directory;
     
@@ -42,32 +42,30 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const Rea
     _reactor = reactor;
     
     //Cells per zone splits each zone up into multiple cells
-    _cells_per_zone = this->_reactor->_input_file_reader->getInputFileParameter("Cells Per Zone", 1 );  
+    _cells_per_zone = this->_reactor->_input_file_reader->getInputFileParameter("Cells Per Zone", static_cast<int>(1) );  
     _number_zones = _reactor->_micro_sphere_geometry->_geometry.size();
     //Cells per zone splits each zone up into multiple cells
-    _number_cpus = this->_reactor->_input_file_reader->getInputFileParameter("Number CPUs", 32 );  
+    _number_cpus = this->_reactor->_input_file_reader->getInputFileParameter("Number CPUs", static_cast<int>(32) );  
     
-    
-    _k_eff_number_particles = this->_reactor->_input_file_reader->getInputFileParameter("Keff Number of Particles", 33000 );  
-    _beta_eff_number_particles = this->_reactor->_input_file_reader->getInputFileParameter("Beff Number of Particles", 33000 );  
-    _particles_per_cycle = this->_reactor->_input_file_reader->getInputFileParameter("Particles Per Cycle", 1000 );
+    //Here we want to establish the number of cycles based on the 
+    _k_eff_number_particles = this->_reactor->_input_file_reader->getInputFileParameter("Keff Number of Particles", static_cast<long>(33000) );  
+    _beta_eff_number_particles = this->_reactor->_input_file_reader->getInputFileParameter("Beff Number of Particles", static_cast<long>(33000) );  
+    _particles_per_cycle = this->_reactor->_input_file_reader->getInputFileParameter("Particles Per Cycle", static_cast<long>(1000) );
     
     _beta_eff_number_cycles = std::ceil(static_cast<Real>(_k_eff_number_particles)/static_cast<Real>(_particles_per_cycle));
     _k_eff_number_cycles = std::ceil(static_cast<Real>(_beta_eff_number_particles)/static_cast<Real>(_particles_per_cycle));
     
     if(_beta_eff_number_cycles < 33 || _k_eff_number_cycles < 33)
     {
-        throw std::string("Need at least 33 cycles for MCNP to run correctly");
+        throw std::string("Need at least 33 cycles for MCNP to run correctly only " + std::to_string(_k_eff_number_cycles) + " cycles now available.");
     }
     
     _calulate_beta_interval = this->_reactor->_input_file_reader->getInputFileParameter("Keff Calculation Per Beta Eff Calculation",0);
     _tally_cells = this->_reactor->_input_file_reader->getInputFileParameter("Tally Cells", false);
-    _tally_energy_bins = this->_reactor->_input_file_reader->getInputFileParameter("Tally Energy Bins", 40);   
-    _starting_k_eff = starting_k_eff;
+    _tally_energy_bins = this->_reactor->_input_file_reader->getInputFileParameter("Tally Energy Bins", 40);     
     
     _current_beta_eff = -1;
     _current_beta_eff_sigma = -1;
-    _virtual_k_eff_multiplier = -1;
     _number_of_keff_calculations = 0;
     _current_mc_exection_elapsed_time = -1;
     
@@ -79,20 +77,15 @@ void ReactorMonteCarlo::updateCurrentValuesFromResults(const BetaSimulationResul
     _current_beta_eff_sigma = beta_results._beta_sigma;
     this->updateCurrentValuesFromResults( beta_results._with_delayed_neutrons);
     _current_mc_exection_elapsed_time = beta_results._elapsed_time;
+    //Twice as many because beta calculation do do cycles
     _current_number_particles = _beta_eff_number_particles*2.0;
 }
 
 void ReactorMonteCarlo::updateCurrentValuesFromResults(const SimulationResults &results)
 {
-    if( _virtual_k_eff_multiplier < 0)
-    {    
-        _virtual_k_eff_multiplier = _starting_k_eff / results._k_eff;  
-        _number_of_keff_calculations = 1;
-    }
-    
-    _current_k_eff = results._k_eff * _virtual_k_eff_multiplier;
+    _current_k_eff = results._k_eff;
     _current_prompt_neutron_lifetime = results._prompt_neutron_lifetime;
-    _current_k_eff_sigma = results._k_eff_sigma * _virtual_k_eff_multiplier;
+    _current_k_eff_sigma = results._k_eff_sigma;
     _current_prompt_neutron_lifetime_sigma = results._prompt_neutron_lifetime_sigma;
     _current_mc_exection_elapsed_time = results._elapsed_time;
     _current_number_particles = _k_eff_number_particles;
@@ -123,8 +116,8 @@ void ReactorMonteCarlo::updateAdjustedCriticalityParameters()
 BetaSimulationResults ReactorMonteCarlo::getRawKeffAndBetaEff()
 {
     //Run the simulation to get the results for both delated and non delayed to do the beta calculation
-    SimulationResults k_eff_with_delayed = getRawCriticalityParameters( "keffective-calc", _particles_per_cycle, _beta_eff_number_cycles, true);
-    SimulationResults k_eff_without_delayed = getRawCriticalityParameters( "keffective-no-delayed-calc", _particles_per_cycle, _beta_eff_number_cycles, false);    
+    SimulationResults k_eff_with_delayed = getRawCriticalityParameters( "k-effective-calc", _particles_per_cycle, _beta_eff_number_cycles, true);
+    SimulationResults k_eff_without_delayed = getRawCriticalityParameters( "k-effective-no-delayed-calc", _particles_per_cycle, _beta_eff_number_cycles, false);    
     //Create the BetaSimulationResults Object
     BetaSimulationResults beta_results = BetaSimulationResults(k_eff_with_delayed,k_eff_without_delayed);
     return beta_results;

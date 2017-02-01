@@ -48,6 +48,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/source/MicroSolution.o \
 	${OBJECTDIR}/source/PythonPlot.o \
 	${OBJECTDIR}/source/RadialMesh.o \
+	${OBJECTDIR}/source/ReactivityInsertion.o \
 	${OBJECTDIR}/source/ReactorKinetics.o \
 	${OBJECTDIR}/source/ReactorMonteCarlo.o \
 	${OBJECTDIR}/source/SimulationResults.o \
@@ -145,6 +146,11 @@ ${OBJECTDIR}/source/RadialMesh.o: source/RadialMesh.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DACORITE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/RadialMesh.o source/RadialMesh.cpp
+
+${OBJECTDIR}/source/ReactivityInsertion.o: source/ReactivityInsertion.cpp
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DACORITE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/ReactivityInsertion.o source/ReactivityInsertion.cpp
 
 ${OBJECTDIR}/source/ReactorKinetics.o: source/ReactorKinetics.cpp
 	${MKDIR} -p ${OBJECTDIR}/source

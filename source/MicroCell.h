@@ -24,7 +24,7 @@
 
 //forward declare for pointers
 class MicroCellBoundaryCondition;
-
+class InfiniteCompositeReactor;
 
 class MicroCell
 {

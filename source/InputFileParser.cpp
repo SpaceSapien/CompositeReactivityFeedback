@@ -59,7 +59,7 @@ Real InputFileParser::getInputFileParameter(const std::string &name, const Real 
     }
 }
 
-int InputFileParser::getInputFileParameter(const std::string &name, const int &default_value)
+long InputFileParser::getInputFileParameter(const std::string &name, const long &default_value)
 {
     std::string input_file_data = this->getInputFileTextEntry(name);
     
@@ -69,7 +69,21 @@ int InputFileParser::getInputFileParameter(const std::string &name, const int &d
     }
     else
     {
-        return std::stoul(input_file_data);
+        return static_cast<long>(std::stod(input_file_data));
+    }
+}
+
+long InputFileParser::getInputFileParameter(const std::string &name, const int &default_value)
+{
+    std::string input_file_data = this->getInputFileTextEntry(name);
+    
+    if(input_file_data == "")
+    {
+        return default_value;
+    }
+    else
+    {
+        return static_cast<long>(std::stod(input_file_data));
     }
 }
 
@@ -156,7 +170,7 @@ std::string InputFileParser::getInputFileParameter(const std::string &name, cons
     }
     else
     {
-        return input_file_data;
+        return trim(input_file_data);
     }
 }
 bool InputFileParser::getInputFileParameter(const std::string &name, const bool &default_value)

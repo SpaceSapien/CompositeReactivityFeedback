@@ -65,8 +65,10 @@ ReactorKinetics::ReactorKinetics(InfiniteCompositeReactor* reactor, const Real &
         }
     }
     
-       
 }
+
+
+
 
 /**
  * Solve the reactor kinetics equations over a given time period
@@ -87,19 +89,20 @@ Real ReactorKinetics::solveForPower
 )
 {
     
-    Real k_effective = _reactor->_monte_carlo_model->_current_k_eff;
-    Real neutron_generation_time = _reactor->_monte_carlo_model->_current_prompt_neutron_lifetime / k_effective;
-    Real beta_effective = _reactor->_monte_carlo_model->_current_beta_eff;
-            
-    //Calculate some parameters
-    Real reactivity = ( k_effective - 1 )/k_effective;
-    Real total_neutrons_per_fission = _delayed_neutron_set._neutrons_per_fission;
     
+    Real beta_effective = _reactor->_monte_carlo_model->_current_beta_eff;
+    Real total_neutrons_per_fission = _delayed_neutron_set._neutrons_per_fission;    
     Real simulation_time_step = 10e-9;
     //Loop over a simulation coupled time step
     Real solve_start_time = _current_time;
     for( ; _current_time < solve_start_time + simulation_coupled_time_step; _current_time += simulation_time_step )
     {
+        
+        Real k_effective = _reactor->_reactivity_insertion_model->getCurrentKeff(_current_time);       
+        Real reactivity = ( k_effective - 1 )/k_effective;
+        Real neutron_generation_time = _reactor->_monte_carlo_model->_current_prompt_neutron_lifetime / k_effective;
+        
+        
         //Delayed Source Term            
         Real delayed_contributions = 0;
         
@@ -124,3 +127,4 @@ Real ReactorKinetics::solveForPower
     
     return _current_power;
 }
+

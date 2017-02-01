@@ -1,5 +1,5 @@
 //Input File 
-Run Name: BC-Worth-1
+Run Name: Base-Case
 
 # Materials and radaii mus have the same number of entries
 #Material options include
@@ -20,7 +20,8 @@ Thermal Solver Order: Second
 
 #Before the program starts iterating the transient, it looks for the 
 #Steady State Transient
-Steady State Temperature Solution Max Residual: 0.0001
+Steady State Temperature Solution Max Residual: 0.01
+Initial Solve Power Residual: 0.1
 
 Uranium Enrichment Fraction: 0.15 
 Cells Per Zone: 4
@@ -39,14 +40,20 @@ Kinetics Thermal Data Sync: 10e-6               #s
 Calculation End Time: 2.0                     #s
 Power Record: 0.0001                            #s  Time between recording power and the delayed neutron record
 
-Keff Number of Particles: 10e6
-Beff Number of Particles: 10e6
-Particles Per Cycle: 10000
+Keff Number of Particles: 33e3
+Beff Number of Particles: 33e3
+Particles Per Cycle: 1000
 Number CPUs:  128
 
 Tally Cells: true                             #tally the cells in the problem
 
+#Worth: false
 #Worth divisions
 Worth Temperature Divisions: 12
 #Worth Temperature Range
-Worth Range: 4e2  4100 #jnsfdk
+Worth Range: 300  4000                         # range over which the worth study is completed
+
+
+#"Instantaneous" or "Ramp"
+Reactivity Insertion Method: Ramp    #how is the reactivity inserted
+Ramp Insertion Timing: 0.01         #if it is a ramp function, what is the timeframe for the ramp.

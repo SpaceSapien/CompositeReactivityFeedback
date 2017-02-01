@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This class creates Monte Carlo Runs, K-eignenvalues and Tallies
  */
 
 /* 
@@ -29,7 +27,6 @@ class ReactorMonteCarlo
 
 public:
     
-    
     Real _current_k_eff;
     Real _current_k_eff_sigma;
     Real _current_prompt_neutron_lifetime;
@@ -38,8 +35,6 @@ public:
     Real _current_beta_eff_sigma;
     long _current_number_particles;
     
-    Real _virtual_k_eff_multiplier;
-    Real _starting_k_eff;
     int _number_cpus;
     int _cells_per_zone;
     int _number_zones;
@@ -53,10 +48,7 @@ public:
     
     int _calulate_beta_interval;
     int _number_of_keff_calculations;
-    std::time_t _current_mc_exection_elapsed_time;
-    
-    
-    
+    std::time_t _current_mc_exection_elapsed_time;    
     
     bool _tally_cells;
     int _tally_energy_bins;
@@ -67,7 +59,7 @@ public:
     
    
     ~ReactorMonteCarlo();
-    ReactorMonteCarlo(InfiniteCompositeReactor* reactor, const Real &starting_k_effective,const std::string &run_directory);
+    ReactorMonteCarlo(InfiniteCompositeReactor* reactor,const std::string &run_directory);
     void createMCNPOutputFile(const std::string &run_title, const std::string &file_name,const int &particles_per_cycle,const int &number_cycles, const bool &delated_neutrons = true);
     void updateAdjustedCriticalityParameters();
     
@@ -85,6 +77,8 @@ public:
     std::string getSurfaceCards();
     std::string getTallyCards();
     std::string getSingleCellCard(const Materials &material, const int &current_zone, int &cell_number );
+    
+    
     
     void createTallyOutputFile(std::string file_name = "tally-data.csv");
     void outputTalliesToFile(TallyGroup* tally_group, std::string file_name = "tally-data.csv");

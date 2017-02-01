@@ -30,7 +30,8 @@ public:
     std::string getInputFileParameter(const std::string &name, const std::string &default_value);
     bool getInputFileParameter(const std::string &name, const bool &default_value);
     std::vector<Materials> getInputFileParameter(const std::string &name, const std::vector<Materials> &default_value);
-    int getInputFileParameter(const std::string &name, const int &default_value);
+    long getInputFileParameter(const std::string &name, const long &default_value);
+    long getInputFileParameter(const std::string &name, const int &default_value);
     std::pair<Real,Real> getInputFileParameter(const std::string &name, const std::pair<Real,Real> &default_value);
     std::string getInputFileTextEntry(const std::string &name);
     InputFileParser(std::string input_file_path);

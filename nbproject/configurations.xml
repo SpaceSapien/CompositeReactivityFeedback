@@ -19,6 +19,7 @@
       <itemPath>source/MicroSolution.h</itemPath>
       <itemPath>source/PythonPlot.h</itemPath>
       <itemPath>source/RadialMesh.h</itemPath>
+      <itemPath>source/ReactivityInsertion.h</itemPath>
       <itemPath>source/ReactorKinetics.h</itemPath>
       <itemPath>source/ReactorMonteCarlo.h</itemPath>
       <itemPath>source/SimulationResults.h</itemPath>
@@ -46,6 +47,7 @@
       <itemPath>source/MicroSolution.cpp</itemPath>
       <itemPath>source/PythonPlot.cpp</itemPath>
       <itemPath>source/RadialMesh.cpp</itemPath>
+      <itemPath>source/ReactivityInsertion.cpp</itemPath>
       <itemPath>source/ReactorKinetics.cpp</itemPath>
       <itemPath>source/ReactorMonteCarlo.cpp</itemPath>
       <itemPath>source/SimulationResults.cpp</itemPath>
@@ -179,6 +181,10 @@
       <item path="source/RadialMesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -315,6 +321,10 @@
       </item>
       <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.h" ex="false" tool="3" flavor2="0">
@@ -445,6 +455,10 @@
       <item path="source/RadialMesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -577,6 +591,10 @@
       </item>
       <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.h" ex="false" tool="3" flavor2="0">
@@ -707,6 +725,10 @@
       <item path="source/RadialMesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -839,6 +861,10 @@
       </item>
       <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.h" ex="false" tool="3" flavor2="0">
@@ -969,6 +995,10 @@
       <item path="source/RadialMesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>

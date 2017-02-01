@@ -44,8 +44,7 @@ void WorthStudy::startStudy()
     
     _micro_sphere_geometry = new MicroGeometry(materials, dimensions);  
     _reactor->_micro_sphere_geometry = _micro_sphere_geometry;
-    Real starting_k_eff =  _reactor->_input_file_reader->getInputFileParameter("Starting K-eff",static_cast<Real>(1.01) );
-    _monte_carlo_model = new ReactorMonteCarlo(_reactor, starting_k_eff, _reactor->_results_directory + "run/"); 
+    _monte_carlo_model = new ReactorMonteCarlo(_reactor, _reactor->_results_directory + "run/"); 
     _monte_carlo_model->_tally_cells = true;
     
     for( int division_counter = 0; division_counter < divisions; ++division_counter)

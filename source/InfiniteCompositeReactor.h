@@ -33,10 +33,12 @@
 #include "PythonPlot.h"
 #include "InputFileParser.h"
 #include "WorthStudy.h"
+#include "ReactivityInsertion.h"
 
 class MicroCell;
 class ReactorKinetics;
 class ReactorMonteCarlo;
+class ReactivityInsertion;
 
 
 class InfiniteCompositeReactor
@@ -65,6 +67,8 @@ class InfiniteCompositeReactor
     ReactorMonteCarlo* _monte_carlo_model;
     //Read the input file
     InputFileParser* _input_file_reader;
+    //Reactivity Insertion Control for Virtual Insertions
+    ReactivityInsertion* _reactivity_insertion_model;
     
     //Data Storage for various data
     std::vector<MicroSolution> _plot_solutions;    
