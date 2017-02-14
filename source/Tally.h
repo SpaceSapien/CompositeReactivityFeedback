@@ -27,15 +27,16 @@ public:
     Real _value;
     Real _uncertainty;
     
-    Tally(Real value, Real uncertainty, std::string tally_name);
-    Tally(Real value, Real uncertainty, std::vector<Real> energy_bins, std::vector<Real> energy_values, std::vector<Real> energy_uncertainty, std::string tally_name); 
+    Tally(const Real &value,const Real &uncertainty,const std::string &tally_name);
+    Tally(const Real &value,const Real &uncertainty,const std::vector<Real> &energy_bins,const std::vector<Real> &energy_values,const std::vector<Real> &energy_uncertainty,const std::string &tally_name); 
     
-    void printTallyInfo(bool display_energy_bins = false);
+    void printTallyInfo(const bool &display_energy_bins = false);
     
     int energyBinSize();
     
-    static Tally* getMCNPTally(std::string tally_id, std::string mcnp_file);
-    static std::vector<Real> processMCTALData(std::string top_tag, std::string tally_string);
+    static Tally* getMCNPTally(const std::string &tally_id,const std::string &mcnp_file);
+    static std::vector<Real> processMCTALData(const std::string &top_tag,const std::string &tally_string);
+    static std::string grabMCNPTallyData(const std::string &tally_id, const std::string &mctal_data, const std::string &mctal_file);
     
 private:
 

@@ -26,8 +26,9 @@ public:
     int _cells_per_zone;
     std::vector<Tally*> _flux_tallies;
     std::vector<Tally*> _fission_tallies;
+    std::vector<Tally*> _absorption_tallies;
     
-    TallyGroup(const Real &time,const int &zones,const int &cells_per_zone,const std::vector<Tally*> &flux_tallies,const std::vector<Tally*> &fission_tallies);
+    TallyGroup(const Real &time,const int &zones,const int &cells_per_zone,const std::vector<Tally*> &flux_tallies,const std::vector<Tally*> &fission_tallies,const std::vector<Tally*> &absorption_tallies);
     
     static TallyGroup* MCNPTallyGroupFactory(const std::string &MCTAL_file,const int &zones,const int &cells_per_zone,const Real &time);
     void print(const bool &print_energies = false);

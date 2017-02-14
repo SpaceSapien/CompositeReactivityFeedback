@@ -21,21 +21,75 @@
 
 
 
-Tally::Tally(Real value, Real uncertainty, std::string tally_name) : _value(value), _uncertainty(uncertainty), _tally_name(tally_name)
+Tally::Tally(const Real &value, const Real &uncertainty,const std::string &tally_name) : _value(value), _uncertainty(uncertainty), _tally_name(tally_name)
 {
     _energy_bins = std::vector<Real>();
     _energy_bin_values = std::vector<Real>();
     _energy_bin_uncertainties = std::vector<Real>();
 }
 
-Tally::Tally(Real value, Real uncertainty, std::vector<Real> energy_bins, std::vector<Real> energy_values, std::vector<Real> energy_uncertainty, std::string tally_name) :
+Tally::Tally(const Real &value,const Real &uncertainty,const std::vector<Real> &energy_bins,const std::vector<Real> &energy_values,const std::vector<Real> &energy_uncertainty,const std::string &tally_name) :
 _value(value), _uncertainty(uncertainty), _energy_bins(energy_bins), _energy_bin_values(energy_values), _energy_bin_uncertainties(energy_uncertainty), _tally_name(tally_name)
 {
     
 }
 
+std::string Tally::grabMCNPTallyData(const std::string &tally_id, const std::string &mctal_data,const std::string &mcnp_mctal_file)
+{
+    std::vector<std::string> split_data = split(mctal_data, "\n");
+    
+    
+    bool found_tally = false;
+    std::size_t start_index = 0;
+    std::size_t end_index = 0;
+    
+    for( std::size_t index=0; index < split_data.size(); ++index)
+    {
+        std::string tally_identifier = "tally " + tally_id;
+        
+        if(split_data[index].find(tally_identifier) != std::string::npos)
+        {
+            std::cout<<split_data[index];
+            start_index = index;
+            found_tally = true;
+            break;
+        }
+    }
+    
+    if(! found_tally)
+    {
+        throw "Tally F" + tally_id + " doesn't exist in " + mcnp_mctal_file;
+    }
+    
+    bool found_tfc = false;
+    
+    for( std::size_t index=start_index; index < split_data.size(); ++index)
+    {
+        if(split_data[index].find("tfc") != std::string::npos)
+        {
+            end_index = index + 1;
+            found_tfc = true;
+            break;
+        }
+    }
+    
+    if(! found_tfc)
+    {
+        throw "Tally F" + tally_id + " doesn't have a tfc " + mcnp_mctal_file;
+    }
+    
+    std::string single_tally_data = "";
+    
+    for( std::size_t index=start_index; index <= end_index; ++index)
+    {
+        single_tally_data += split_data[index] + "\n";
+    }
+    
+    return single_tally_data;
+    
+}
 
-Tally* Tally::getMCNPTally(std::string tally_id, std::string mcnp_mctal_file)
+Tally* Tally::getMCNPTally(const std::string &tally_id, const std::string &mcnp_mctal_file)
 {
     if(! file_exists( mcnp_mctal_file ))
     {
@@ -50,15 +104,18 @@ Tally* Tally::getMCNPTally(std::string tally_id, std::string mcnp_mctal_file)
     std::regex multiple_spaces("[ ]{2,}");
     std::string compressed_text = std::regex_replace(file_text, multiple_spaces, " ");
     
-    std::regex tally_info("tally " + tally_id + "(.|\\r|\\n)+?tfc [-+.0-9E ]+\\n( [-+.0-9E ]+\\n){1,}");
+    //std::cout << compressed_text;
+    
     std::smatch match;
+    /*std::regex tally_info("tally " + tally_id + "(.|\\r|\\n)+?tfc"); // [-+.0-9E ]+\\n( [-+.0-9E ]+\\n){1,}");
+    
     
     if(! std::regex_search(compressed_text, match, tally_info))
     {
         throw "Tally F" + tally_id + " doesn't exist in " + mcnp_mctal_file;
-    }
+    }*/
     
-    std::string tally_mcnp_text = match.str();       
+    std::string tally_mcnp_text = Tally::grabMCNPTallyData(tally_id, compressed_text, mcnp_mctal_file);//match.str();       
     std::regex value_and_uncertainty("tfc.+?\\n [-+.0-9E]+ ([-+.0-9E]+) ([-+.0-9E]+)");
     
     if(! std::regex_search(tally_mcnp_text, match, value_and_uncertainty))
@@ -95,7 +152,7 @@ Tally* Tally::getMCNPTally(std::string tally_id, std::string mcnp_mctal_file)
     
 }
 
-std::vector<Real> Tally::processMCTALData(std::string top_tag, std::string tally_mcnp_text)
+std::vector<Real> Tally::processMCTALData(const std::string &top_tag,const std::string &tally_mcnp_text)
 {
     std::regex energy_tally_check( top_tag + "(.+)?\\n");
     std::vector<Real> output = std::vector<Real>();
@@ -136,7 +193,7 @@ std::vector<Real> Tally::processMCTALData(std::string top_tag, std::string tally
     return output;
 }
 
-void Tally::printTallyInfo(bool energy_bins)
+void Tally::printTallyInfo(const bool &energy_bins)
 {
     std::cout<< std::left << std::setw(8) << _tally_name << " Value: "<< std::setw(11) << _value << "  sigma="<< _uncertainty;
     

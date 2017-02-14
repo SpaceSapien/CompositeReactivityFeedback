@@ -19,20 +19,7 @@
 #include <stdio.h>
 #include <iostream>
 
-std::vector<std::string> InputFileParser::split(const std::string &str,const std::string &sep) 
-{
-    char* cstr=const_cast<char*>(str.c_str());
-    char* current;
-    std::vector<std::string> arr;
-    current=strtok(cstr,sep.c_str());
-    
-    while(current!=NULL)
-    {
-        arr.push_back(current);
-        current=strtok(NULL,sep.c_str());
-    }
-    return arr;
-}
+
 
 
 std::string InputFileParser::getInputFileTextEntry(const std::string &name)
@@ -98,7 +85,7 @@ std::pair<Real,Real> InputFileParser::getInputFileParameter(const std::string &n
     }
     else
     {
-        std::vector<std::string> split_string = this->split(input_file_data," ");
+        std::vector<std::string> split_string = split(input_file_data," ");
         std::pair<Real,Real> return_pair;
         
         return_pair.first = std::stod(split_string[0]);
@@ -119,7 +106,7 @@ std::vector<Real> InputFileParser::getInputFileParameter(const std::string &name
     }
     else
     {
-        std::vector<std::string> split_string = this->split(input_file_data," ");
+        std::vector<std::string> split_string = split(input_file_data," ");
         std::vector<Real> return_vector;
         
         for( size_t index = 0; index < split_string.size(); index++)
@@ -146,7 +133,7 @@ std::vector<Materials> InputFileParser::getInputFileParameter(const std::string 
     }
     else
     {
-        std::vector<std::string> split_string = this->split(input_file_data," ");
+        std::vector<std::string> split_string = split(input_file_data," ");
         std::vector<Materials> return_vector;
         
         for( size_t index = 0; index < split_string.size(); index++)

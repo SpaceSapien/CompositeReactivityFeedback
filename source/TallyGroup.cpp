@@ -15,12 +15,13 @@
 #include <cmath>
 #include <fstream>
 
-TallyGroup::TallyGroup(const Real &time,const int &zones,const int &cells_per_zone,const std::vector<Tally*> &flux_tallies,const std::vector<Tally*> &fission_tallies) 
+TallyGroup::TallyGroup(const Real &time,const int &zones,const int &cells_per_zone,const std::vector<Tally*> &flux_tallies,const std::vector<Tally*> &fission_tallies,const std::vector<Tally*> &absorption_tallies) 
 {
     _time = time;
     _cells_per_zone = cells_per_zone;
     _flux_tallies = flux_tallies;
     _fission_tallies = fission_tallies;
+    _absorption_tallies = absorption_tallies;
     _zones = zones;
 }
 
@@ -55,13 +56,16 @@ void TallyGroup::outputToFile(const std::string &file_path)
             
             
             std::string flux_location =  "Flux-" + zone_str + "-" + cell_str + "," + zone_str + "," + cell_str;
-            std::string fission_location =  "Fission-" + zone_str + "-" +cell_str + "," + zone_str + "," + cell_str; ;
+            std::string fission_location =  "Fission-" + zone_str + "-" +cell_str + "," + zone_str + "," + cell_str;
+            std::string absorption_location =  "Absorption-" + zone_str + "-" +cell_str + "," + zone_str + "," + cell_str;
             
             Tally *flux_tally = _flux_tallies[index];
             Tally *fission_tally = _fission_tallies[index];
+            Tally *absorption_tally = _absorption_tallies[index];
             
             this->outputTallyToFile(file_path,flux_tally,flux_location);
             this->outputTallyToFile(file_path,fission_tally, fission_location);            
+            this->outputTallyToFile(file_path,absorption_tally, absorption_location);            
         }    
        
     }
@@ -82,6 +86,7 @@ TallyGroup* TallyGroup::MCNPTallyGroupFactory(const std::string &MCTAL_file,cons
     
     std::vector<Tally*> fission_tallies = std::vector<Tally*>();
     std::vector<Tally*> flux_tallies = std::vector<Tally*>();
+    std::vector<Tally*> absorption_tallies = std::vector<Tally*>();
     
     for(int index = 1; index <= total_tallies; ++index)
     {
@@ -95,7 +100,18 @@ TallyGroup* TallyGroup::MCNPTallyGroupFactory(const std::string &MCTAL_file,cons
         fission_tallies.push_back(fission_tally);
     }
     
-    return new TallyGroup(time,zones,cells_per_zone, flux_tallies, fission_tallies);
+    for(int index = total_tallies + 1; index <= total_tallies * 2; ++index)
+    {
+        std::string F4_absorption_tally = std::to_string(index) + "4";
+        
+        Tally* absorption_tally = Tally::getMCNPTally( F4_absorption_tally, MCTAL_file);
+        
+        absorption_tallies.push_back(absorption_tally);
+    }
+    
+    
+    
+    return new TallyGroup(time,zones,cells_per_zone, flux_tallies, fission_tallies,absorption_tallies);
 }
 
 void TallyGroup::print(const bool &print_energies)
@@ -103,7 +119,14 @@ void TallyGroup::print(const bool &print_energies)
     for(std::size_t index = 0; index < _flux_tallies.size(); ++index )
     {
         _flux_tallies[index]->printTallyInfo(print_energies);
+    }
+    for(std::size_t index = 0; index < _fission_tallies.size(); ++index )
+    {
         _fission_tallies[index]->printTallyInfo(print_energies);
+    }   
+    for(std::size_t index = 0; index < _absorption_tallies.size(); ++index )
+    {
+        _absorption_tallies[index]->printTallyInfo(print_energies);
     }
 }
 
@@ -117,6 +140,11 @@ TallyGroup::~TallyGroup()
     for(std::size_t index=0; index < _fission_tallies.size(); ++index)
     {
         delete _fission_tallies[index];
+    }
+    
+    for(std::size_t index=0; index < _absorption_tallies.size(); ++index)
+    {
+        delete _absorption_tallies[index];
     }
 }
 
