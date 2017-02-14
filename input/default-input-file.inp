@@ -46,7 +46,7 @@ Particles Per Cycle: 1000
 Number CPUs:  128
 
 Tally Cells: true                             #tally the cells in the problem
-
+Tally Energy Bins: 400
 #Worth: false
 #Worth divisions
 Worth Temperature Divisions: 12
