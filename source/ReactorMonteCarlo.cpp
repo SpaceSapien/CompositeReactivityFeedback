@@ -52,8 +52,8 @@ ReactorMonteCarlo::ReactorMonteCarlo(InfiniteCompositeReactor* reactor, const  s
     _beta_eff_number_particles = this->_reactor->_input_file_reader->getInputFileParameter("Beff Number of Particles", static_cast<long>(33000) );  
     _particles_per_cycle = this->_reactor->_input_file_reader->getInputFileParameter("Particles Per Cycle", static_cast<long>(1000) );
     
-    _beta_eff_number_cycles = std::ceil(static_cast<Real>(_k_eff_number_particles)/static_cast<Real>(_particles_per_cycle));
-    _k_eff_number_cycles = std::ceil(static_cast<Real>(_beta_eff_number_particles)/static_cast<Real>(_particles_per_cycle));
+    _beta_eff_number_cycles = std::ceil(static_cast<Real>(_beta_eff_number_particles)/static_cast<Real>(_particles_per_cycle));
+    _k_eff_number_cycles = std::ceil(static_cast<Real>(_k_eff_number_particles)/static_cast<Real>(_particles_per_cycle));
     
     if(_beta_eff_number_cycles < 33 || _k_eff_number_cycles < 33)
     {
@@ -404,7 +404,7 @@ std::string ReactorMonteCarlo::getTallyCards()
     std::vector<std::pair<Materials, Dimension> > geometry_data = _reactor->_micro_sphere_geometry->_geometry;
     int number_zones = geometry_data.size();   
     int cell_number = 1;
-    
+    //Create the Fission and Flux Tallies
     //For each zone create a cell
     for( int current_zone = 1; current_zone <= number_zones  ; current_zone++ )
     {
@@ -416,6 +416,7 @@ std::string ReactorMonteCarlo::getTallyCards()
         }
     }
     
+    //Create the Absorption Tallies
     int tally_number = cell_number;
     cell_number = 1;
     
@@ -425,8 +426,8 @@ std::string ReactorMonteCarlo::getTallyCards()
         for( int current_cell_in_zone = 1; current_cell_in_zone <= _cells_per_zone; current_cell_in_zone++)
         {
             //Here we are creating our absorption tally
-            tally_cards << " F" + std::to_string(tally_number) << "4:n " << std::to_string(cell_number) << "   $fission energy deposition tally" << std::endl;
-            tally_cards << " FM" + std::to_string(tally_number) << "4   -1 " << current_zone << " -2  $fission energy deposition tally" << std::endl;
+            tally_cards << " F" + std::to_string(tally_number) << "4:n " << std::to_string(cell_number) << "       $ absorption tally" << std::endl;
+            tally_cards << " FM" + std::to_string(tally_number) << "4 -1 " << current_zone << " -2  $ multiplier to set the absorption tally counter" << std::endl;
             cell_number++;
             tally_number++;
         }
