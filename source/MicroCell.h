@@ -54,6 +54,7 @@ public:
     int _number_mesh_nodes;
     //higher precision as we may be taking derivatives of it
     long double _outward_integrated_power;
+    Real _outward_current_power;
     long double _integrated_power;
     SolverOrder _solver_order;
     

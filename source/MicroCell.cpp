@@ -251,7 +251,8 @@ MicroSolution MicroCell::solveSecondOrder(const Real &simulation_time_step, cons
             {
                 //use the boundary condition to determine the outward heat flux
                 outward_heat_flux = this->_outer_boundary_condition->getHeatFlux(this,inward_heat_flux + internal_power);
-                _outward_integrated_power += outward_heat_flux * _time_step;
+                _outward_integrated_power += -outward_heat_flux * _time_step;
+                _outward_current_power = -outward_heat_flux;
             }            
             else
             {   

@@ -54,7 +54,7 @@ Real MicroCellBoundaryCondition::getHeatFlux(MicroCell*  micro_cell, const Real 
     {
         case BoundaryType::FixedHeatFlux :
         {
-            return  this->_fixed_heat_flux;
+            return  -1 * this->_fixed_heat_flux;
             break;
         }
         case BoundaryType::ReflectedHeatFlux :
