@@ -358,10 +358,16 @@ void InfiniteCompositeReactor::temperatureIterationInnerLoop()
             _delayed_record.push_back(delayed_entry);
         }
         
-        //If there has been a significant temperature change or if there was a ramp function and it just ended
-        if( this->significantTemperatureDifference(&current_solution) || this->_reactivity_insertion_model->rampNeedsReactivityUpdate(_transient_time , _inner_time_step) )
+        //If there has been a significant temperature change recalculate the k_eff
+        if( this->significantTemperatureDifference(&current_solution) )
         {
             break;
+        }
+        
+        //If this is a ramp insertion and there has been a certain amount of time passed record in the log 
+        if(this->_reactivity_insertion_model->rampNeedsReactivityLogUpdate(_transient_time , _inner_time_step) )
+        {
+            this->monteCarloTimeStepSimulationProcessing();
         }
 
     }
