@@ -133,7 +133,7 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string old_results
 void InfiniteCompositeReactor::worthStudy()
 {
     std::cout<<"Starting Worth Study"<<std::endl;
-    
+    this->_transient_time = -2.0;
     WorthStudy* study = new WorthStudy(this);
     study->startStudy();
     delete study;
