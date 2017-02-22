@@ -26,7 +26,7 @@ public:
     Real getCurrentVirtualKeffMultiplier(const Real &current_time);
     Real getCurrentKeff(const Real &current_time);
     Real getCurrentKeffSigma(const Real &current_time);
-    bool rampJustEnded(const Real &current_time);
+    bool rampNeedsReactivityUpdate(const Real &last_update_time,const Real &time_since_last_update );
     
     
     InfiniteCompositeReactor* _reactor;

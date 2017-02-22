@@ -359,7 +359,7 @@ void InfiniteCompositeReactor::temperatureIterationInnerLoop()
         }
         
         //If there has been a significant temperature change or if there was a ramp function and it just ended
-        if( this->significantTemperatureDifference(&current_solution) || this->_reactivity_insertion_model->rampJustEnded(_transient_time + _inner_time_step) )
+        if( this->significantTemperatureDifference(&current_solution) || this->_reactivity_insertion_model->rampNeedsReactivityUpdate(_transient_time , _inner_time_step) )
         {
             break;
         }

@@ -45,14 +45,22 @@ ReactivityInsertion::ReactivityInsertion(InfiniteCompositeReactor* reactor)
 }
 
 //A function that is called to break the inner loop and record a timestep right as the ramp ends
-bool ReactivityInsertion::rampJustEnded(const Real &current_time)
+bool ReactivityInsertion::rampNeedsReactivityUpdate(const Real &last_update_time,const Real &time_since_last_update )
 {
+    Real current_time = last_update_time + time_since_last_update;
+    
     //if this is a ramp
     if( _reactivity_insertion_function == ReactivityInsertion::RAMP_REACTIVITY_INSERTION )
     {
         //the ramp finished flag hasn't been set
         if(! _ramp_finished)
         {
+            //There needs to be at leat 15 piecewise time periods where the reactivity needs to be updated
+            if( time_since_last_update > _reactivity_addition_timing/15.0)
+            {
+                return true;
+            }
+            
             //and the current time is over the ramp addition time
             if( current_time >= _reactivity_addition_timing )
             {
