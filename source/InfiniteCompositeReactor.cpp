@@ -359,7 +359,7 @@ void InfiniteCompositeReactor::temperatureIterationInnerLoop()
         }
         
         //If there has been a significant temperature change recalculate the k_eff
-        if( this->significantTemperatureDifference(&current_solution) )
+        if( this->significantTemperatureDifference(&current_solution) || this->_reactivity_insertion_model->rampNeedsReactivityMonteCarloUpdate(_transient_time , _inner_time_step) )
         {
             break;
         }

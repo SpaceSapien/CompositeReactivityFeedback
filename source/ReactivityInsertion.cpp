@@ -45,6 +45,27 @@ ReactivityInsertion::ReactivityInsertion(InfiniteCompositeReactor* reactor)
 }
 
 //A function that is called to break the inner loop and record a timestep right as the ramp ends
+bool ReactivityInsertion::rampNeedsReactivityMonteCarloUpdate(const Real &last_update_time,const Real &time_since_last_update )
+{
+    Real current_time = last_update_time + time_since_last_update;
+    
+    //if this is a ramp
+    if( _reactivity_insertion_function == ReactivityInsertion::RAMP_REACTIVITY_INSERTION )
+    {
+        //the ramp finished flag hasn't been set
+        if(! _ramp_finished)
+        {
+            //and the current time is over the ramp addition time
+            if( current_time >= _reactivity_addition_timing )
+            {
+                _ramp_finished = true;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 bool ReactivityInsertion::rampNeedsReactivityLogUpdate(const Real &last_update_time,const Real &time_since_last_update )
 {
     Real current_time = last_update_time + time_since_last_update;
@@ -55,16 +76,9 @@ bool ReactivityInsertion::rampNeedsReactivityLogUpdate(const Real &last_update_t
         //the ramp finished flag hasn't been set
         if(! _ramp_finished)
         {
-            //There needs to be at leat 15 piecewise time periods where the reactivity needs to be updated
-            if( time_since_last_update > _reactivity_addition_timing/15.0)
+            //There needs to be at leat 25 piecewise time periods where the reactivity needs to be shown in the log 
+            if( time_since_last_update > _reactivity_addition_timing/25.0)
             {
-                return true;
-            }
-            
-            //and the current time is over the ramp addition time
-            if( current_time >= _reactivity_addition_timing )
-            {
-                _ramp_finished = true;
                 return true;
             }
         }
