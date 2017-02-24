@@ -303,7 +303,7 @@ bool InfiniteCompositeReactor::significantTemperatureDifference(MicroSolution* c
      
      average_difference /= std::pow(differences._grid.back(),3);
      
-     if( max_difference > _maximum_allowed_temperature_difference || average_difference > _maximum_allowed_temperature_difference/4.0 )
+     if( max_difference > _maximum_allowed_temperature_difference || average_difference > _maximum_allowed_temperature_difference/3.3 )
      {
          return true;
      }
