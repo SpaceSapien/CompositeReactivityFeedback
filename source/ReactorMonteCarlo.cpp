@@ -418,6 +418,7 @@ std::string ReactorMonteCarlo::getTallyCards()
     
     //Create the Absorption Tallies
     int tally_number = cell_number;
+    //cell number couts from 1 to n_zones * n_cells
     cell_number = 1;
     
     //For each zone create a cell
@@ -426,12 +427,44 @@ std::string ReactorMonteCarlo::getTallyCards()
         for( int current_cell_in_zone = 1; current_cell_in_zone <= _cells_per_zone; current_cell_in_zone++)
         {
             //Here we are creating our absorption tally
-            tally_cards << " F" + std::to_string(tally_number) << "4:n " << std::to_string(cell_number) << "       $ absorption tally" << std::endl;
-            tally_cards << " FM" + std::to_string(tally_number) << "4 -1 " << current_zone << " -2  $ multiplier to set the absorption tally counter" << std::endl;
+            tally_cards << " F" + std::to_string(tally_number) << "4:n " << std::to_string(cell_number) << "       $ absorption rate tally" << std::endl;
+            tally_cards << " FM" + std::to_string(tally_number) << "4 -1 " << current_zone << " -6:-2  $ multiplier to set the absorption rate tally counter" << std::endl;
             cell_number++;
             tally_number++;
         }
     }
+    
+    //cell number couts from 1 to n_zones * n_cells
+    cell_number = 1;
+    
+    //For each zone create a cell
+    for( int current_zone = 1; current_zone <= number_zones  ; current_zone++ )
+    {
+        for( int current_cell_in_zone = 1; current_cell_in_zone <= _cells_per_zone; current_cell_in_zone++)
+        {
+            //Here we are creating our fission number tally
+            tally_cards << " F" + std::to_string(tally_number) << "4:n " << std::to_string(cell_number) << "       $ fission rate tally" << std::endl;
+            tally_cards << " FM" + std::to_string(tally_number) << "4 -1 " << current_zone << " -2  $ multiplier to set the fission rate tally counter" << std::endl;
+            cell_number++;
+            tally_number++;
+        }
+    }
+    
+    //cell number couts from 1 to n_zones * n_cells
+    cell_number = 1;
+    
+    for( int current_zone = 1; current_zone <= number_zones  ; current_zone++ )
+    {
+        for( int current_cell_in_zone = 1; current_cell_in_zone <= _cells_per_zone; current_cell_in_zone++)
+        {
+            //Here we are creating our absorption tally
+            tally_cards << " F" + std::to_string(tally_number) << "4:n " << std::to_string(cell_number) << "       $ capture rate tally" << std::endl;
+            tally_cards << " FM" + std::to_string(tally_number) << "4 -1 " << current_zone << " -6  $ multiplier to set the capture rate tally counter" << std::endl;
+            cell_number++;
+            tally_number++;
+        }
+    }
+    
     
     tally_cards << " E0 0.000000001 " + std::to_string(_tally_energy_bins - 2) + "ILOG 10" << std::endl;
     tally_cards << " PRDMP   j j 1 		$write mctal file" << std::endl;

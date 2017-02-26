@@ -269,7 +269,7 @@ MicroSolution MicroCell::solveSecondOrder(const Real &simulation_time_step, cons
             Real base_thermal_inertia = material_data._density * material_data._specific_heat;
             Real thermal_inertia = base_thermal_inertia * _mesh->_volume[radial_index];
             
-            net_heat_flux = inward_heat_flux + outward_heat_flux + internal_power;   
+            net_heat_flux = inward_heat_flux + outward_heat_flux + internal_power;  
             dSolution = net_heat_flux / thermal_inertia;
             current_solution[ radial_index ] = previous_solution[ radial_index ] + _time_step * dSolution;
             

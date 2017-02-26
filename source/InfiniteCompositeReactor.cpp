@@ -608,7 +608,10 @@ void InfiniteCompositeReactor::createOutputFile()
     std::ofstream output_file;
     output_file.open( this->_results_directory + this->_data_file, std::ios::out);
     
-    output_file << "Iteration,Time [s],Timestep [s],Power [W/m^3],k_eff,k_eff sigma,neutron lifetime [s],Neutron Lifetime sigma [s],Beta_eff,Beta_eff sigma,Run Time [s],Edge Temp [K],Gamma,Power Peaking,Current Power Out [W/m^3],Integrated Outward Power [W*s/m^3],Integrated Power [W*s/m^3],MC Execution Time [s],Time Per Particle [ms],Time Per Particle CPU [ms/cpu]";
+    output_file << "Iteration,Time [s],Timestep [s],Power [W/m^3],k_eff,k_eff sigma,neutron lifetime [s],Neutron Lifetime sigma [s],"
+                << "Beta_eff,Beta_eff sigma,Run Time [s],Edge Temp [K],Gamma,Power Peaking,Current Power Out [W/m^3],"
+                << "Integrated Outward Power [W*s/m^3],Integrated Power [W*s/m^3],MC Execution Time [s],Time Per Particle [ms],"
+                << "Time Per Particle CPU [ms/cpu]";
     
     for(size_t index = 1; index <= 6; index++ )
     {
