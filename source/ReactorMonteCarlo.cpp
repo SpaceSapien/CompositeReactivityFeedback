@@ -318,7 +318,12 @@ std::string ReactorMonteCarlo::getMaterialCards()
         Materials material = geometry_data[index].first; 
         std::string material_card_entry;
         std::string doppler_card_entry;
-        MaterialLibrary::getMcnpMaterialCard(material,current_zone,material_card_entry, doppler_card_entry, enrichment_fraction);
+        
+        Real cell_temperature, cell_volume;
+        
+        _reactor->_thermal_solver->getAverageTemperature(index, cell_temperature, cell_volume);
+        
+        MaterialLibrary::getMcnpMaterialCard(material,current_zone,cell_temperature,material_card_entry, doppler_card_entry, enrichment_fraction);
         
         material_cards << material_card_entry;
         otfdb_card << doppler_card_entry;        

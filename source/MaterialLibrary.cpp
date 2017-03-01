@@ -381,18 +381,56 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
 }
 
 /**
+ * This function takes the temperature and library data and matches it with the correct mt card library
+ * 
+ * @param temperature
+ * @param library_list
+ * @param library_name
+ * @return 
+ */
+void MaterialLibrary::getMcnpMtMaterialCard(const Real &temperature,const std::vector<std::pair<int,Real>> &library_list,const std::string &base_library_name, std::string &library_name, Real &library_temperature)
+{
+    
+    
+    
+    std::pair<int,Real> starting_temperature_lib = library_list[0];
+    
+    for( std::size_t material_index = 1; material_index < library_list.size(); ++material_index)
+    {
+    
+        Real starting_temperature = starting_temperature_lib.second;
+        
+        std::pair<int,Real> next_temperature_lib = library_list[material_index];
+        Real next_temperature = next_temperature_lib.second;
+        
+        Real avg_temperature = ( next_temperature + starting_temperature ) / 2;
+        
+                
+        if( temperature < avg_temperature )
+        {
+            break;
+        }
+        
+        starting_temperature_lib = next_temperature_lib;
+        
+    }
+    
+    int library_index = starting_temperature_lib.first;
+    
+    library_name = base_library_name + std::to_string(library_index) + "t";
+    library_temperature = starting_temperature_lib.second;
+}
+
+/**
  * 
  * @param material
  * @param material_card_entry  
  * @param doppler_card         The string text entry for the otfdb card entry. Net needed for every material 
  * @param enrichment_fraction  Only needed for materials containing Uranium. Specifies enricment amount
  */
-void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsigned int &zone, std::string &material_card_entry, std::string &doppler_card,const Real &enrichment_fraction)
+void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsigned int &zone, const Real &avg_temperature, std::string &material_card_entry, std::string &doppler_card,const Real &enrichment_fraction)
 {
     std::stringstream material_cards, db_cards;
-    
-    
-    
     
         
     std::string U238_cs = "92238.80c";
@@ -415,8 +453,20 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
             material_cards << " m" << zone << "  8016        2          $UO2" << std::endl;
             material_cards << "     " << U235_cs << "   " << U235_fraction << std::endl;
             material_cards << "     " << U238_cs << "   " << U238_fraction << std::endl;
-            material_cards << " mt" << zone << " o2-u.27t           $S(a,b) UO2 @ 1200 K" << std::endl;
-            material_cards << "     u-o2.37t" << std::endl;
+            
+            std::vector<std::pair<int,Real>> mt_paired_library_list_o2 = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
+            
+            std::string mt_card_library;
+            Real library_temperature;            
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_o2,std::string("o2-u."), mt_card_library, library_temperature);
+           
+            material_cards << " mt" << zone << " " << mt_card_library << "           $S(a,b) O2 in UO2 @ " << library_temperature << " K" << std::endl;
+            
+            std::vector<std::pair<int,Real>> mt_paired_library_list_u = { {30,293.6},{31,400},{32,500},{33,600},{34,700},{35,800},{36,1000},{37,1200} };
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_u,std::string("u-o2."), mt_card_library, library_temperature);
+           
+            
+            material_cards << "     " << mt_card_library << "           $S(a,b) U in UO2 @ " << library_temperature << std::endl;
             break;
                             
         }
@@ -439,21 +489,49 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
         case Materials::C :
         {
             material_cards << " m" << zone << "  6000    1          $Graphite" << std::endl;
-            material_cards << " mt" << zone << " grph.22t           $Graphite S(a,b) treatment @ 500 K" << std::endl;
+            
+            std::vector<std::pair<int,Real>> mt_paired_library_list = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200},{28,1600},{29,2000} };
+            
+            std::string mt_card_library;
+            Real library_temperature;            
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list,std::string("grph."), mt_card_library, library_temperature);
+                        
+            material_cards << " mt" << zone << " " << mt_card_library << "           $Graphite S(a,b) treatment @ " << library_temperature << " K" << std::endl;
             break;
         }
         case Materials::Be :
         {
             material_cards << " m" << zone << "  4009    1          $Beryllium" << std::endl;
-            material_cards << " mt" << zone << " be.25t             $Be S(a,b) treatment @ 800 K" << std::endl;
+            
+            std::vector<std::pair<int,Real>> mt_paired_library_list = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
+            
+            std::string mt_card_library;
+            Real library_temperature;            
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list,std::string("be."), mt_card_library, library_temperature);
+            
+            
+            material_cards << " mt" << zone << " " << mt_card_library << "             $Be S(a,b) treatment @ " << library_temperature << " K" << std::endl;
             break;
         }
         case Materials::BeO :
         {
+            
+            std::vector<std::pair<int,Real>> mt_paired_library_list_be = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
+            std::string mt_card_library;
+            Real library_temperature;            
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_be,std::string("be-o."), mt_card_library, library_temperature);
+             
+            
             material_cards << " m" << zone << "  4009    1          $Beryllium Oxide" << std::endl;
             material_cards << "     8016        1          " << std::endl;
-            material_cards << " mt" << zone << " be-o.25t             $Be S(a,b) treatment @ 800 K" << std::endl;
-            material_cards << "     o-be.25t" << "             $Oxygen S(a,b) treatment @ 800 K " << std::endl;
+            material_cards << " mt" << zone << " " << mt_card_library << "             $Be S(a,b) treatment @ " << library_temperature << " K" << std::endl;
+            
+            
+            std::vector<std::pair<int,Real>> mt_paired_library_list_o = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_be,std::string("o-be."), mt_card_library, library_temperature);
+            
+            
+            material_cards << "     " << mt_card_library << "             $Oxygen S(a,b) treatment @ " << library_temperature << " K " << std::endl;
             break;        
         }
         
