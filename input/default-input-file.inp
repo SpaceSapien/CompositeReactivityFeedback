@@ -4,8 +4,8 @@ Run Name: Base-Case
 # Materials and radaii mus have the same number of entries
 #Material options include
 # U, UO2, UN, UC, U3Si, SiC, C, Be, BeO, ZrB2, W, B4C, Mo, Nb, Zr, Graphene
-Materials: UO2 ZrO2 C
-Radaii: 4e-4 4.5e-4 1.612e-3 #m
+Materials: UO2 ZrO2 W C
+Radaii: 4e-4 4.5e-4 4.6e-4 1.612e-3 #m
 
 #Starting Power Density 
 

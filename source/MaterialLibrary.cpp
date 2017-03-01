@@ -662,7 +662,7 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
             material_cards << "     40092.80c       0.1715          " << std::endl;
             material_cards << "     40094.80c       0.1738          " << std::endl;
             material_cards << "     40096.80c       0.0280          " << std::endl;
-            material_cards << "     8016        2          " << std::endl;
+            material_cards << "     8016.80c        2          " << std::endl;
             
             doppler_broaden_cross_sections["40090.80c"] = true;
             doppler_broaden_cross_sections["40091.80c"] = true;
