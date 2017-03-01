@@ -17,6 +17,7 @@
 #include <vector>
 #include <complex>
 #include <cmath>
+#include <map>
 #include "MaterialLibrary.h"
 
 // #define NO_MATERIAL_PROPERTIES_DIFFERENTIAL
@@ -390,9 +391,6 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
  */
 void MaterialLibrary::getMcnpMtMaterialCard(const Real &temperature,const std::vector<std::pair<int,Real>> &library_list,const std::string &base_library_name, std::string &library_name, Real &library_temperature)
 {
-    
-    
-    
     std::pair<int,Real> starting_temperature_lib = library_list[0];
     
     for( std::size_t material_index = 1; material_index < library_list.size(); ++material_index)
@@ -434,10 +432,13 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
     
         
     std::string U238_cs = "92238.80c";
-    std::string U235_cs = "92235.80c";    
+    std::string U235_cs = "92235.80c";   
+    
      
     Real U235_fraction = enrichment_fraction;
     Real U238_fraction = (1 - enrichment_fraction);
+    
+    std::map<std::string,bool> doppler_broaden_cross_sections;
     
     switch(material)
     {
@@ -445,12 +446,16 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
         {
             material_cards << " m" << zone << "  " << U235_cs << "   " << U235_fraction << std::endl;
             material_cards << "     " << U238_cs << "   " << U238_fraction << std::endl;
+            
+            doppler_broaden_cross_sections[U238_cs] = true;
+            doppler_broaden_cross_sections[U235_cs] = true;
+            
             break;
            
         }
         case Materials::UO2 :
         {
-            material_cards << " m" << zone << "  8016        2          $UO2" << std::endl;
+            material_cards << " m" << zone << "  8016.80c        2          $UO2" << std::endl;
             material_cards << "     " << U235_cs << "   " << U235_fraction << std::endl;
             material_cards << "     " << U238_cs << "   " << U238_fraction << std::endl;
             
@@ -467,28 +472,40 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
            
             
             material_cards << "     " << mt_card_library << "           $S(a,b) U in UO2 @ " << library_temperature << std::endl;
+            
+            doppler_broaden_cross_sections[U238_cs] = true;
+            doppler_broaden_cross_sections[U235_cs] = true;
+            
             break;
                             
         }
         
         case Materials::UN :
         {
-            material_cards << " m" << zone << "  7014        1          $UN" << std::endl;
+            material_cards << " m" << zone << "  7014.80c        1          $UN" << std::endl;
             material_cards << "     " << U235_cs << "   " << U235_fraction << std::endl;
             material_cards << "     " << U238_cs << "   " << U238_fraction << std::endl;
+            
+            doppler_broaden_cross_sections[U238_cs] = true;
+            doppler_broaden_cross_sections[U235_cs] = true;
+            
             break;
         }
         
         case Materials::UC :
         {
-            material_cards << " m" << zone << "  6000        1          $UC" << std::endl;
+            material_cards << " m" << zone << "  6000.80c        1          $UC" << std::endl;
             material_cards << "     " << U235_cs << "   " << U235_fraction << std::endl;
             material_cards << "     " << U238_cs << "   " << U238_fraction << std::endl;
+            
+            doppler_broaden_cross_sections[U238_cs] = true;
+            doppler_broaden_cross_sections[U235_cs] = true;
+            
             break;
         }
         case Materials::C :
         {
-            material_cards << " m" << zone << "  6000    1          $Graphite" << std::endl;
+            material_cards << " m" << zone << "  6000.80c    1          $Graphite" << std::endl;
             
             std::vector<std::pair<int,Real>> mt_paired_library_list = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200},{28,1600},{29,2000} };
             
@@ -501,7 +518,7 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
         }
         case Materials::Be :
         {
-            material_cards << " m" << zone << "  4009    1          $Beryllium" << std::endl;
+            material_cards << " m" << zone << "  4009.80c    1          $Beryllium" << std::endl;
             
             std::vector<std::pair<int,Real>> mt_paired_library_list = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
             
@@ -515,18 +532,18 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
         }
         case Materials::BeO :
         {
-            
+            //grabbing data for out S(a,b) treatment of Be
             std::vector<std::pair<int,Real>> mt_paired_library_list_be = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
             std::string mt_card_library;
             Real library_temperature;            
             MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_be,std::string("be-o."), mt_card_library, library_temperature);
              
             
-            material_cards << " m" << zone << "  4009    1          $Beryllium Oxide" << std::endl;
-            material_cards << "     8016        1          " << std::endl;
+            material_cards << " m" << zone << "  4009.80c    1          $Beryllium Oxide" << std::endl;
+            material_cards << "     8016.80c        1          " << std::endl;
             material_cards << " mt" << zone << " " << mt_card_library << "             $Be S(a,b) treatment @ " << library_temperature << " K" << std::endl;
             
-            
+            //grabbing data for out S(a,b) treatment of Oxygen
             std::vector<std::pair<int,Real>> mt_paired_library_list_o = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
             MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_be,std::string("o-be."), mt_card_library, library_temperature);
             
@@ -537,53 +554,122 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
         
         case Materials::SiC :
         {
-            material_cards << " m" << zone << "  14000    1          $SiC" << std::endl;
-            material_cards << "     6000        1          " << std::endl;
+            material_cards << " m" << zone << "  14028.80c    0.922          $SiC" << std::endl;
+            material_cards << "     14029.80c   0.047          " << std::endl;
+            material_cards << "     14030.80c   0.031          " << std::endl;
+            material_cards << "     6000.80c    1          " << std::endl;
+            
+            doppler_broaden_cross_sections["14028.80c"] = true;
+            doppler_broaden_cross_sections["14029.80c"] = true;
+            doppler_broaden_cross_sections["14030.80c"] = true;
+            
             break;    
         }
         
         case Materials::W :
         {
-            material_cards << " m" << zone << "  74000    1          $Tungsten" << std::endl;
+            material_cards << " m" << zone << "  74180.80c    0.0012          $Tungsten" << std::endl;
+            material_cards << "     74182.80c       0.2650      " << std::endl;
+            material_cards << "     74183.80c       0.1431          " << std::endl;
+            material_cards << "     74184.80c       0.3064          " << std::endl;
+            material_cards << "     74186.80c       0.2843          " << std::endl;
+            
+            //For some reason MCNP won't boraden the 74180. Luckily it isn't a large percentage of the W
+            //doppler_broaden_cross_sections["74180.80c"] = true;
+            doppler_broaden_cross_sections["74182.80c"] = true;
+            doppler_broaden_cross_sections["74183.80c"] = true;
+            doppler_broaden_cross_sections["74184.80c"] = true;
+            doppler_broaden_cross_sections["74186.80c"] = true;
+            
             break;                
         }
         
         case Materials::B4C :
         {
-            material_cards << " m" << zone << "  5011    1          $B4C" << std::endl;
-            material_cards << "     6000        4          " << std::endl;
+            material_cards << " m" << zone << "  5011.80c    1          $B4C" << std::endl;
+            material_cards << "     6000.80c        4          " << std::endl;
+            
             break;
         }
         
         case Materials::Mo :
         {
-            material_cards << " m" << zone << "  42000    1          $Mo" << std::endl;
+            material_cards << " m" << zone << "  42092.80c    .1465          $Mo" << std::endl;
+            material_cards << "     42094.80c       0.0919      " << std::endl;
+            material_cards << "     42095.80c       0.1587          " << std::endl;
+            material_cards << "     42096.80c       0.1667          " << std::endl;
+            material_cards << "     42097.80c       0.0958          " << std::endl;
+            material_cards << "     42098.80c       0.2429          " << std::endl;
+            material_cards << "     42100.80c       0.0974          " << std::endl;
+            
+            doppler_broaden_cross_sections["42092.80c"] = true;
+            doppler_broaden_cross_sections["42094.80c"] = true;
+            doppler_broaden_cross_sections["42095.80c"] = true;
+            doppler_broaden_cross_sections["42096.80c"] = true;
+            doppler_broaden_cross_sections["42097.80c"] = true;
+            doppler_broaden_cross_sections["42098.80c"] = true;
+            doppler_broaden_cross_sections["42100.80c"] = true;           
+            
             break;
         }
 
         case Materials::Nb :
         {
-            material_cards << " m" << zone << "  41093    1          $Nb" << std::endl;
+            material_cards << " m" << zone << "  41093.80c    1          $Nb" << std::endl;
+            doppler_broaden_cross_sections["41093.80c"] = true;
             break;
         }
             
         case Materials::Zr :
         {
-            material_cards << " m" << zone << "  40000    1          $Zr" << std::endl;
+            material_cards << " m" << zone << "  40090.80c    0.5145          $Zr" << std::endl;
+            material_cards << "     40091.80c       0.1122      " << std::endl;
+            material_cards << "     40092.80c       0.1715          " << std::endl;
+            material_cards << "     40094.80c       0.1738          " << std::endl;
+            material_cards << "     40096.80c       0.0280          " << std::endl;
+            
+            doppler_broaden_cross_sections["40090.80c"] = true;
+            doppler_broaden_cross_sections["40091.80c"] = true;
+            doppler_broaden_cross_sections["40092.80c"] = true;
+            doppler_broaden_cross_sections["40094.80c"] = true;
+            doppler_broaden_cross_sections["40096.80c"] = true;            
+            
             break;
         }
 
         case Materials::ZrB2 :
         {        
-            material_cards << " m" << zone << "  42000    1          $ZrB2" << std::endl;
+            material_cards << " m" << zone << "  40090.80c    0.5145          $ZrB2" << std::endl;
+            material_cards << "     40091.80c       0.1122      " << std::endl;
+            material_cards << "     40092.80c       0.1715          " << std::endl;
+            material_cards << "     40094.80c       0.1738          " << std::endl;
+            material_cards << "     40096.80c       0.0280          " << std::endl;
             material_cards << "     5011        2          " << std::endl;
+            
+            doppler_broaden_cross_sections["40090.80c"] = true;
+            doppler_broaden_cross_sections["40091.80c"] = true;
+            doppler_broaden_cross_sections["40092.80c"] = true;
+            doppler_broaden_cross_sections["40094.80c"] = true;
+            doppler_broaden_cross_sections["40096.80c"] = true;
+            
             break;
         }
         
         case Materials::ZrO2 :
         {        
-            material_cards << " m" << zone << "  42000    1          $ZrO2" << std::endl;
+            material_cards << " m" << zone << "  40090.80c    0.5145          $ZrO2" << std::endl;
+            material_cards << "     40091.80c       0.1122      " << std::endl;
+            material_cards << "     40092.80c       0.1715          " << std::endl;
+            material_cards << "     40094.80c       0.1738          " << std::endl;
+            material_cards << "     40096.80c       0.0280          " << std::endl;
             material_cards << "     8016        2          " << std::endl;
+            
+            doppler_broaden_cross_sections["40090.80c"] = true;
+            doppler_broaden_cross_sections["40091.80c"] = true;
+            doppler_broaden_cross_sections["40092.80c"] = true;
+            doppler_broaden_cross_sections["40094.80c"] = true;
+            doppler_broaden_cross_sections["40096.80c"] = true;
+            
             break;
         }
         
@@ -593,6 +679,17 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
         }
 
     }
+    
+    
+    for (std::map<std::string,bool>::iterator it=doppler_broaden_cross_sections.begin(); it!=doppler_broaden_cross_sections.end(); ++it)
+    {
+        std::string cs = it->first;
+        doppler_card += "       " + cs + "\n";
+    }
+    
+    
+    
+  
     material_card_entry = material_cards.str();
 }
 

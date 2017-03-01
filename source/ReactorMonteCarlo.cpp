@@ -305,6 +305,7 @@ std::vector< std::vector<Real> > ReactorMonteCarlo::getZoneCellRelativePowerDens
 std::string ReactorMonteCarlo::getMaterialCards()
 {
     std::stringstream material_cards, otfdb_card;
+    otfdb_card << " OTFDB ";
         
     Real enrichment_fraction = _reactor->_input_file_reader->getInputFileParameter("Uranium Enrichment Fraction", static_cast<Real>(0.2) );
 
@@ -328,14 +329,6 @@ std::string ReactorMonteCarlo::getMaterialCards()
         material_cards << material_card_entry;
         otfdb_card << doppler_card_entry;        
     }       
-    
-    std::string U238_cs = "92238.80c";
-    std::string U235_cs = "92235.80c";    
-
-    otfdb_card << " OTFDB " << U238_cs << std::endl;
-    otfdb_card << "       " << U235_cs << std::endl;
-    //otfdb_card << "       8016.60c" << std::endl;
-    //otfdb_card << "       6000.60c" << std::endl;
     
     
     return material_cards.str() + otfdb_card.str();
@@ -367,7 +360,7 @@ std::string ReactorMonteCarlo::getSingleCellCard(const Materials &material, cons
         //we want to put our reflecting boundary condition here
         if( cell_number == 1 )
         {
-            cell_card << std::left << " " << std::setw(2) << cell_number << " " << std::setw(2) << current_zone << " " << std::setw(9) << -density << " " << std::setw(3) <<                       "  " << std::setw(4)  << -cell_number << " imp:n=1 TMP=" << std::setw(11) << temperature*MeVperK << " VOL=" << std::setw(11) << cell_volume << " $ " << std::setw(6) << getMaterialName(material) << " T = " << std::setw(8) << temperature << " K" << " Volume = " << std::setw(11) << cell_volume << " cm^3 " << std::endl;
+            cell_card << std::left << " " << std::setw(2) << cell_number << " " << std::setw(2) << current_zone << " " << std::setw(9) << -density << "  " << std::setw(3) <<                       "  " << std::setw(4)  << -cell_number << " imp:n=1 TMP=" << std::setw(11) << temperature*MeVperK << " VOL=" << std::setw(11) << cell_volume << " $ " << std::setw(6) << getMaterialName(material) << " T = " << std::setw(8) << temperature << " K" << " Volume = " << std::setw(11) << cell_volume << " cm^3 " << std::endl;
         }
         else
         {

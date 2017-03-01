@@ -31,7 +31,6 @@ namespace MaterialLibrary
     
     void getMcnpMaterialCard(const Materials &material, const unsigned int &zone, const Real &average_temperature, std::string &material_card_entry, std::string &doppler_card,const Real &enrichment_fraction);
     static void getMcnpMtMaterialCard(const Real &temperature,const std::vector<std::pair<int,Real>> &library_list,const std::string &library_base_name,std::string &library_name, Real &library_temperature);
-
     
     Real getMeltingPoint(const Materials &material);
     Real getLinearExpansionCoeifficient(const Materials &material,const Real &T,const Real &dpa);

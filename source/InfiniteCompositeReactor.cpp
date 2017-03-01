@@ -133,9 +133,16 @@ InfiniteCompositeReactor::InfiniteCompositeReactor(const std::string old_results
 void InfiniteCompositeReactor::worthStudy()
 {
     std::cout<<"Starting Worth Study"<<std::endl;
-    this->_transient_time = -2.0;
     WorthStudy* study = new WorthStudy(this);
-    study->startStudy();
+    
+    //Setting certain times for the transient time to track the tallies
+    this->_transient_time = -4.0;
+    study->startStudy(true,false,"fuel-worth.csv");
+    this->_transient_time = -3.0;
+    study->startStudy(false,true,"moderator-worth.csv");
+    this->_transient_time = -2.0;
+    study->startStudy(true,true,"worth.csv");
+    
     delete study;
     
 }

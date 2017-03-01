@@ -19,7 +19,7 @@ WorthStudy::WorthStudy(InfiniteCompositeReactor *reactor)
     _output_file = "worth.csv";
 }
 
-void WorthStudy::startStudy()
+void WorthStudy::startStudy(const bool &vary_fuel_temperature,const bool &vary_matrix_temperature,const std::string &output_file_name)
 {
     //Default geometry sizes
     Real default_sphere_outer_radius = 2e-3;  //meters
@@ -51,11 +51,29 @@ void WorthStudy::startStudy()
     {
         std::cout << current_temperature << std::endl;
         
-        _thermal_solver = new MicroCell(_reactor, current_temperature);
-        _thermal_solver->setOuterMaterialTemperature(starting_temperature);
+        if( vary_fuel_temperature)
+        {
+            _thermal_solver = new MicroCell(_reactor, current_temperature);
+        }
+        else
+        {
+            _thermal_solver = new MicroCell(_reactor, starting_temperature);
+        }
+        
+        if( vary_matrix_temperature )
+        {
+            _thermal_solver->setOuterMaterialTemperature(current_temperature);
+        }
+        else
+        {
+            _thermal_solver->setOuterMaterialTemperature(starting_temperature);
+        }
+        
+        
+        
         _reactor->_thermal_solver = _thermal_solver;
         SimulationResults results = _monte_carlo_model->getRawKeff();          
-        this->log(results);
+        this->log(results, output_file_name);
         delete _thermal_solver;
         _reactor->_thermal_solver = nullptr;
         
@@ -67,23 +85,29 @@ void WorthStudy::startStudy()
     delete _monte_carlo_model;
 }
 
-void WorthStudy::createOutputFile()
+void WorthStudy::createOutputFile(const std::string &output_file_path)
 {
     std::ofstream output_file;
-    output_file.open( _reactor->_results_directory + _output_file, std::ios::out);    
+    output_file.open( output_file_path, std::ios::out);    
     output_file << "Fuel Temperature [K],Non Fissile Temperature [K],Power Peaking,K-eigenvalue,K-eigenvalue Sigma,Prompt Neutron Lifetime [s],Prompt Neutron Lifetime Sigma [s],Elapsed Time [s],MC Execution Time [s],Time Per Particle [ms],Time Per Particle CPU [ms/cpu]";
     output_file << std::endl;    
     output_file.close();
 }
 
-void WorthStudy::log(const SimulationResults &results)
+void WorthStudy::log(const SimulationResults &results,std::string output_file_name)
 {
+    
+    if( output_file_name == "")
+    {
+        output_file_name = _output_file;
+    }
+    
     std::ofstream output_file;
-    std::string file_path = _reactor->_results_directory + _output_file;
+    std::string file_path = _reactor->_results_directory + output_file_name;
     
     if(!file_exists(file_path))
     {
-        this->createOutputFile();
+        this->createOutputFile(file_path);
     }
     
     output_file.open( file_path, std::ios::app);

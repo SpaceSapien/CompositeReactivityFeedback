@@ -40,9 +40,9 @@ public:
     
     
     WorthStudy(InfiniteCompositeReactor* reactor);
-    void startStudy();
-    void log(const SimulationResults &results);
-    void createOutputFile();
+    void startStudy(const bool &vary_fuel_temperature,const bool &vary_matrix_temperature,const std::string &output_file_name);
+    void log(const SimulationResults &results, std::string output_file_name = "");
+    void createOutputFile(const std::string &output_file_path);
     
 private:
 
