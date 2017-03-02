@@ -49,12 +49,12 @@ Particles Per Cycle: 1000
 Number CPUs:  128
 
 Tally Cells: true                             #tally the cells in the problem
-Tally Energy Bins: 400
+Tally Energy Bins: 1000
 Worth: true
 #Worth divisions
 Worth Temperature Divisions: 9
 #Worth Temperature Range
-Worth Range: 300  4000                         # range over which the worth study is completed
+Worth Range: 300  3000                         # range over which the worth study is completed
 
 
 #"Instantaneous" or "Ramp"

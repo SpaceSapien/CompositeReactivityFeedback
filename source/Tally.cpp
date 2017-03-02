@@ -34,6 +34,8 @@ _value(value), _uncertainty(uncertainty), _energy_bins(energy_bins), _energy_bin
     
 }
 
+
+
 std::string Tally::grabMCNPTallyData(const std::string &tally_id, const std::string &mctal_data,const std::string &mcnp_mctal_file)
 {
     std::vector<std::string> split_data = split(mctal_data, "\n");
@@ -138,8 +140,9 @@ Tally* Tally::getMCNPTally(const std::string &tally_id, const std::string &mcnp_
                 
         for(int index=0; index < energy_bins.size(); index++)
         {
-            tally_values.push_back( output_values[ index * 2 ]);
-            tally_uncertainty.push_back(output_values[ index * 2 + 1]);
+            //  index + 1 because the bins
+            tally_values.push_back( output_values[ (index + 1) * 2 ]);
+            tally_uncertainty.push_back(output_values[ (index + 1) * 2 + 1]);
         }
         
         tally = new Tally(value, uncertainty, energy_bins, tally_values, tally_uncertainty, tally_id);
@@ -161,15 +164,39 @@ std::vector<Real> Tally::processMCTALData(const std::string &top_tag,const std::
     //If there is an energy tally
     if( std::regex_search( tally_mcnp_text, match, energy_tally_check ) )
     {
-        int start_bin_cutoff = match.position() + match.length();
+        int match_start = match.position();
+        int match_length = match.length();
+        int start_bin_cutoff = match_start + match_length;
+        int total_length = tally_mcnp_text.length();
        
-        std::regex energy_groups_regex(top_tag + "(.+)?\\n([0-9E+-\\. ]+\\n){1,}");
-        std::regex_search(tally_mcnp_text, match, energy_groups_regex);
-        int length = match.length();
-        int position = match.position();
-        int end_bin_cutoff = length + position;
+        std::string values_begin_to_end = tally_mcnp_text.substr(start_bin_cutoff, total_length - start_bin_cutoff );        
+        std::vector<std::string> split_data = split(values_begin_to_end, "\n");
+    
+        std::string values = "";
         
-        std::string raw_energy_bins = tally_mcnp_text.substr(start_bin_cutoff,end_bin_cutoff-start_bin_cutoff);
+        for( std::size_t index=0; index < split_data.size(); ++index)
+        {
+            if(split_data[index][0] == ' ')
+            {
+                values += split_data[index];                
+            }
+            else
+            {
+                break;
+            }            
+        }
+        
+        //std::cout<<values;
+        
+        /*std::regex energy_groups_regex("^[^ ](.+)$");
+        std::regex_search(values_begin_to_end, match, energy_groups_regex);
+        //int length = match.length();
+        int position = match.position();
+        //int end_bin_cutoff = length + position;
+        
+        std::string raw_energy_bins = values_begin_to_end.substr(0,position);*/
+        
+        std::string raw_energy_bins = values;
         
         std::regex remove_return("\\n");
         std::string energy_bins = std::regex_replace(raw_energy_bins, remove_return, "");
