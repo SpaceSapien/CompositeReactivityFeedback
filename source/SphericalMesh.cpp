@@ -1,8 +1,8 @@
 #include <vector>
-#include "RadialMesh.h"
+#include "SphericalMesh.h"
 #include <cmath>
 
-RadialMesh::RadialMesh(MicroGeometry* geometry,const int &minimum_nodes, const int &total_nodes, const int &cells_per_zone)
+SphericalMesh::SphericalMesh(MicroGeometry* geometry,const int &minimum_nodes, const int &total_nodes, const int &cells_per_zone)
 {
     std::size_t number_zones = geometry->_geometry.size();
     
@@ -64,27 +64,5 @@ RadialMesh::RadialMesh(MicroGeometry* geometry,const int &minimum_nodes, const i
         zone_start = zone_end;
     }   
    
-}
-
-
-void RadialMesh::pushBack(const Dimension &dimension, const Materials &material)
-{
-     _materials.push_back( material );
-     _position.push_back( dimension );
-}
-
-Dimension RadialMesh::getNodeLocation(const int &node) const
-{
-    return _position[node];
-}
-
-Materials RadialMesh::getMaterial(const int &node) const
-{
-    return _materials[node];
-}
-
-std::size_t RadialMesh::numberOfNodes() const
-{
-    return _position.size();
 }
 

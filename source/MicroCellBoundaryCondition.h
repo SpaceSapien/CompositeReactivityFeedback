@@ -16,9 +16,8 @@
 
 #include "EnumsAndFunctions.h"
 #include "MicroCell.h"
+
 class MicroCell;
-
-
 
 class MicroCellBoundaryCondition 
 {

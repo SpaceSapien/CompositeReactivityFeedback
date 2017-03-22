@@ -15,8 +15,9 @@
 #define REACTORKINETICS_H
 #include "EnumsAndFunctions.h"
 #include "DelayedNeutronSet.h"
+#include "Reactor.h"
 
-class InfiniteCompositeReactor;
+
 
 class ReactorKinetics 
 {
@@ -33,7 +34,7 @@ public:
         EquilibriumPrecursors
     };
     
-    InfiniteCompositeReactor* _reactor;
+    Reactor* _reactor;
     std::vector<Real> _delayed_precursors;
     Real _initial_power;
     Real _current_power;
@@ -45,7 +46,7 @@ public:
     
     
     ReactorKinetics();
-    ReactorKinetics(InfiniteCompositeReactor* reactor,const Real &initial_power, const DelayedPrecursorInitialState &state );
+    ReactorKinetics(Reactor* reactor,const Real &initial_power, const DelayedPrecursorInitialState &state );
     Real solveForPower( const Real &simulation_time);    
    
     

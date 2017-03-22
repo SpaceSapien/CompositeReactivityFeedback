@@ -18,15 +18,11 @@ const std::string ReactivityInsertion::RAMP_REACTIVITY_INSERTION = "Ramp";
 
 
 
-ReactivityInsertion::ReactivityInsertion(InfiniteCompositeReactor* reactor) 
+ReactivityInsertion::ReactivityInsertion(Reactor* reactor) 
 {
-    
-    _reactor = reactor;
-    
+    _reactor = reactor;    
     _initial_k_eff =  this->_reactor->_input_file_reader->getInputFileParameter("Starting K-eff",static_cast<Real>(1.01) );   
     _reactivity_insertion_function = this->_reactor->_input_file_reader->getInputFileParameter("Reactivity Insertion Method", ReactivityInsertion::INSTANTANEOUS_REACTIVITY_INSERTION);
-    
-    
     _ending_virtual_k_eff_multiplier = _initial_k_eff / _reactor->_monte_carlo_model->_current_k_eff;
     
     if( _reactivity_insertion_function == ReactivityInsertion::RAMP_REACTIVITY_INSERTION)

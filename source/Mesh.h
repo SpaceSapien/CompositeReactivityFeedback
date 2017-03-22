@@ -5,22 +5,23 @@
  */
 
 /* 
- * File:   RadialMesh.h
+ * File:   Mesh.h
  * Author: chris
  *
- * Created on November 1, 2016, 2:57 PM
+ * Created on March 16, 2017, 3:47 PM
  */
 
+#ifndef MESH_H
+#define MESH_H
 #include <vector>
 #include "EnumsAndFunctions.h"
 #include "MicroGeometry.h"
 
-#ifndef RADIALMESH_H
-#define RADIALMESH_H
+using namespace MaterialLibrary;
 
-class RadialMesh
+class Mesh
 {
-public :
+public:
     
     std::vector<Dimension> _position;
     std::vector<Materials> _materials;
@@ -32,15 +33,16 @@ public :
     std::vector<int> _zone;
     std::vector<int> _cell_in_zone;
     
-    RadialMesh(MicroGeometry* geometry,const int &minumum_nodes_per_cell,const int &total_cells, const int &cells_per_zone);
+    
     
     std::size_t numberOfNodes() const;        
     void pushBack(const Dimension &dimension, const Materials &material);
     Dimension getNodeLocation(const int &node) const;
     Materials getMaterial(const int &node) const;
     
+
+
 };
 
-
-#endif /* RADIALMESH_H */
+#endif /* MESH_H */
 

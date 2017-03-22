@@ -20,6 +20,9 @@
 #include "MaterialLibrary.h"
 #include "MaterialDataPacket.h"
 
+namespace MaterialLibrary
+{
+
 class MicroGeometry 
 {
 
@@ -45,17 +48,19 @@ public:
     Materials getMaterial(const Real &r);
     Dimension getOuterRadius() const;
     Dimension getFuelKernelRadius() const;
-    Real getVolume();
+    std::vector<Real> getVolumeFractions() const;
     void printGeometry();
+    
+    MaterialDataPacket getHomogenizedMaterialProperties(const Real &T);
+    void getHomogenizedMcnpMaterialCard(const int &zone, const std::vector<Real> &geometry_temperature_data, const Real &enrichment_fraction,
+           std::string &material_cards,std::string &doppler_cards, std::string &mt_cards) const;
+    
     
     static MaterialDataPacket _last_packet;
     static Real _last_temperature;
     static Materials _last_material;
     
     std::vector< std::pair<Materials,Dimension> > _geometry;
-   
-    
-   
     
 private:
     
@@ -63,6 +68,8 @@ private:
     
 
 };
+
+}
 
 #endif /* MICROGEOMETRY_H */
 

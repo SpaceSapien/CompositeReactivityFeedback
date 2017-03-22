@@ -16,12 +16,12 @@
 #ifndef REACTIVITYINSERTION_H
 #define REACTIVITYINSERTION_H
 
-class InfiniteCompositeReactor;
+//class Reactor;
 
 class ReactivityInsertion 
 {
 public:
-    ReactivityInsertion(InfiniteCompositeReactor* reactor);
+    ReactivityInsertion(Reactor* reactor);
    
     Real getCurrentVirtualKeffMultiplier(const Real &current_time);
     Real getCurrentKeff(const Real &current_time);
@@ -30,7 +30,7 @@ public:
     bool rampNeedsReactivityMonteCarloUpdate(const Real &last_update_time,const Real &time_since_last_update );
     
     
-    InfiniteCompositeReactor* _reactor;
+    Reactor* _reactor;
     
     std::string _reactivity_insertion_function;
     Real _initial_k_eff;

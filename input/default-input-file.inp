@@ -4,8 +4,8 @@ Run Name: Base-Case
 # Materials and radaii mus have the same number of entries
 #Material options include
 # U, UO2, UN, UC, U3Si, SiC, C, Be, BeO, ZrB2, W, B4C, Mo, Nb, Zr, Graphene
-Materials: UO2 ZrO2 W C
-Radaii: 4e-4 4.5e-4 4.6e-4 1.612e-3 #m
+Materials: UO2 ZrO2 C
+Radaii: 4e-4 4.5e-4 1.612e-3 #m
 
 #Starting Power Density 
 
@@ -27,7 +27,7 @@ Steady State Temperature Solution Max Residual: 0.01
 Initial Solve Power Residual: 0.1
 
 Uranium Enrichment Fraction: 0.15 
-Cells Per Zone: 4
+Cells Per Zone: 1
 
 #Timer iteration data
 Keff Calculation Per Beta Eff Calculation: 25   # calculating the beta is expensive so we only calculate it once for ever so may keff calculations zero means only calculate at the beginning of the simulation
@@ -44,17 +44,17 @@ Calculation End Time: 2.0                     #s
 Power Record: 0.0001                            #s  Time between recording power and the delayed neutron record
 
 Keff Number of Particles: 33e3
-Beff Number of Particles: 93e3
+Beff Number of Particles: 33e3
 Particles Per Cycle: 1000
 Number CPUs:  128
 
 Tally Cells: true                             #tally the cells in the problem
-Tally Energy Bins: 1000
-Worth: true
+Tally Energy Bins: 100
+Worth: false
 #Worth divisions
-Worth Temperature Divisions: 9
+#Worth Temperature Divisions: 9
 #Worth Temperature Range
-Worth Range: 300  3000                         # range over which the worth study is completed
+#Worth Range: 300  3000                         # range over which the worth study is completed
 
 
 #"Instantaneous" or "Ramp"

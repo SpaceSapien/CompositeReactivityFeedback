@@ -12,6 +12,7 @@
  */
 #include "DelayedNeutronSet.h"
 #include "ReactorKinetics.h"
+#include "ReactivityInsertion.h"
 #include "InfiniteCompositeReactor.h"
 #include <iostream>
 
@@ -23,7 +24,7 @@ ReactorKinetics::ReactorKinetics() { }
  * @param initial_power
  * @param state
  */
-ReactorKinetics::ReactorKinetics(InfiniteCompositeReactor* reactor, const Real &initial_power,const DelayedPrecursorInitialState &state) 
+ReactorKinetics::ReactorKinetics(Reactor* reactor, const Real &initial_power,const DelayedPrecursorInitialState &state) 
 {
     _reactor = reactor;
     _initial_power = initial_power;

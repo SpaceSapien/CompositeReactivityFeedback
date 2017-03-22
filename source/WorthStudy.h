@@ -14,35 +14,40 @@
 #ifndef WORTHSTUDY_H
 #define WORTHSTUDY_H
 #include <string>
+#include "Reactor.h"
 #include "MicroCell.h"
 #include "MicroGeometry.h"
 #include "ReactorMonteCarlo.h"
 #include "SimulationResults.h"
 
-class ReactorMonteCarlo;
-class MicroCell;
-class MicroGeometry;
-class InfiniteCompositeReactor;
+
+
 
 class WorthStudy 
 {
 public:
     
     //The geometry object
-    MicroGeometry* _micro_sphere_geometry;
+    MaterialLibrary::MicroGeometry* _micro_sphere_geometry;
     //Create the thermal heat transfer object 
     ReactorMonteCarlo* _monte_carlo_model;
     //Read the input file
-    InfiniteCompositeReactor* _reactor;
+    Reactor* _reactor;
     //The thermal data and mesh
     MicroCell* _thermal_solver;
+    
     std::string _output_file;
     
     
-    WorthStudy(InfiniteCompositeReactor* reactor);
-    void startStudy(const bool &vary_fuel_temperature,const bool &vary_matrix_temperature,const std::string &output_file_name);
-    void log(const SimulationResults &results, std::string output_file_name = "");
-    void createOutputFile(const std::string &output_file_path);
+    WorthStudy(Reactor* reactor);
+    
+    virtual void setThermalSolver(MicroCell* solver);
+    virtual void setMonteCarloModel(ReactorMonteCarlo* monte_carlo_model);
+    
+    virtual void logData(const SimulationResults &results, std::string output_file_name = "");
+    virtual void startStudy(const std::string &output_file_name = "worth.csv") = 0;
+    
+    
     
 private:
 

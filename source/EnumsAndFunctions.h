@@ -20,26 +20,7 @@
 typedef double Real;
 typedef double Dimension;
 
-enum Materials
-{
-    U,
-    UO2,
-    UN,
-    UC,
-    U3Si,
-    SiC,
-    C,
-    Be,
-    BeO,
-    ZrB2,
-    W,
-    B4C,
-    Mo,
-    Nb,
-    Zr,
-    ZrO2,
-    Graphene
-};
+
    
 enum FissionableIsotope
 {
@@ -53,9 +34,6 @@ enum FissionableIsotope
     Pu242,
     Mixed
 };
-
-std::string getMaterialName(const Materials &material);
-Materials getMaterialFromName(const std::string &material_name);
 
 Real sphere_volume(const Real &radius);
 Real sphere_surface_area(const Real &radius);

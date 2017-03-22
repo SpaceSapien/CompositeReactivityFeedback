@@ -17,7 +17,9 @@
 #include <vector>
 #include <tuple>
 #include "EnumsAndFunctions.h"
+#include "MaterialLibrary.h"
 
+using namespace MaterialLibrary;
 
 class InputFileParser 
 {

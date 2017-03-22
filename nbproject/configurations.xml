@@ -5,24 +5,40 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>source/BetaSimulationResults.h</itemPath>
+      <itemPath>source/CompositeMicroCell.h</itemPath>
+      <itemPath>source/Composition.h</itemPath>
+      <itemPath>source/Compound.h</itemPath>
       <itemPath>source/DelayedNeutronSet.h</itemPath>
+      <itemPath>source/Element.h</itemPath>
       <itemPath>source/EnumsAndFunctions.h</itemPath>
+      <itemPath>source/HomogenousMesh.h</itemPath>
+      <itemPath>source/HomogenousMicroCell.h</itemPath>
+      <itemPath>source/HomogenousMonteCarlo.h</itemPath>
+      <itemPath>source/HomogenousWorth.h</itemPath>
+      <itemPath>source/InfiniteCompositeMonteCarlo.h</itemPath>
       <itemPath>source/InfiniteCompositeReactor.h</itemPath>
       <itemPath>source/InfiniteCompositeReactorInputParser.h</itemPath>
+      <itemPath>source/InfiniteCompositeWorth.h</itemPath>
+      <itemPath>source/InfiniteHomogenousReactor.h</itemPath>
+      <itemPath>source/InifiniteReactor.h</itemPath>
       <itemPath>source/InputDataFunctions.h</itemPath>
       <itemPath>source/InputFileParser.h</itemPath>
+      <itemPath>source/Isotope.h</itemPath>
       <itemPath>source/MaterialDataPacket.h</itemPath>
       <itemPath>source/MaterialLibrary.h</itemPath>
+      <itemPath>source/Mesh.h</itemPath>
       <itemPath>source/MicroCell.h</itemPath>
       <itemPath>source/MicroCellBoundaryCondition.h</itemPath>
       <itemPath>source/MicroGeometry.h</itemPath>
       <itemPath>source/MicroSolution.h</itemPath>
+      <itemPath>source/Mixture.h</itemPath>
       <itemPath>source/PythonPlot.h</itemPath>
-      <itemPath>source/RadialMesh.h</itemPath>
       <itemPath>source/ReactivityInsertion.h</itemPath>
+      <itemPath>source/Reactor.h</itemPath>
       <itemPath>source/ReactorKinetics.h</itemPath>
       <itemPath>source/ReactorMonteCarlo.h</itemPath>
       <itemPath>source/SimulationResults.h</itemPath>
+      <itemPath>source/SphericalMesh.h</itemPath>
       <itemPath>source/Tally.h</itemPath>
       <itemPath>source/TallyGroup.h</itemPath>
       <itemPath>source/WorthStudy.h</itemPath>
@@ -35,22 +51,36 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>source/BetaSimulationResults.cpp</itemPath>
+      <itemPath>source/CompositeMicroCell.cpp</itemPath>
+      <itemPath>source/Compound.cpp</itemPath>
       <itemPath>source/DelayedNeutronSet.cpp</itemPath>
+      <itemPath>source/Element.cpp</itemPath>
+      <itemPath>source/EnumsAndFunctions.cpp</itemPath>
+      <itemPath>source/HomogenousMesh.cpp</itemPath>
+      <itemPath>source/HomogenousMicroCell.cpp</itemPath>
+      <itemPath>source/HomogenousMonteCarlo.cpp</itemPath>
+      <itemPath>source/HomogenousWorth.cpp</itemPath>
+      <itemPath>source/InfiniteCompositeMonteCarlo.cpp</itemPath>
       <itemPath>source/InfiniteCompositeReactor.cpp</itemPath>
+      <itemPath>source/InfiniteCompositeWorth.cpp</itemPath>
+      <itemPath>source/InfiniteHomogenousReactor.cpp</itemPath>
       <itemPath>source/InputFileParser.cpp</itemPath>
+      <itemPath>source/Isotope.cpp</itemPath>
       <itemPath>source/MaterialDataPacket.cpp</itemPath>
-      <itemPath>source/MaterialEnum.cpp</itemPath>
       <itemPath>source/MaterialLibrary.cpp</itemPath>
+      <itemPath>source/Mesh.cpp</itemPath>
       <itemPath>source/MicroCell.cpp</itemPath>
       <itemPath>source/MicroCellBoundaryCondition.cpp</itemPath>
       <itemPath>source/MicroGeometry.cpp</itemPath>
       <itemPath>source/MicroSolution.cpp</itemPath>
+      <itemPath>source/Mixture.cpp</itemPath>
       <itemPath>source/PythonPlot.cpp</itemPath>
-      <itemPath>source/RadialMesh.cpp</itemPath>
       <itemPath>source/ReactivityInsertion.cpp</itemPath>
+      <itemPath>source/Reactor.cpp</itemPath>
       <itemPath>source/ReactorKinetics.cpp</itemPath>
       <itemPath>source/ReactorMonteCarlo.cpp</itemPath>
       <itemPath>source/SimulationResults.cpp</itemPath>
+      <itemPath>source/SphericalMesh.cpp</itemPath>
       <itemPath>source/Tally.cpp</itemPath>
       <itemPath>source/TallyGroup.cpp</itemPath>
       <itemPath>source/WorthStudy.cpp</itemPath>
@@ -118,11 +148,53 @@
       </item>
       <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/CompositeMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/CompositeMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Composition.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Compound.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Compound.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Element.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Element.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/EnumsAndFunctions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="source/InfiniteCompositeReactor.cpp"
             ex="false"
@@ -136,21 +208,40 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="source/InfiniteCompositeWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InifiniteReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/InputDataFunctions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/InputFileParser.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/InputFileParser.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Isotope.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Isotope.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/MaterialDataPacket.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialDataPacket.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/MaterialEnum.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="source/MaterialLibrary.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialLibrary.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Mesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/MicroCell.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -174,17 +265,21 @@
       </item>
       <item path="source/MicroSolution.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Mixture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mixture.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/PythonPlot.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/PythonPlot.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/RadialMesh.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Reactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Reactor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -197,6 +292,10 @@
       <item path="source/SimulationResults.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/SimulationResults.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/Tally.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -257,11 +356,53 @@
       </item>
       <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/CompositeMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/CompositeMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Composition.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Compound.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Compound.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Element.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Element.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/EnumsAndFunctions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="source/InfiniteCompositeReactor.cpp"
             ex="false"
@@ -275,21 +416,40 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="source/InfiniteCompositeWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InifiniteReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/InputDataFunctions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/InputFileParser.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/InputFileParser.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Isotope.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Isotope.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/MaterialDataPacket.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialDataPacket.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/MaterialEnum.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="source/MaterialLibrary.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialLibrary.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Mesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/MicroCell.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -313,17 +473,21 @@
       </item>
       <item path="source/MicroSolution.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Mixture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mixture.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/PythonPlot.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/PythonPlot.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/RadialMesh.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Reactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Reactor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -336,6 +500,10 @@
       <item path="source/SimulationResults.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/SimulationResults.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/Tally.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -392,11 +560,53 @@
       </item>
       <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/CompositeMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/CompositeMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Composition.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Compound.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Compound.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Element.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Element.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/EnumsAndFunctions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="source/InfiniteCompositeReactor.cpp"
             ex="false"
@@ -410,21 +620,40 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="source/InfiniteCompositeWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InifiniteReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/InputDataFunctions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/InputFileParser.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/InputFileParser.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Isotope.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Isotope.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/MaterialDataPacket.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialDataPacket.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/MaterialEnum.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="source/MaterialLibrary.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialLibrary.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Mesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/MicroCell.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -448,17 +677,21 @@
       </item>
       <item path="source/MicroSolution.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Mixture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mixture.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/PythonPlot.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/PythonPlot.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/RadialMesh.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Reactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Reactor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -471,6 +704,10 @@
       <item path="source/SimulationResults.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/SimulationResults.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/Tally.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -527,11 +764,53 @@
       </item>
       <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/CompositeMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/CompositeMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Composition.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Compound.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Compound.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Element.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Element.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/EnumsAndFunctions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="source/InfiniteCompositeReactor.cpp"
             ex="false"
@@ -545,21 +824,40 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="source/InfiniteCompositeWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InifiniteReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/InputDataFunctions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/InputFileParser.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/InputFileParser.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Isotope.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Isotope.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/MaterialDataPacket.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialDataPacket.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/MaterialEnum.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="source/MaterialLibrary.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialLibrary.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Mesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/MicroCell.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -583,17 +881,21 @@
       </item>
       <item path="source/MicroSolution.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Mixture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mixture.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/PythonPlot.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/PythonPlot.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/RadialMesh.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Reactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Reactor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -606,6 +908,10 @@
       <item path="source/SimulationResults.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/SimulationResults.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/Tally.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -662,11 +968,53 @@
       </item>
       <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/CompositeMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/CompositeMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Composition.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Compound.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Compound.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Element.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Element.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/EnumsAndFunctions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="source/InfiniteCompositeReactor.cpp"
             ex="false"
@@ -680,21 +1028,40 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="source/InfiniteCompositeWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InifiniteReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/InputDataFunctions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/InputFileParser.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/InputFileParser.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Isotope.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Isotope.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/MaterialDataPacket.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialDataPacket.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/MaterialEnum.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="source/MaterialLibrary.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialLibrary.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Mesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/MicroCell.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -718,17 +1085,21 @@
       </item>
       <item path="source/MicroSolution.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Mixture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mixture.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/PythonPlot.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/PythonPlot.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/RadialMesh.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Reactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Reactor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -741,6 +1112,10 @@
       <item path="source/SimulationResults.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/SimulationResults.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/Tally.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -797,11 +1172,53 @@
       </item>
       <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/CompositeMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/CompositeMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Composition.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Compound.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Compound.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Element.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Element.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/EnumsAndFunctions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="source/InfiniteCompositeReactor.cpp"
             ex="false"
@@ -815,21 +1232,40 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="source/InfiniteCompositeWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InifiniteReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/InputDataFunctions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/InputFileParser.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/InputFileParser.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Isotope.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Isotope.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/MaterialDataPacket.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialDataPacket.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/MaterialEnum.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="source/MaterialLibrary.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialLibrary.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Mesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/MicroCell.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -853,17 +1289,21 @@
       </item>
       <item path="source/MicroSolution.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Mixture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mixture.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/PythonPlot.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/PythonPlot.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/RadialMesh.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Reactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Reactor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -876,6 +1316,10 @@
       <item path="source/SimulationResults.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/SimulationResults.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/Tally.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -932,11 +1376,53 @@
       </item>
       <item path="source/BetaSimulationResults.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/CompositeMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/CompositeMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Composition.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Compound.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Compound.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/DelayedNeutronSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/DelayedNeutronSet.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Element.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Element.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/EnumsAndFunctions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMesh.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousMonteCarlo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/HomogenousWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeMonteCarlo.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="source/InfiniteCompositeReactor.cpp"
             ex="false"
@@ -950,21 +1436,40 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="source/InfiniteCompositeWorth.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/InfiniteCompositeWorth.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="source/InfiniteHomogenousReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/InifiniteReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/InputDataFunctions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/InputFileParser.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/InputFileParser.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Isotope.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Isotope.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/MaterialDataPacket.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialDataPacket.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/MaterialEnum.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="source/MaterialLibrary.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/MaterialLibrary.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Mesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/MicroCell.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -988,17 +1493,21 @@
       </item>
       <item path="source/MicroSolution.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/Mixture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Mixture.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/PythonPlot.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/PythonPlot.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/RadialMesh.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="source/RadialMesh.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="source/ReactivityInsertion.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/ReactivityInsertion.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/Reactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/Reactor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/ReactorKinetics.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -1011,6 +1520,10 @@
       <item path="source/SimulationResults.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/SimulationResults.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/SphericalMesh.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/Tally.cpp" ex="false" tool="1" flavor2="0">
       </item>

@@ -18,7 +18,11 @@
 #include <complex>
 #include <cmath>
 #include <map>
+#include "InputDataFunctions.h"
 #include "MaterialLibrary.h"
+#include "MicroGeometry.h"
+
+using namespace MaterialLibrary;
 
 // #define NO_MATERIAL_PROPERTIES_DIFFERENTIAL
 // #define CONSTANT_TEMPERATURE_PROPERTIES
@@ -419,6 +423,74 @@ void MaterialLibrary::getMcnpMtMaterialCard(const Real &temperature,const std::v
     library_temperature = starting_temperature_lib.second;
 }
 
+void MaterialLibrary::getMcnpMTCard(const Materials &material, const Real &avg_temperature, std::string &mt_card_entry)
+{
+    std::stringstream mt_cards;
+    
+    std::string mt_card_library;
+    Real library_temperature;            
+        
+    switch(material)
+    {
+        case Materials::UO2 :
+        {
+            
+            std::vector<std::pair<int,Real>> mt_paired_library_list_o2 = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_o2,std::string("o2-u."), mt_card_library, library_temperature);
+           
+            mt_cards << "     " << mt_card_library <<  std::setw(7) << " " << "$S(a,b) O2 in UO2 @ " << library_temperature << " K" << std::endl;
+            
+            std::vector<std::pair<int,Real>> mt_paired_library_list_u = { {30,293.6},{31,400},{32,500},{33,600},{34,700},{35,800},{36,1000},{37,1200} };
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_u,std::string("u-o2."), mt_card_library, library_temperature);
+           
+            mt_cards << "     " << mt_card_library << std::setw(7) << " " << "$S(a,b) U in UO2 @ " << library_temperature << std::endl;
+            
+            break;
+                            
+        }
+        
+        case Materials::C :
+        {
+            
+            std::vector<std::pair<int,Real>> mt_paired_library_list = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200},{28,1600},{29,2000} };
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list,std::string("grph."), mt_card_library, library_temperature);
+                        
+            mt_cards << "     " << std::setw(12) << mt_card_library << std::setw(7) << " " << "$Graphite S(a,b) treatment @ " << library_temperature << " K" << std::endl;
+            
+            break;
+        }
+        case Materials::Be :
+        {
+            std::vector<std::pair<int,Real>> mt_paired_library_list = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list,std::string("be."), mt_card_library, library_temperature);
+            
+            mt_cards << "     " << std::setw(12) << mt_card_library <<std::setw(7) << " " << "$Be S(a,b) treatment @ " << library_temperature << " K" << std::endl;
+            break;
+        }
+        case Materials::BeO :
+        {
+            //grabbing data for out S(a,b) treatment of Be
+            std::vector<std::pair<int,Real>> mt_paired_library_list_be = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_be,std::string("be-o."), mt_card_library, library_temperature);
+            
+            mt_cards << "     " << std::setw(12) << mt_card_library <<  std::setw(7) << " " << "$Be S(a,b) treatment @ " << library_temperature << " K" << std::endl;
+            
+            //grabbing data for out S(a,b) treatment of Oxygen
+            std::vector<std::pair<int,Real>> mt_paired_library_list_o = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_be,std::string("o-be."), mt_card_library, library_temperature);
+            
+            
+            mt_cards << "     " << mt_card_library << std::setw(7) << " " << "$Oxygen S(a,b) treatment @ " << library_temperature << " K " << std::endl;
+            break;        
+        }
+        
+
+    }
+    
+    mt_card_entry = mt_cards.str();
+}
+
+
 /**
  * 
  * @param material
@@ -686,8 +758,6 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
         std::string cs = it->first;
         doppler_card += "       " + cs + "\n";
     }
-    
-    
     
   
     material_card_entry = material_cards.str();
@@ -1176,3 +1246,233 @@ MaterialDataPacket MaterialLibrary::getMaterialProperties(const Materials &mater
       
     return packet;   
 }
+
+
+std::string MaterialLibrary::getMaterialName(const Materials &material)
+{
+    switch(material)
+    {
+        case Materials::U :
+        {
+            return "U";
+        }
+        
+        case Materials::UO2 :
+        {
+            return "UO2";
+        }
+        case Materials::UC :
+        {
+            return "UC";
+        }
+        case Materials::UN :
+        {
+            return "UN";
+        }
+        case Materials::U3Si :
+        {
+            return "U3Si";
+        }
+        case Materials::SiC :
+        {
+            return "SiC";
+        }
+        case Materials::C :
+        {
+            return "C";
+        }
+        case Materials::Be :
+        {
+            return "Be";
+        }
+        case Materials::BeO :
+        {
+            return "BeO";
+        }
+        case Materials::ZrB2 :
+        {
+            return "ZrB2";
+        }
+        case Materials::W :
+        {
+            return "W";
+        }
+        case Materials::B4C :
+        {
+            return "B4C";
+        }
+        case Materials::Mo :
+        {
+            return "Mo";
+        }
+        case Materials::Nb :
+        {
+            return "Nb";
+        }
+        case Materials::Zr :
+        {
+            return "Zr";
+        }
+        case Materials::Graphene :
+        {
+            return "Graphene";
+        }
+        case Materials::ZrO2 :
+        {
+            return "ZrO2";
+        }
+        case Materials::Homogenous :
+        {
+            return "Homogenous";
+        }
+        default :
+        {
+            return "Unknown Material";
+        }
+    }
+}
+
+Materials MaterialLibrary::getMaterialFromName(const std::string &material_name)
+{
+    if(material_name == "U")
+    {
+        return Materials::U;
+    }
+    if(material_name == "UO2")
+    {
+        return Materials::UO2;
+    }   
+    if(material_name == "UN")
+    {
+        return Materials::UN;
+    }
+    if(material_name == "UC")
+    {
+        return Materials::UC;
+    }
+    if( material_name == "U3Si" )
+    {
+        return Materials::U3Si;
+    }
+    if( material_name == "SiC" )
+    {
+        return Materials::SiC;
+    }
+    if( material_name == "C" )
+    {
+        return Materials::C;
+    }
+    if( material_name == "Be" )
+    {
+        return Materials::Be;
+    }
+    if( material_name == "BeO" )
+    {
+        return Materials::BeO;
+    }
+    if( material_name == "ZrB2" )
+    {
+        return Materials::ZrB2;
+    }
+    if( material_name == "W" )
+    {
+        return Materials::W;
+    }
+    if( material_name == "B4C" )
+    {
+        return Materials::B4C;
+    }    
+    if( material_name == "Mo" )
+    {
+        return Materials::Mo;
+    }
+    if( material_name == "Nb" )
+    {
+        return Materials::Nb;
+    }
+    if( material_name == "Zr" )
+    {
+        return Materials::Zr;
+    }
+    if( material_name == "ZrO2" )
+    {
+        return Materials::ZrO2;
+    }
+    if( material_name == "Homogenous" )
+    {
+        return Materials::Homogenous;
+    }
+    throw -1;
+}
+
+/**
+ * Returns the MCNP libraries that have been modified 
+ * 
+ * @param pre_modified_libraries
+ * @return 
+ */
+std::map<std::string,std::pair<Real,std::string> > MaterialLibrary::getMCNPCrossSectionLibraries(const Composition<Isotope> &pre_modified_libraries)
+{
+    
+    
+    std::size_t number_isotopes = pre_modified_libraries.size();
+    std::map<std::string,std::pair<Real,std::string> > mcnp_cs_libraries;
+    
+    
+    for(std::size_t isotope_index = 0; isotope_index < number_isotopes; ++isotope_index)
+    {
+        Isotope isotope = pre_modified_libraries[isotope_index]._object;
+        Real fraction = pre_modified_libraries[isotope_index]._fraction;
+        std::string mcnp_library;
+        
+        Atom isotope_atom = isotope.getAtom();
+        std::string atom_name = isotope.getElementName();
+        
+        // Use the natural carbon library
+        if( isotope_atom == Atom::C )
+        {
+            mcnp_library = "6000.80c";
+        }
+        // Need to combine O-16 and O-17 and O-18
+        else if( isotope_atom == Atom::O )
+        {
+            mcnp_library = "8016.80c";
+        }
+        // Otherwise use the latest endf
+        else
+        {
+            mcnp_library = isotope.getZAID() + ".80c";
+        }
+        
+        if( mcnp_cs_libraries.find(mcnp_library) == mcnp_cs_libraries.end()  )
+        {
+            mcnp_cs_libraries[mcnp_library] = { fraction, atom_name };
+        }
+        else
+        {
+            mcnp_cs_libraries[mcnp_library].first += fraction;
+        }
+        
+    }
+    return mcnp_cs_libraries;
+    
+}
+
+std::map<std::string,bool>  MaterialLibrary::getMcnpDopplerBroadenedCS(const std::vector<std::string> &cross_sections)
+{
+    std::map<std::string,bool> doppler_broadened_cs;
+    
+    for( std::size_t cs_index = 0; cs_index < cross_sections.size(); ++cs_index)
+    {
+        std::string library = cross_sections[cs_index];
+        std::string file = "doppler-broadened-cs/otf_" + library + ".txt";
+        
+        if(file_exists( file ))
+        {
+            doppler_broadened_cs[library] = true;
+        }
+    }
+    
+    return doppler_broadened_cs;
+}
+
