@@ -118,10 +118,30 @@ Element Element::getNaturalAtomicData(Atom atom)
     std::string symbol;
     int atomic_number;
     
-  
-    
     switch(atom)
     {
+        case Atom::B :
+        {
+            name = "Boron";
+            symbol = "B";
+            atomic_number = 5;
+
+            nucleon_numbers = { 10,   11 };
+            fractions =       { 0.199, 0.801 };                      
+            
+            break;
+        }
+        case Atom::Be :
+        {
+            name = "Beryllium";
+            symbol = "Be";
+            atomic_number = 4;
+
+            nucleon_numbers = { 9 };
+            fractions =       { 1 };                      
+            
+            break;
+        }
         case Atom::C :
         {
             name = "Carbon";
@@ -134,6 +154,17 @@ Element Element::getNaturalAtomicData(Atom atom)
             
             break;
         }
+        case Atom::N :
+        {
+            name = "Nitrogen";
+            symbol = "N";
+            atomic_number = 7;
+           
+            nucleon_numbers = { 14,      15     };
+            fractions =       { 0.99632, 0.00368};
+            
+            break;
+        }
         case Atom::O :
         {
             name = "Oxygen";
@@ -142,6 +173,66 @@ Element Element::getNaturalAtomicData(Atom atom)
            
             nucleon_numbers = { 16,      17,      18      };
             fractions =       { 0.99757, 0.00038, 0.00205 };
+            
+            break;
+        }
+        
+        case Atom::Si :
+        {
+            name = "Silicon";
+            symbol = "Si";
+            atomic_number = 14;
+           
+            nucleon_numbers = { 28,       29,      30        };
+            fractions =       { 0.922297, 0.046832, 0.030872 };
+            
+            break;
+        }
+        
+        case Atom::Zr :
+        {
+            name = "Zirconium";
+            symbol = "Zr";
+            atomic_number = 40;
+
+            nucleon_numbers = { 90,      91,      92,      94 ,    96 };
+            fractions =       { 0.5145,  0.1122,  0.1715,  0.1738, 0.0280};
+            
+            break;
+        }
+        
+        case Atom::Nb :
+        {
+            name = "Niobium";
+            symbol = "Nb";
+            atomic_number = 41;
+
+            nucleon_numbers = { 93 };
+            fractions =       { 1  };
+            
+            break;
+        }
+        
+        case Atom::Mo:
+        {
+            name = "Molybdenum";
+            symbol = "Mo";
+            atomic_number = 42;
+
+            nucleon_numbers = { 92,     94,     95,     96,     97,      98,      100     };
+            fractions =       { 0.1484, 0.0925, 0.1592, 0.1668, 0.0955,  0.2413,  0.0963  };
+            
+            break;
+        }
+        
+        case Atom::W :
+        {
+            name = "Tungsten";
+            symbol = "W";
+            atomic_number = 74;
+
+            nucleon_numbers = { 180,      182,      183,      184 ,    186    };
+            fractions =       { 0.0012,   0.2560,   0.1431,   0.3064,  0.2843 };
             
             break;
         }
@@ -158,17 +249,7 @@ Element Element::getNaturalAtomicData(Atom atom)
             break;
         }
         
-        case Atom::Zr :
-        {
-            name = "Zirconium";
-            symbol = "Zr";
-            atomic_number = 40;
-
-            nucleon_numbers = { 90,      91,      92,      94 ,    96 };
-            fractions =       { 0.5145,  0.1122,  0.1715,  0.1738, 0.0280};
-            
-            break;
-        }
+        
     }
     
     //Create the natural elements based on the data

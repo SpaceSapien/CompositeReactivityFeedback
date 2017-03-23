@@ -43,6 +43,81 @@ Compound Compound::getStandardCompound(const Materials &material, const double &
     
     switch(material)
     {
+        // Note that this is 100% enriched B-11
+        case Materials::B4C :
+        {
+            std::string name = "Boron-11";
+            std::string symbol = "B-11";
+            int atomic_number = 5;
+
+            std::vector<int> nucleon_numbers = { 11 };
+            std::vector<Real> fractions =       { 1 };    
+            
+            Element boron = Element(name,symbol,atomic_number, Atom::B); 
+    
+            for(std::size_t index=0; index < nucleon_numbers.size(); ++index)
+            {
+                Isotope isotope = Isotope(&boron, nucleon_numbers[index]);
+                boron.addIsotope(isotope, fractions[index]);
+            }
+            
+            Element carbon = Element::getNaturalAtomicData(Atom::C);
+            
+            elemental_composition = { boron, carbon };
+            amounts = { 4.0, 1.0 };
+            break;
+        }
+        case Materials::SiC :
+        {
+            Element silicon = Element::getNaturalAtomicData(Atom::Si);
+            Element carbon = Element::getNaturalAtomicData(Atom::C);
+            
+            elemental_composition = { silicon, carbon };
+            amounts = { 1.0, 1.0 };
+            break;
+        }
+        case Materials::U :
+        {
+            Element uranium = Element::getEnrichedUranium(enrichment);            
+            
+            elemental_composition = { uranium };
+            amounts = { 1.0  };
+            break;
+        }
+        case Materials::UN :
+        {
+            Element uranium = Element::getEnrichedUranium(enrichment);  
+            Element nitrogen = Element::getNaturalAtomicData(Atom::N);  
+            
+            elemental_composition = { uranium , nitrogen };
+            amounts = { 1.0, 1.0  };
+            break;
+        }
+        case Materials::UC :
+        {
+            Element uranium = Element::getEnrichedUranium(enrichment);  
+            Element carbon = Element::getNaturalAtomicData(Atom::C);  
+            
+            elemental_composition = { uranium , carbon };
+            amounts = { 1.0, 1.0  };
+            break;
+        }
+        case Materials::BeO :
+        {
+            Element beryllium = Element::getNaturalAtomicData(Atom::Be);
+            Element oxygen = Element::getNaturalAtomicData(Atom::O);
+            
+            elemental_composition = { beryllium, oxygen };
+            amounts = { 1.0, 1.0 };
+            break;
+        }
+        case Materials::Be :
+        {
+            Element beryllium = Element::getNaturalAtomicData(Atom::Be);
+            elemental_composition = { beryllium };
+            amounts = { 1.0 };
+            break;
+        }
         case Materials::C :
         {
             Element carbon = Element::getNaturalAtomicData(Atom::C);
@@ -69,6 +144,41 @@ Compound Compound::getStandardCompound(const Materials &material, const double &
             amounts = { 1.0, 2.0 };
             
             break;
+        }
+        case Materials::W :
+        {
+            Element tungsten = Element::getNaturalAtomicData(Atom::W);
+            
+            elemental_composition = { tungsten };
+            amounts = { 1.0 };
+            
+            break;
+        }
+        
+        case Materials::Mo :
+        {
+            Element molybdenum = Element::getNaturalAtomicData(Atom::Mo);
+            
+            elemental_composition = { molybdenum };
+            amounts = { 1.0 };
+            
+            break;
+        }
+        
+        case Materials::Nb :
+        {
+            Element niobium = Element::getNaturalAtomicData(Atom::Nb);
+            
+            elemental_composition = { niobium };
+            amounts = { 1.0 };
+            
+            break;
+        }
+        
+        default :
+        {
+            std::string material_name = getMaterialName(material);
+            throw "Not defined " +  material_name;
         }
     }
     

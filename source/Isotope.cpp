@@ -83,19 +83,57 @@ double Isotope::getAtomicMassFomZAID(const std::string &zaid)
 {
     std::map<std::string,double> atomic_mass;
     
+    //Boron
+    atomic_mass["5010"] = 10.012937;
+    atomic_mass["5011"] = 11.009305;
+    
+    //Beryllium
+    atomic_mass["9004"] = 9.012182;
+    
     //Carbon 
     atomic_mass["6012"] = 12.0;
     atomic_mass["6013"] = 13.003355;
+    
+    //Nitrogen
+    atomic_mass["7014"] = 14.003074;
+    atomic_mass["7015"] = 15.000109;
+    
     //Oxygen
     atomic_mass["8016"] = 15.994915;
     atomic_mass["8017"] = 16.999132;
     atomic_mass["8018"] = 17.999160;
+    
+    //Silicon
+    atomic_mass["14028"] = 27.976927;
+    atomic_mass["14029"] = 28.976495;
+    atomic_mass["14030"] = 29.973770;
+    
     // Zirconium
     atomic_mass["40090"] = 89.904704;
     atomic_mass["40091"] = 90.905645;
     atomic_mass["40092"] = 91.905040;
     atomic_mass["40094"] = 93.906316;
     atomic_mass["40096"] = 95.908276;
+    
+    // Niobium
+    atomic_mass["41093"] = 92.906378;
+    
+    // Molybdenum
+    atomic_mass["42092"] = 91.906810;
+    atomic_mass["42094"] = 93.905088;
+    atomic_mass["42095"] = 94.905841;
+    atomic_mass["42096"] = 95.904679;
+    atomic_mass["42097"] = 96.906021;
+    atomic_mass["42098"] = 97.905408;
+    atomic_mass["42100"] = 99.907477;
+    
+    // Tungsten
+    atomic_mass["74180"] = 179.946706;
+    atomic_mass["74182"] = 181.948206;
+    atomic_mass["74183"] = 182.950224;
+    atomic_mass["74184"] = 183.950933;
+    atomic_mass["74186"] = 185.954362;
+    
     //Uranium
     atomic_mass["92234"] = 234.040946;
     atomic_mass["92235"] = 235.043923;
