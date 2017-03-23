@@ -45,34 +45,35 @@ int main(int argc, char** argv)
         if( argc == 2)
         {
             std::string input_file_name = std::string(argv[1]);
+            Reactor* reactor;
 
+            //Check to make sure the old dire
             if( ! file_exists(input_file_name) )
             {
-                std::cerr << "input_file_name: " + input_file_name + " Doesn't exist";
-                input_file_name = "input/default-input-file.inp";       
-                
-                if( ! file_exists(input_file_name) )
-                {
-                    std::cerr << "input_file_name: " + input_file_name + " Doesn't exist";
-                    input_file_name = "input/default-input-file.inp";  
-                    
-                    //Check to make sure the old dire
-                    if( ! file_exists(input_file_name) )
-                    {
-                        std::cerr << "Input File: " + input_file_name + " doesn't exist";
-                        throw 1;
+                std::cerr << "Input File: " + input_file_name + " doesn't exist";
+                throw 1;
 
-                    }
-
-                    //Initialize the input file reader
-                    input_file_parser = new InputFileParser( input_file_name );
-                    delete input_file_parser;
-                }
-                
             }
 
-            InfiniteHomogenousReactor reactor(input_file_name);
-            reactor.simulateTransient();
+            //Initialize the input file reader
+            input_file_parser = new InputFileParser( input_file_name );
+
+            std::string reactor_type =  input_file_parser->getInputFileParameter( "Reactor Type",std::string("Composite") ); // W/m^3 averaged over the entire micro sphere
+
+            if( reactor_type == "Composite" )
+            {
+                reactor = new InfiniteCompositeReactor(input_file_name);
+            }
+            else
+            {
+                reactor = new InfiniteHomogenousReactor(input_file_name);
+            }
+
+            delete input_file_parser;
+            
+            reactor->simulateTransient();
+            delete reactor;
+            
         }
         // Only do a worth calculation
         // (1) ./executable (2) "worth" (3) input_file

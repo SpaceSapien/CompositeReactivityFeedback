@@ -60,3 +60,4 @@ Worth: false
 #"Instantaneous" or "Ramp"
 #Reactivity Insertion Method: Ramp    #how is the reactivity inserted
 #Ramp Insertion Timing: 0.01         #if it is a ramp function, what is the timeframe for the ramp.
+Reactor Type: Homogenous  #jksdf

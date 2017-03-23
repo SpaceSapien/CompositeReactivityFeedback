@@ -65,6 +65,8 @@ void InfiniteHomogenousReactor::initializeReactorProblem()
     
     //Define the transient parameters
     this->setReactivityInsertionModel( new ReactivityInsertion(this) );  
+    
+    this->_thermal_solver->_outward_current_power = initial_power_density;
 }
 void InfiniteHomogenousReactor::worthStudy()
 {
