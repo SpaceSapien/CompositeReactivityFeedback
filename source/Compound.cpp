@@ -145,6 +145,17 @@ Compound Compound::getStandardCompound(const Materials &material, const double &
             
             break;
         }
+        case Materials::DUO2 :
+        {
+            Element oxygen = Element::getNaturalAtomicData(Atom::O);
+            //Depleted U
+            Element uranium = Element::getEnrichedUranium(0.004);            
+            
+            elemental_composition = { uranium, oxygen };
+            amounts = { 1.0, 2.0 };
+            
+            break;
+        }
         case Materials::W :
         {
             Element tungsten = Element::getNaturalAtomicData(Atom::W);

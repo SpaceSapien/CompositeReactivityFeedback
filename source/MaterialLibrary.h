@@ -39,6 +39,7 @@ namespace MaterialLibrary
     {
         U,
         UO2,
+        DUO2,
         UN,
         UC,
         U3Si,

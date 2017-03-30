@@ -41,6 +41,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/source/DelayedNeutronSet.o \
 	${OBJECTDIR}/source/Element.o \
 	${OBJECTDIR}/source/EnumsAndFunctions.o \
+	${OBJECTDIR}/source/FuelPinMicroCell.o \
+	${OBJECTDIR}/source/FuelPinReactor.o \
 	${OBJECTDIR}/source/HomogenousMesh.o \
 	${OBJECTDIR}/source/HomogenousMicroCell.o \
 	${OBJECTDIR}/source/HomogenousMonteCarlo.o \
@@ -125,6 +127,16 @@ ${OBJECTDIR}/source/EnumsAndFunctions.o: source/EnumsAndFunctions.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DNEAMS -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/EnumsAndFunctions.o source/EnumsAndFunctions.cpp
+
+${OBJECTDIR}/source/FuelPinMicroCell.o: source/FuelPinMicroCell.cpp
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DNEAMS -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/FuelPinMicroCell.o source/FuelPinMicroCell.cpp
+
+${OBJECTDIR}/source/FuelPinReactor.o: source/FuelPinReactor.cpp
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DNEAMS -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/FuelPinReactor.o source/FuelPinReactor.cpp
 
 ${OBJECTDIR}/source/HomogenousMesh.o: source/HomogenousMesh.cpp
 	${MKDIR} -p ${OBJECTDIR}/source

@@ -125,7 +125,7 @@ std::pair<Real,Real> MaterialLibrary::getDensityPair(const Materials &material,c
         
         }
    
-        case Materials::UO2 :
+        case Materials::UO2 : case Materials::DUO2 :
         {
             density = 10960;
             // TODO
@@ -257,7 +257,7 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
             thermal_conductivity_derivative = 0.023;
             return std::pair<Real,Real>(thermal_conductivity,thermal_conductivity_derivative);            
         }
-        case Materials::UO2 :
+        case Materials::UO2 : case Materials::DUO2 :
         {
             //radiation is measured in MW days/MTU
             Real radiation = 0;
@@ -432,7 +432,7 @@ void MaterialLibrary::getMcnpMTCard(const Materials &material, const Real &avg_t
         
     switch(material)
     {
-        case Materials::UO2 :
+        case Materials::UO2 : case Materials::DUO2 :
         {
             
             std::vector<std::pair<int,Real>> mt_paired_library_list_o2 = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
@@ -547,6 +547,31 @@ void MaterialLibrary::getMcnpMaterialCard(const Materials &material, const unsig
             
             doppler_broaden_cross_sections[U238_cs] = true;
             doppler_broaden_cross_sections[U235_cs] = true;
+            
+            break;
+                            
+        }
+        
+        case Materials::DUO2 :
+        {
+            material_cards << " m" << zone << "  8016.80c        2          $UO2" << std::endl;
+            material_cards << "     " << U238_cs << "  1    " << std::endl;
+            
+            std::vector<std::pair<int,Real>> mt_paired_library_list_o2 = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
+            
+            std::string mt_card_library;
+            Real library_temperature;            
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_o2,std::string("o2-u."), mt_card_library, library_temperature);
+           
+            material_cards << " mt" << zone << " " << mt_card_library << "           $S(a,b) O2 in UO2 @ " << library_temperature << " K" << std::endl;
+            
+            std::vector<std::pair<int,Real>> mt_paired_library_list_u = { {30,293.6},{31,400},{32,500},{33,600},{34,700},{35,800},{36,1000},{37,1200} };
+            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_u,std::string("u-o2."), mt_card_library, library_temperature);
+           
+            
+            material_cards << "     " << mt_card_library << "           $S(a,b) U in UO2 @ " << library_temperature << std::endl;
+            
+            doppler_broaden_cross_sections[U238_cs] = true;            
             
             break;
                             
@@ -790,7 +815,7 @@ std::pair<Real,Real> MaterialLibrary::getSpecificHeatPair(const Materials &mater
             }
             return std::pair<Real,Real>(specific_heat,specific_heat_derivative);
         }
-        case Materials::UO2 :
+        case Materials::UO2 : case Materials::DUO2 :
         {
             Real kg_per_mol = (237.0 + 32.0)/1000.0;
 
@@ -958,7 +983,7 @@ Real MaterialLibrary::getMeltingPoint(const Materials &material)
             melting_temperature = 1405.3;
             break;
         }
-        case Materials::UO2 :
+        case Materials::UO2 : case Materials::DUO2 :
         {
             melting_temperature = 3140;
             break;
@@ -1061,7 +1086,7 @@ Real MaterialLibrary::getLinearExpansionCoeifficient(const Materials& material, 
 
             break;
         }
-        case Materials::UO2 :
+        case Materials::UO2 : case Materials::DUO2 :
         {
             const std::vector<Real> T_data = {298,     373,     473,     573,     673,     773,     873,     973,     1073,    1173,    1273,    1373,    1473,    1573,     1673,     1773,     1873,     1973,     2073,     2173,     2273,    2373,    2473,    2573,    2673,    2773,    2873,    2973,    3073,    3100,    3140};
             const std::vector<Real> a_data = {9.76e-6, 9.76e-6, 9.82e-6, 9.90e-6, 10e-6,   10.1e-6, 10.4e-6, 10.5e-6, 10.7e-6, 11e-6,   11.4e-6, 11.9e-6, 12.4e-6, 13e-6,    13.7e-6,  14.4e-6,  15.2e-6,  16.1e-6,  17.0e-6,  18.1e-6,  19.1e-6, 20.3e-6, 21.5e-6, 22.8e-6, 24.1e-6, 25.5e-6, 27e-6,   28.5e-6, 30.1e-6, 30.9e-6, 30.9e-6};
@@ -1261,6 +1286,10 @@ std::string MaterialLibrary::getMaterialName(const Materials &material)
         {
             return "UO2";
         }
+        case Materials::DUO2 :
+        {
+            return "DUO2";
+        }
         case Materials::UC :
         {
             return "UC";
@@ -1341,7 +1370,11 @@ Materials MaterialLibrary::getMaterialFromName(const std::string &material_name)
     if(material_name == "UO2")
     {
         return Materials::UO2;
-    }   
+    }
+    if(material_name == "DUO2")
+    {
+        return Materials::DUO2;
+    } 
     if(material_name == "UN")
     {
         return Materials::UN;

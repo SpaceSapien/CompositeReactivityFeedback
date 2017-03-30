@@ -11,6 +11,7 @@
 #include "Tally.h"
 #include "TallyGroup.h"
 #include "InfiniteHomogenousReactor.h"
+#include "FuelPinReactor.h"
 
 
 int main(int argc, char** argv) 
@@ -31,7 +32,7 @@ int main(int argc, char** argv)
     try
     {
         InputFileParser* input_file_parser;
-        
+        Reactor* reactor;
         
         //No Input File
         /*if( argc == 1 )
@@ -42,17 +43,22 @@ int main(int argc, char** argv)
         }
         //Input File Specified
         else*/ 
-        if( argc == 2)
+        if( argc == 2 )
         {
             std::string input_file_name = std::string(argv[1]);
-            Reactor* reactor;
+            
 
             //Check to make sure the old dire
             if( ! file_exists(input_file_name) )
             {
-                std::cerr << "Input File: " + input_file_name + " doesn't exist";
-                throw 1;
-
+                std::cerr << "input_file_name: " + input_file_name + " doesn't exist, using default input file";
+                input_file_name = "input/default-input-file.inp";                 
+                    
+                //Check to make sure the old dire
+                if( ! file_exists(input_file_name) )
+                {
+                    throw "Input File: " + input_file_name + " doesn't exist";
+                }
             }
 
             //Initialize the input file reader
@@ -63,6 +69,10 @@ int main(int argc, char** argv)
             if( reactor_type == "Composite" )
             {
                 reactor = new InfiniteCompositeReactor(input_file_name);
+            }
+            else if( reactor_type == "Fuel Pin" )
+            {
+                reactor = new FuelPinReactor(input_file_name);
             }
             else
             {
@@ -88,7 +98,7 @@ int main(int argc, char** argv)
                 
                 if( ! file_exists(input_file_name) )
                 {
-                    std::cerr << "input_file_name: " + input_file_name + " Doesn't exist";
+                    std::cerr << "input_file_name: " + input_file_name + " doesn't exist, using default input file";
                     input_file_name = "input/default-input-file.inp";  
                     
                     //Check to make sure the old dire
@@ -98,14 +108,29 @@ int main(int argc, char** argv)
                         throw 1;
 
                     }
-
-                    //Initialize the input file reader
-                    input_file_parser = new InputFileParser( input_file_name );
-                    delete input_file_parser;
                 }
 
-                InfiniteCompositeReactor reactor = InfiniteCompositeReactor(input_file_name);
-                reactor.worthStudy();
+                //Initialize the input file reader
+                input_file_parser = new InputFileParser( input_file_name );
+                
+                std::string reactor_type =  input_file_parser->getInputFileParameter( "Reactor Type",std::string("Composite") ); // W/m^3 averaged over the entire micro sphere
+
+                if( reactor_type == "Composite" )
+                {
+                    reactor = new InfiniteCompositeReactor(input_file_name);
+                }
+                else if( reactor_type == "Fuel Pin" )
+                {
+                    reactor = new FuelPinReactor(input_file_name);
+                }
+                else
+                {
+                    reactor = new InfiniteHomogenousReactor(input_file_name);
+                }
+                
+                delete input_file_parser;
+
+                reactor->worthStudy();
             }
             else
             {

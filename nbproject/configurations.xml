@@ -11,6 +11,8 @@
       <itemPath>source/DelayedNeutronSet.h</itemPath>
       <itemPath>source/Element.h</itemPath>
       <itemPath>source/EnumsAndFunctions.h</itemPath>
+      <itemPath>source/FuelPinMicroCell.h</itemPath>
+      <itemPath>source/FuelPinReactor.h</itemPath>
       <itemPath>source/HomogenousMesh.h</itemPath>
       <itemPath>source/HomogenousMicroCell.h</itemPath>
       <itemPath>source/HomogenousMonteCarlo.h</itemPath>
@@ -56,6 +58,8 @@
       <itemPath>source/DelayedNeutronSet.cpp</itemPath>
       <itemPath>source/Element.cpp</itemPath>
       <itemPath>source/EnumsAndFunctions.cpp</itemPath>
+      <itemPath>source/FuelPinMicroCell.cpp</itemPath>
+      <itemPath>source/FuelPinReactor.cpp</itemPath>
       <itemPath>source/HomogenousMesh.cpp</itemPath>
       <itemPath>source/HomogenousMicroCell.cpp</itemPath>
       <itemPath>source/HomogenousMonteCarlo.cpp</itemPath>
@@ -169,6 +173,14 @@
       <item path="source/EnumsAndFunctions.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -378,6 +390,14 @@
       </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/HomogenousMesh.h" ex="false" tool="3" flavor2="0">
@@ -581,6 +601,14 @@
       <item path="source/EnumsAndFunctions.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -786,6 +814,14 @@
       </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/HomogenousMesh.h" ex="false" tool="3" flavor2="0">
@@ -989,6 +1025,14 @@
       <item path="source/EnumsAndFunctions.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -1194,6 +1238,14 @@
       </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/HomogenousMesh.h" ex="false" tool="3" flavor2="0">
@@ -1397,6 +1449,14 @@
       <item path="source/EnumsAndFunctions.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/EnumsAndFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="source/FuelPinReactor.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/HomogenousMesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
