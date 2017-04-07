@@ -16,7 +16,7 @@
 using namespace MaterialLibrary;
 
 
-CompositeMicroCell::CompositeMicroCell(InfiniteCompositeReactor* reactor, const Real &initial_temperature) : MicroCell(reactor)
+CompositeMicroCell::CompositeMicroCell(Reactor* reactor, const Real &initial_temperature) : MicroCell(reactor)
 {
     this->_reactor = reactor;    
     

@@ -24,7 +24,7 @@ ReactorKinetics::ReactorKinetics() { }
  * @param initial_power
  * @param state
  */
-ReactorKinetics::ReactorKinetics(Reactor* reactor, const Real &initial_power,const DelayedPrecursorInitialState &state) 
+ReactorKinetics::ReactorKinetics(Reactor* reactor, const Real &initial_power,const DelayedPrecursorInitialState &state, const Real &starting_beta_eff) 
 {
     _reactor = reactor;
     _initial_power = initial_power;
@@ -50,9 +50,15 @@ ReactorKinetics::ReactorKinetics(Reactor* reactor, const Real &initial_power,con
             //operated for a long time at that power
             _delayed_precursors.resize(_delayed_neutron_set.numberDelayedNeutronSets(),0);
             
+            //The calculated b_eff is going to be a little different than the real b_eff so update the 
+            //delayed yields from the 6 groups but use them proportionally   
+            Real natural_b_eff = _delayed_neutron_set._delayed_neutrons_per_fission / _delayed_neutron_set._neutrons_per_fission;
+            Real delayed_neutron_group_proportionality_constant = starting_beta_eff / natural_b_eff;
+            
             //initialize the delated precoursors
             for(int index = 0; index < _delayed_precursors.size(); index++)
             {
+                _delayed_neutron_set._delayed_neutrons_per_fission_groups[index] *=  delayed_neutron_group_proportionality_constant;
                 Real nu_dk = _delayed_neutron_set._delayed_neutrons_per_fission_groups[index];
                 Real lambda_k = _delayed_neutron_set._beta_time_constants[index];
                 _delayed_precursors[index] = (_initial_power * nu_dk) / ( _power_per_fission * lambda_k );

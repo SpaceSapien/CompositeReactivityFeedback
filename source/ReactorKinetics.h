@@ -46,7 +46,7 @@ public:
     
     
     ReactorKinetics();
-    ReactorKinetics(Reactor* reactor,const Real &initial_power, const DelayedPrecursorInitialState &state );
+    ReactorKinetics(Reactor* reactor,const Real &initial_power, const DelayedPrecursorInitialState &state, const Real &beta_eff = 0.00679  );
     Real solveForPower( const Real &simulation_time);    
    
     

@@ -99,6 +99,10 @@ void InfiniteCompositeReactor::initializeReactorProblem()
         
     this->_monte_carlo_model->updateAdjustedCriticalityParameters();
     
+    
+    //Define the kinetics parameters
+    this->setKineticsModel(new ReactorKinetics(this,initial_power_density, ReactorKinetics::DelayedPrecursorInitialState::EquilibriumPrecursors, this->_monte_carlo_model->_current_beta_eff));    
+    
     //Reset the time to zero and then grab the current solution for the Problem
     _thermal_solver->_current_time = 0;    
      //Add the starting MicroSolution

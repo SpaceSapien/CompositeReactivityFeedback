@@ -241,7 +241,8 @@ void Reactor::temperatureIterationInnerLoop()
         Real current_power = _kinetics_model->solveForPower(_kinetics_thermal_sync_time_step);
         std::vector<Real> power_distribition;
         
-       
+        Real absolute_time = _transient_time + _inner_time_step;
+        
         if(_monte_carlo_model->_tally_cells)
         {
             //Get a vector representation of the radial power distribution
@@ -259,9 +260,7 @@ void Reactor::temperatureIterationInnerLoop()
         if( ( _inner_time_step - last_reported_time )  >= _power_and_delayed_neutron_record_time_step )
         {
             last_reported_time = _inner_time_step;
-
-            Real absolute_time = _transient_time + _inner_time_step;
-
+            
             //Everytime the MC is recalculated store this data
             std::pair<Real,Real> power_entry = { absolute_time, current_power };
             _power_record.push_back(power_entry);
@@ -271,7 +270,12 @@ void Reactor::temperatureIterationInnerLoop()
         }
         
         //If there has been a significant temperature change recalculate the k_eff
-        if( this->significantTemperatureDifference(&current_solution) || this->_reactivity_insertion_model->rampNeedsReactivityMonteCarloUpdate(_transient_time , _inner_time_step) )
+        if
+        (  
+            this->significantTemperatureDifference(&current_solution) || 
+            _reactivity_insertion_model->rampNeedsReactivityMonteCarloUpdate(_transient_time , _inner_time_step) ||
+            absolute_time > _end_time
+        )
         {
             break;
         }
@@ -373,12 +377,7 @@ void Reactor::initializeReactorProblem()
     //Create a new geometry
     this->setMicroSphereGeometry(new MaterialLibrary::MicroGeometry(materials, dimensions));   
     
-    Real initial_power_density =  _input_file_reader->getInputFileParameter("Starting Power Density",static_cast<Real>(200e6) ); // W/m^3 averaged over the entire micro sphere
-    
-    //Define the kinetics parameters
-    this->setKineticsModel(new ReactorKinetics(this,initial_power_density, ReactorKinetics::DelayedPrecursorInitialState::EquilibriumPrecursors));    
-    
-      
+   
     
     
     //Time stepping parameters

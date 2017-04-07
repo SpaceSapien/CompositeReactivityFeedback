@@ -324,7 +324,7 @@ void PythonPlot::createPlots()
 {
     std::string program = PYTHON_PLOT_SCRIPT;  
     std::string command = program + " inputfile " + PythonPlot::_log_file;
-    exec(command);   
+    //exec(command);   
 }
 
 std::string PythonPlot::_log_file = "";

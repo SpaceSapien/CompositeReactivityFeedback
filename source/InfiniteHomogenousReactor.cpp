@@ -14,6 +14,7 @@
 #include "InfiniteHomogenousReactor.h"
 #include "HomogenousWorth.h"
 #include "ReactivityInsertion.h"
+#include "ReactorKinetics.h"
 
 InfiniteHomogenousReactor::InfiniteHomogenousReactor(const std::string &input_file_name) : Reactor(input_file_name) {}
 
@@ -36,6 +37,13 @@ void InfiniteHomogenousReactor::initializeReactorProblem()
     //Define the Monte Carlo Parameters
     this->setMoteCarloModel(new HomogenousMonteCarlo(this, this->_results_directory + "run/"));   
     this->_monte_carlo_model->updateAdjustedCriticalityParameters();
+    
+     
+    //Define the kinetics parameters
+    this->setKineticsModel(new ReactorKinetics(this,initial_power_density, ReactorKinetics::DelayedPrecursorInitialState::EquilibriumPrecursors, this->_monte_carlo_model->_current_beta_eff));    
+    
+      
+    
     
     //Setting Up the Transient BC    
     std::string transient_boundary_condition = _input_file_reader->getInputFileParameter(std::string("Transient BC"), std::string("FixedHeatFlux") );
@@ -62,6 +70,8 @@ void InfiniteHomogenousReactor::initializeReactorProblem()
     {
         throw "Unknown BC for transient";
     }
+    
+    
     
     //Define the transient parameters
     this->setReactivityInsertionModel( new ReactivityInsertion(this) );  
