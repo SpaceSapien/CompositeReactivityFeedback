@@ -38,10 +38,14 @@ OBJECTFILES= \
 	${OBJECTDIR}/source/BetaSimulationResults.o \
 	${OBJECTDIR}/source/CompositeMicroCell.o \
 	${OBJECTDIR}/source/Compound.o \
+	${OBJECTDIR}/source/CylindricalMesh.o \
+	${OBJECTDIR}/source/CylindricalMicroCell.o \
 	${OBJECTDIR}/source/DelayedNeutronSet.o \
 	${OBJECTDIR}/source/Element.o \
 	${OBJECTDIR}/source/EnumsAndFunctions.o \
+	${OBJECTDIR}/source/FuelPinCompositeMicroCell.o \
 	${OBJECTDIR}/source/FuelPinMicroCell.o \
+	${OBJECTDIR}/source/FuelPinMonteCarlo.o \
 	${OBJECTDIR}/source/FuelPinReactor.o \
 	${OBJECTDIR}/source/HomogenousMesh.o \
 	${OBJECTDIR}/source/HomogenousMicroCell.o \
@@ -113,6 +117,16 @@ ${OBJECTDIR}/source/Compound.o: source/Compound.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DPRACTICE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/Compound.o source/Compound.cpp
 
+${OBJECTDIR}/source/CylindricalMesh.o: source/CylindricalMesh.cpp
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DPRACTICE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/CylindricalMesh.o source/CylindricalMesh.cpp
+
+${OBJECTDIR}/source/CylindricalMicroCell.o: source/CylindricalMicroCell.cpp
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DPRACTICE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/CylindricalMicroCell.o source/CylindricalMicroCell.cpp
+
 ${OBJECTDIR}/source/DelayedNeutronSet.o: source/DelayedNeutronSet.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
@@ -128,10 +142,20 @@ ${OBJECTDIR}/source/EnumsAndFunctions.o: source/EnumsAndFunctions.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DPRACTICE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/EnumsAndFunctions.o source/EnumsAndFunctions.cpp
 
+${OBJECTDIR}/source/FuelPinCompositeMicroCell.o: source/FuelPinCompositeMicroCell.cpp
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DPRACTICE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/FuelPinCompositeMicroCell.o source/FuelPinCompositeMicroCell.cpp
+
 ${OBJECTDIR}/source/FuelPinMicroCell.o: source/FuelPinMicroCell.cpp
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DPRACTICE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/FuelPinMicroCell.o source/FuelPinMicroCell.cpp
+
+${OBJECTDIR}/source/FuelPinMonteCarlo.o: source/FuelPinMonteCarlo.cpp
+	${MKDIR} -p ${OBJECTDIR}/source
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DPRACTICE_CLUSTER -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/FuelPinMonteCarlo.o source/FuelPinMonteCarlo.cpp
 
 ${OBJECTDIR}/source/FuelPinReactor.o: source/FuelPinReactor.cpp
 	${MKDIR} -p ${OBJECTDIR}/source

@@ -12,7 +12,7 @@ Radaii: 4e-4 4.5e-4 1.612e-3 #m
 #Transient BC: FixedTemperature FixedHeatFlux ReflectedHeatFlux
 
 Starting Power Density: 200e6 # W/m^3
-Starting K-eff: 1.01
+Starting K-eff: 1.001
 Kernel Outer Temperature: 800 K
 
 #Generally 100 is a good size
@@ -27,30 +27,30 @@ Kernel Outer Temperature: 800 K
 #Initial Solve Power Residual: 0.1
 
 Uranium Enrichment Fraction: 0.15 
-#Cells Per Zone: 1
+Cells Per Zone: 1
 
 #Timer iteration data
 Keff Calculation Per Beta Eff Calculation: 25   # calculating the beta is expensive so we only calculate it once for ever so may keff calculations zero means only calculate at the beginning of the simulation
 
 #Options: Time and Temperature
 Monte Carlo Recalculation Type: Temperature
-MC Recalc Delta T: 7.5  # K
+MC Recalc Delta T: 1.0  # K
 #Monte Carlo Recalculation Timestep: 0.005      #s
 
 Kinetics Time Iteration: 1e-9                  #s
-Thermal Time Iteration: 200e-9                 #s
+Thermal Time Iteration: 1000e-9                 #s
 Kinetics Thermal Data Sync: 10e-6               #s
 Calculation End Time: 2.0                     #s
 Power Record: 0.0001                            #s  Time between recording power and the delayed neutron record
 
-Keff Number of Particles: 33e3
-Beff Number of Particles: 33e3
-Particles Per Cycle: 1000
+Keff Number of Particles: 33e2
+Beff Number of Particles: 33e2
+Particles Per Cycle: 100
 Number CPUs:  128
 
 Tally Cells: true                             #tally the cells in the problem
-Tally Energy Bins: 1000
-Worth: true
+Tally Energy Bins: 10
+Worth: false
 #Worth divisions
 #Worth Temperature Divisions: 9
 #Worth Temperature Range
@@ -60,4 +60,7 @@ Worth: true
 #"Instantaneous" or "Ramp"
 #Reactivity Insertion Method: Ramp   #how is the reactivity inserted
 #Ramp Insertion Timing: 0.01         #if it is a ramp function, what is the timeframe for the ramp.
-Reactor Type: Composite             # Homogenous Composite Cylindrical
+Reactor Type: Fuel Pin             # Homogenous Composite "Fuel Pin"
+Number Macro Cells: 10                # Number of cells at the macro scale
+Fuel Pin Dimensionality: HomogenousNeutronicsAndHeatTransfer  # HomogenousNeutronics, FullHeterogeneous, HomogenousNeutronicsAndHeatTransfer
+Macro Thermal Mesh Size: 200  # Macro Scale Thermal Mesh 
