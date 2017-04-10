@@ -40,6 +40,9 @@ public:
     Dimension getNodeLocation(const int &node) const;
     Materials getMaterial(const int &node) const;
     
+    Real getTotalVolume() const;
+    Real getVolumeWeightedQuantity(const std::vector<Real> &quantity) const;
+    
 
 
 };

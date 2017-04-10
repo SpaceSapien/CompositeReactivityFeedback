@@ -14,6 +14,7 @@
 #include "FuelPinReactor.h"
 #include "ReactivityInsertion.h"
 #include "ReactorKinetics.h"
+#include "EnumsAndFunctions.h"
 #include <cmath>
 
 FuelPinReactor::FuelPinReactor(const std::string &input_file_name) : Reactor(input_file_name) 
@@ -47,6 +48,10 @@ void FuelPinReactor::initializeReactorProblem()
 {
     //Call the parent constructor
     Reactor::initializeReactorProblem(); 
+    
+    // Set the dimensionality
+    std::string dimensionality_string = _input_file_reader->getInputFileParameter("Fuel Pin Dimensionality", std::string("HomogenousNeutronics") );
+    _dimensionality = FuelPinReactor::getDimensionalTreatment(dimensionality_string);
     
     //Create a series of macro_cells
     _number_macro_cells = _input_file_reader->getInputFileParameter("Number Macro Cells", 0 );
@@ -113,9 +118,66 @@ void FuelPinReactor::initializeReactorProblem()
     //Define the transient parameters
     this->setReactivityInsertionModel( new ReactivityInsertion(this) );  
     
-    std::string dimensionality_string = _input_file_reader->getInputFileParameter("Fuel Pin Dimensionality", std::string("HomogenousNeutronics") );
-    _dimensionality = FuelPinReactor::getDimensionalTreatment(dimensionality_string);
+    
 
+}
+
+
+
+bool FuelPinReactor::significantTemperatureDifference(MicroSolution* comparison)
+{
+    bool significan_difference_in_macrocell = this->Reactor::significantTemperatureDifference(comparison);
+    
+    if(significan_difference_in_macrocell)
+    {
+        return true;
+    }    
+        
+    
+    //Add in the cell data
+    switch( _dimensionality )
+    {
+        //Heterogeneous MicroCells
+        case FuelPinReactor::HomogenousNeutronics :
+        case FuelPinReactor::FullHeterogeneous :
+        {
+            std::vector<Real> run_data = getMicroCellTemperatures();
+            
+            if(this->significantTemperatureDifferenceInMicroCell(run_data))
+            {
+                return true;
+            }
+            
+            break;
+        }
+    }
+    
+    return false;
+}
+
+/**
+ * Comparing the current microsolution to the one on record as the last k-eignvalue time step microsolution
+ * 
+ * @param comparison the current microsolution
+ * @return true or false if there is a significant enought temperature change to warrant a new k-eignevalue calc
+ */
+bool FuelPinReactor::significantTemperatureDifferenceInMicroCell(std::vector<Real> comparison)
+{
+     std::vector<Real> last_solution_microcell_temperatures = _microsolver_average_temperatures.back();
+     
+     Real max_difference;
+     Real average_difference;
+     
+     vector_difference(comparison, last_solution_microcell_temperatures, max_difference, average_difference);
+     
+     if( max_difference > _maximum_allowed_temperature_difference || average_difference > _maximum_allowed_average_temperature_difference )
+     {
+         return true;
+     }
+     else
+     {
+         return false;
+     }     
 }
 
 void FuelPinReactor::worthStudy()
@@ -132,11 +194,11 @@ void FuelPinReactor::setThermalSolver(CylindricalMicroCell* solver)
     this->Reactor::setThermalSolver(solver);
 }
 
- void FuelPinReactor::setMoteCarloModel(FuelPinMonteCarlo* mc_model)
- {
+void FuelPinReactor::setMoteCarloModel(FuelPinMonteCarlo* mc_model)
+{
      this->_monte_carlo_model = mc_model;
      this->Reactor::setMoteCarloModel(mc_model);
- }
+}
  
  void FuelPinReactor::solveForSteadyStatePowerDistribution(const std::vector<Real> &homogenous_power_density, const Real &initial_power_density)
 {
@@ -153,6 +215,13 @@ void FuelPinReactor::setThermalSolver(CylindricalMicroCell* solver)
         this->_monte_carlo_model->getRawKeff();
         std::vector<std::vector<Real>> initial_tally_power_density = this->_monte_carlo_model->getZoneCellRelativePowerDensity();
         std::vector<Real> tally_power_density = this->_thermal_solver->getTallyBasedRepresentativeKernelPowerDistribution(initial_tally_power_density, initial_power_density);
+        
+        for(std::size_t index = 0; index < _thermal_solver->_micro_scale_solvers.size(); ++index)
+        {
+            delete _thermal_solver->_micro_scale_solvers[index];
+            _thermal_solver->_micro_scale_solvers[index] = nullptr;            
+        }
+        
         std::vector<MicroSolution> tally_plot =  this->_thermal_solver->iterateInitialConditions(tally_power_density);
         vector_residuals(last_power_density, tally_power_density,max_relative_residual,average_residual);
         std::cout<< "Max Power Residual: " << max_relative_residual << " Average Power Residual: " << average_residual << std::endl;
@@ -167,3 +236,123 @@ void FuelPinReactor::setThermalSolver(CylindricalMicroCell* solver)
     
     
 }
+ 
+ 
+void FuelPinReactor::monteCarloTimeStepSimulationDataProcessing()
+{
+    this->Reactor::monteCarloTimeStepSimulationDataProcessing();
+     
+    //Add in the macro cell temperature change data
+    switch( _dimensionality )
+    {
+        //Heterogeneous MicroCells
+        case FuelPinReactor::HomogenousNeutronics :
+        case FuelPinReactor::FullHeterogeneous :
+        {
+            std::vector<Real> run_data = getMicroCellTemperatures();
+            _microsolver_average_temperatures.push_back(run_data);
+            this->saveMicroScaleDataToFile();
+            
+            break;
+        }
+    }
+}
+ 
+//Keep a record of the micro cell temperatures
+ std::vector<Real> FuelPinReactor::getMicroCellTemperatures()
+ {
+     std::vector<Real> run_data;
+     
+    for( auto cell : this->_thermal_solver->_micro_scale_solvers )
+    {
+        Real temperature, volume;
+        cell->getAverageZoneTemperature(1,temperature,volume);
+        run_data.push_back(temperature);
+    }
+     
+     return run_data;
+ }
+ 
+void FuelPinReactor::saveMicroScaleDataToFile()
+{
+    std::ofstream output_file;
+    std::string output_file_path = _results_directory + "microscale-aggregate-data.csv";
+        
+    if(!file_exists(output_file_path))
+    {
+        
+        
+        output_file.open( output_file_path, std::ios::app);
+
+        output_file << "Time [s]";
+        
+        for( int index = 0; index < _thermal_solver->_micro_scale_solvers.size(); ++index )
+        {
+            output_file << ",Position-" << index << " [m],Temperature-"<< index << " [K],Integrated-Power-" << index << " [W-s],Current-Power-" << index <<" [W]";
+        }
+    
+        output_file << std::endl;    
+    }
+    else
+    {
+        output_file.open( output_file_path, std::ios::app);
+    }
+    
+    output_file << _transient_time;
+    
+        
+    for( auto cell : this->_thermal_solver->_micro_scale_solvers )
+    {
+        Real temperature,volume;
+        
+        cell->getAverageZoneTemperature(1,temperature,volume);
+        
+        output_file << "," << cell->_macro_scale_position;
+        output_file << "," << temperature;
+        output_file << "," << cell->_outward_integrated_power;
+        output_file << "," << cell->_outward_current_power;       
+    }
+    output_file << std::endl;  
+    output_file.close();
+    
+    
+    
+    //Fine data
+    output_file_path = _results_directory + "microscale-fine-data.csv";
+        
+    if(!file_exists(output_file_path))
+    {
+        
+        
+        output_file.open( output_file_path, std::ios::app);
+        output_file << "Time [s],Cell,";
+        
+        for( int index = 0; index < _thermal_solver->_micro_scale_solvers[0]->_mesh->_position.size(); ++index )
+        {
+            output_file << ",Radius-" << index << " [m],Temperature-"<< index << " [K]";
+        }
+    
+        output_file << std::endl;    
+    }
+    else
+    {
+        output_file.open( output_file_path, std::ios::app);
+    }
+    
+    
+    
+    
+    for( auto cell : _thermal_solver->_micro_scale_solvers )
+    {
+        output_file << _transient_time;
+        
+        for(int index = 0; index < cell->_mesh->_position.size(); ++index)
+        {
+            output_file << "," << cell->_mesh->_position[index] << "," << cell->_solution[index];
+        }
+        
+        output_file << std::endl;  
+    }
+    
+    output_file.close();
+ }

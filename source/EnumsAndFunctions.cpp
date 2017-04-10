@@ -172,6 +172,47 @@ void vector_residuals(const std::vector<Real> &vector1, const std::vector<Real> 
     }
 }
 
+/**
+ * 
+ * @param vector1  vector of values that should be the same size as the second vector
+ * @param vector2
+ * @param max_relative_residual the normalized max residual of any element
+ * @param average_residual      the avg normalized residual  for all elements
+ */
+std::vector<Real> vector_difference(const std::vector<Real> &vector1, const std::vector<Real> &vector2, Real &max_difference,Real &average_difference)
+{
+    std::vector<Real> difference_vector;
+    max_difference = 0;
+    average_difference = 0;
+    std::size_t size = vector1.size();
+    
+    if( size == vector2.size() )
+    {
+        for(std::size_t index = 0; index < size; ++index)
+        {
+            Real current_difference = vector2[index] - vector1[index];                
+            average_difference += current_difference;
+            
+            if( std::abs(current_difference) > max_difference)
+            {
+                max_difference = std::abs(current_difference);
+            }
+            
+            difference_vector.push_back(current_difference);
+        }
+        
+        average_difference /= size;
+        
+    }
+    else
+    {
+        throw std::string("Vectors are different Sizes ") + std::to_string(__LINE__) + " " + __FILE__;
+    }
+    
+    return difference_vector;
+}
+
+
 Real vector_max(const std::vector<Real> &vector)
 {
     Real max = vector[0];

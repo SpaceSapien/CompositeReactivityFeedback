@@ -63,7 +63,6 @@
       <itemPath>source/Element.cpp</itemPath>
       <itemPath>source/EnumsAndFunctions.cpp</itemPath>
       <itemPath>source/FuelPinCompositeMicroCell.cpp</itemPath>
-      <itemPath>source/FuelPinMicroCell.cpp</itemPath>
       <itemPath>source/FuelPinMonteCarlo.cpp</itemPath>
       <itemPath>source/FuelPinReactor.cpp</itemPath>
       <itemPath>source/HomogenousMesh.cpp</itemPath>
@@ -194,8 +193,6 @@
             flavor2="0">
       </item>
       <item path="source/FuelPinCompositeMicroCell.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -423,8 +420,6 @@
       </item>
       <item path="source/FuelPinCompositeMicroCell.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/FuelPinMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
@@ -646,8 +641,6 @@
             flavor2="0">
       </item>
       <item path="source/FuelPinCompositeMicroCell.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -871,8 +864,6 @@
       </item>
       <item path="source/FuelPinCompositeMicroCell.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/FuelPinMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
@@ -1094,8 +1085,6 @@
             flavor2="0">
       </item>
       <item path="source/FuelPinCompositeMicroCell.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -1319,8 +1308,6 @@
       </item>
       <item path="source/FuelPinCompositeMicroCell.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="source/FuelPinMonteCarlo.cpp" ex="false" tool="1" flavor2="0">
@@ -1542,8 +1529,6 @@
             flavor2="0">
       </item>
       <item path="source/FuelPinCompositeMicroCell.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="source/FuelPinMicroCell.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="source/FuelPinMicroCell.h" ex="false" tool="3" flavor2="0">
       </item>

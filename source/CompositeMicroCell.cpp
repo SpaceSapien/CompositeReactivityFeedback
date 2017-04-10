@@ -336,14 +336,13 @@ std::vector<Real> CompositeMicroCell::getRespresentativePowerDistribution(const 
 void CompositeMicroCell::getAverageCellTemperature(const int &zone, const int &zone_divisions, const int &current_division, Real &cell_temperature, Real &cell_volume ) const
 {
     Dimension material_inner_radius = 0.0;
-    Dimension material_outer_radius = _reactor->_micro_sphere_geometry->_geometry[zone].second;
+    Dimension material_outer_radius = _reactor->_micro_sphere_geometry->_geometry[zone-1].second;
     
-    if( zone > 0 )
+    if( zone > 1 )
     {
-        material_inner_radius = _reactor->_micro_sphere_geometry->_geometry[zone-1].second;
+        material_inner_radius = _reactor->_micro_sphere_geometry->_geometry[zone-2].second;
     }
     
-    int number_zones = _reactor->_micro_sphere_geometry->_geometry.size();  
     
     Dimension outer_radius;
     Dimension material_delta_radius = material_outer_radius - material_inner_radius;
@@ -351,7 +350,7 @@ void CompositeMicroCell::getAverageCellTemperature(const int &zone, const int &z
         
     
     //If we are in the last zone and last zone division we make the radius the equivalent to the neutronics square volume
-    if( zone == number_zones -1 && zone_divisions == current_division)
+    if( zone == _number_zones && zone_divisions == current_division)
     {
         Dimension a = material_inner_radius + material_delta_radius * ( static_cast<Real>(current_division )/static_cast<Real>(zone_divisions) );
         
@@ -444,11 +443,16 @@ void CompositeMicroCell::getAverageTemperatureInRadaii(const Dimension &inner_ra
 void CompositeMicroCell::getAverageZoneTemperature(const int &zone, Real &cell_temperature, Real &cell_volume) const
 {
     Dimension inner_radius = 0.0;
-    Dimension outer_radius = _reactor->_micro_sphere_geometry->_geometry[zone].second;
+    Dimension outer_radius = _reactor->_micro_sphere_geometry->_geometry[zone -1].second;
     
-    if( zone > 0 )
+    if( zone > 1 )
     {
-        inner_radius = _reactor->_micro_sphere_geometry->_geometry[zone-1].second;
+        inner_radius = _reactor->_micro_sphere_geometry->_geometry[zone-2].second;
+    }
+    // the last geometry setting is cubic which when translated to spherical is larger radius
+    if( zone == _number_zones)
+    {
+        outer_radius = outer_radius * std::pow( 6.0/M_PI , 1.0/3.0);
     }
     
    return this->getAverageTemperatureInRadaii(inner_radius, outer_radius, cell_temperature,cell_volume);

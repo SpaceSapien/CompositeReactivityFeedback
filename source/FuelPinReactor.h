@@ -32,6 +32,7 @@ public:
     //Create the thermal heat transfer object 
     CylindricalMicroCell* _thermal_solver;
     FuelPinMonteCarlo* _monte_carlo_model;
+    std::vector<std::vector<Real>> _microsolver_average_temperatures;
     
     enum DimensionalTreatment
     {
@@ -57,10 +58,15 @@ public:
     
     virtual void setThermalSolver(CylindricalMicroCell* solver);
     virtual void setMoteCarloModel(FuelPinMonteCarlo* mc_model);
-    
+    virtual bool significantTemperatureDifferenceInMicroCell(std::vector<Real> comparison);
+    virtual bool significantTemperatureDifference(MicroSolution* comparison);
+    virtual void monteCarloTimeStepSimulationDataProcessing();
+    virtual std::vector<Real> getMicroCellTemperatures();
    
     
     void solveForSteadyStatePowerDistribution(const std::vector<Real> &homogenous_power_density, const Real &initial_power_density);
+    void saveMicroScaleDataToFile();
+    
     
     virtual ~FuelPinReactor();
     

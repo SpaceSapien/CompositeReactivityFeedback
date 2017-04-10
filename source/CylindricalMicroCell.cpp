@@ -20,6 +20,7 @@ using namespace MaterialLibrary;
 
 void CylindricalMicroCell::setInnerBoundaryCondition(MicroCellBoundaryCondition* boundary_condition)
 {
+    delete this->_inner_boundary_condition;
     this->_inner_boundary_condition = boundary_condition;
 }
 
@@ -39,13 +40,13 @@ CylindricalMicroCell::CylindricalMicroCell(FuelPinReactor* reactor, const Real &
     
     
     
-    Real coolant_channel_radius = _reactor->_input_file_reader->getInputFileParameter("Coolant Channel Radius", static_cast<Real>(0.01) );
+    _coolant_channel_radius = _reactor->_input_file_reader->getInputFileParameter("Coolant Channel Radius", static_cast<Real>(0.01) );
     Real fuel_pin_pitch = _reactor->_input_file_reader->getInputFileParameter("Hexagonal Pitch", static_cast<Real>(0.04) );
     Real side_length = fuel_pin_pitch / 2.0 ;
-    Real eqivalent_outer_radius = side_length * sqrt( 3.0 * sqrt(3.0) / ( 2.0 * M_PI) );
+    _eqivalent_outer_radius = side_length * sqrt( 3.0 * sqrt(3.0) / ( 2.0 * M_PI) );
     
     
-    this->setMesh(new CylindricalMesh(coolant_channel_radius, eqivalent_outer_radius, _number_mesh_nodes, _reactor->_number_macro_cells));
+    this->setMesh(new CylindricalMesh(_coolant_channel_radius, _eqivalent_outer_radius, _number_mesh_nodes, _reactor->_number_macro_cells));
     
     _solution.resize( _mesh->numberOfNodes(), initial_temperature );
     
@@ -75,15 +76,28 @@ void CylindricalMicroCell::initializeMicroScaleCells(const std::vector<Real> &ma
                 
                 delete _micro_scale_solvers[macro_cell_index];
                 
-                this->getAverageCellTemperature( 1, _reactor->_number_macro_cells, (macro_cell_index + 1), temperature, volume);                
-                FuelPinCompositeMicroCell* new_cell = new FuelPinCompositeMicroCell(_reactor, temperature);
+                this->getAverageCellTemperature( 1, _reactor->_number_macro_cells, (macro_cell_index + 1), temperature, volume);  
+                Real macro_scale_radius = _coolant_channel_radius + ( _coolant_channel_radius - _eqivalent_outer_radius ) * ( macro_cell_index + 0.5 );
                 
-                _micro_scale_solvers[macro_cell_index] = new_cell;                
+                
+                
+                Real r_inner = _reactor->_micro_sphere_geometry->_geometry[_number_zones - 2].second;
+                Real r_outer = _reactor->_micro_sphere_geometry->_geometry[_number_zones - 1].second * pow(6.0/M_PI, 1.0/3.0);
+                Real r_avg_temp = 1.0 / ( 1.0/r_inner - 3.0/( pow(r_outer,3) - pow(r_inner,3)) * ( pow(r_outer,3)/(3*r_inner) - r_outer*r_outer/2.0 + r_inner*r_inner / 6.0 ));
+                Real cell_volume = (M_PI*4.0/3.0) * pow(r_outer, 3);
                 Real initial_power_density = macro_cell_power_density[macro_cell_index];
+                Real kernel_power = cell_volume * initial_power_density;
+                Materials matrix_material = _reactor->_micro_sphere_geometry->_geometry[_number_zones - 1].first;
+                MaterialDataPacket packet = MaterialLibrary::getMaterialProperties(matrix_material, temperature);
+                Real delta_t = kernel_power / (4.0 * M_PI * packet._thermal_conductivity) * ( 1/r_avg_temp - 1/r_outer); 
+
+                        
+                FuelPinCompositeMicroCell* new_cell = new FuelPinCompositeMicroCell(_reactor, temperature - delta_t, macro_scale_radius);
+                new_cell->setBoundaryCondition(MicroCellBoundaryCondition::getFixedTemperatureBoundaryConditionFactory(temperature - delta_t));
+                _micro_scale_solvers[macro_cell_index] = new_cell;                               
                 
                 std::vector<Real> representative_power_distribution = new_cell->getRespresentativePowerDistribution(initial_power_density);                
                 new_cell->iterateInitialConditions(representative_power_distribution);                
-                
             }
             break;
         }
@@ -128,14 +142,18 @@ MicroSolution CylindricalMicroCell::solve(const Real &simulation_time_step,const
 
 MicroSolution CylindricalMicroCell::solveHeterogeneous(const Real &simulation_time_step,const std::vector<Real> &power_distribution)
 {
-     std::vector<Real> radial_mesh = _mesh->_position;
+    std::vector<Real> radial_mesh = _mesh->_position;
     std::vector<Real> previous_solution = this->_solution;
     std::vector<Real> current_solution;
     
     current_solution.resize( previous_solution.size() );
     
+   
+    
+    
     Real time = _current_time;
     unsigned long iteration = 0;
+    
     
     while( time < _current_time + simulation_time_step )
     {
@@ -150,15 +168,41 @@ MicroSolution CylindricalMicroCell::solveHeterogeneous(const Real &simulation_ti
         Real inward_heat_flux = 0; 
         Real net_heat_flux = 0;
         
+        //The matrix material is the last material in the geometry
+        Materials matrix_material = _reactor->_micro_sphere_geometry->_geometry.back().first;
+        std::vector<Real> micro_scale_power = std::vector<Real>(_reactor->_number_macro_cells, -1);
+        
+        //Important properties of the microcells
+        
         for( int radial_index = 0; radial_index < _mesh->numberOfNodes(); ++radial_index )
         {
+            int current_cell = _mesh->_cell_in_zone[radial_index];
+            
+            //Get some macro scale properties
             Real temperature = previous_solution[radial_index];                        
-            
-            MaterialDataPacket material_data = _reactor->_micro_sphere_geometry->getHomogenizedMaterialProperties(temperature);
+            MaterialDataPacket material_data = MaterialLibrary::getMaterialProperties(matrix_material, temperature);
             Dimension center_radius = _mesh->getNodeLocation(radial_index);         
-            Real internal_power = power_distribution[radial_index] * _mesh->_volume[radial_index];
-            _integrated_power += internal_power * _time_step;
             
+            Real microcell_internal_power_density = power_distribution[radial_index];
+            
+            
+            //If we haven't calculated out micro to macro cell heat flux calculate it
+            if(micro_scale_power[current_cell -1 ] == -1)
+            {
+                if(this->_micro_scale_solvers[current_cell-1] != nullptr)
+                {
+                    Real macrocell_volume, macrocell_temperature;
+                    this->getAverageCellTemperature(1,_reactor->_number_macro_cells,current_cell,macrocell_temperature,macrocell_volume);
+                    micro_scale_power[current_cell-1] = -1 * this->_micro_scale_solvers[current_cell-1]->solveMicroCellCoupling(macrocell_temperature,microcell_internal_power_density, _time_step);
+                }
+                else
+                {
+                    micro_scale_power[current_cell-1] = microcell_internal_power_density;
+                }
+            }
+            
+            Real internal_power = micro_scale_power[current_cell-1] * _mesh->_volume[radial_index];
+            _integrated_power += microcell_internal_power_density * _time_step;
             
             //Check for boundary conditions
             //If we are at the first node
@@ -169,8 +213,7 @@ MicroSolution CylindricalMicroCell::solveHeterogeneous(const Real &simulation_ti
                 Real outward_delta_T = temperature - outward_neighbor_cell_temperature;
                 Real outward_distance = _mesh->getNodeLocation(radial_index + 1) - center_radius; 
                 Real outward_dTdr = outward_delta_T / outward_distance; 
-                
-                
+
                 outward_heat_flux =  -_mesh->_outer_surface[radial_index] * outward_dTdr * material_data._thermal_conductivity; 
                 
                 //use the boundary condition to determine the outward heat flux
@@ -325,11 +368,11 @@ std::vector<MicroSolution> CylindricalMicroCell::iterateInitialConditions(const 
     std::vector<MicroSolution> solutions = std::vector<MicroSolution>();
     solutions.push_back(initial_solution);
     
-    Real solution_time_step = _time_step * 50;
+    Real solution_time_step = _time_step * 50000;
     Real max_residual = 1;
     Real avg_residual = 0;
     Real index = 0;
-    Real desired_residual = _reactor->_input_file_reader->getInputFileParameter("Steady State Temperature Solution Max Residual", static_cast<Real>(0.005) );
+    Real desired_residual =  _reactor->_input_file_reader->getInputFileParameter("Steady State Temperature Solution Max Residual", static_cast<Real>(0.005) );
     
     
     while( max_residual > desired_residual )
@@ -349,6 +392,30 @@ std::vector<MicroSolution> CylindricalMicroCell::iterateInitialConditions(const 
     }
     std::vector<Real> macro_cell_power_distribution = this->getMacroCellPowerDensity(power_distribution);
     this->initializeMicroScaleCells(macro_cell_power_distribution);
+    
+    
+    //Redo the iteration this time with the microcells setup
+    max_residual = 1;
+    avg_residual = 0;
+    index = 0;
+    desired_residual = _reactor->_input_file_reader->getInputFileParameter("Steady State Temperature Solution Max Residual", static_cast<Real>(0.005) );
+    
+    
+    while( max_residual > desired_residual )
+    {
+       MicroSolution solution = this->solve(solution_time_step,power_distribution); 
+       
+       if(index > 1)
+       {
+            //calculate the maximum change in solution from previous to new 
+            vector_residuals(solution._solution, solutions.back()._solution, max_residual, avg_residual);
+            std::cout<<"Residual: " << max_residual << " Time Step: " << solution_time_step << std::endl;
+       }
+       solutions.push_back(solution);
+       
+       index++;
+       
+    }
        
     return solutions;
 }

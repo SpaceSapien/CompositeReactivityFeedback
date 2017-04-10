@@ -29,6 +29,7 @@
 MicroCell::MicroCell(Reactor* reactor) 
 {
     this->_reactor = reactor;
+    _number_zones = _reactor->_micro_sphere_geometry->_geometry.size();
 }
 
 MicroCell::~MicroCell()

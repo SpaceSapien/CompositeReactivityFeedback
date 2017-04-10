@@ -38,6 +38,7 @@ enum FissionableIsotope
 Real sphere_volume(const Real &radius);
 Real sphere_surface_area(const Real &radius);
 void vector_residuals(const std::vector<Real> &vector1, const std::vector<Real> &vector2, Real &max_relative_residual,Real &average_residual);
+std::vector<Real> vector_difference(const std::vector<Real> &vector1, const std::vector<Real> &vector2, Real &max_difference,Real &average_difference);
 Real vector_max(const std::vector<Real> &vector);
 std::vector<std::string> split(const std::string &str,const std::string &sep);
 

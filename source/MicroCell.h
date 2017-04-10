@@ -46,7 +46,9 @@ public:
     Real _outward_integrated_power;
     Real _outward_current_power;
     Real _integrated_power;
-
+    
+    int _number_zones;
+    
     virtual MicroSolution getCurrentMicrosolution() const;
     virtual MicroSolution solve(const Real &simulation_time_step, const std::vector<Real> &power_distribution) = 0;
  

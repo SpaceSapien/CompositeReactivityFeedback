@@ -73,13 +73,15 @@ std::string FuelPinMonteCarlo::getMaterialCards()
 {
     MaterialLibrary::MicroGeometry* geometry_data = _reactor->_micro_sphere_geometry;
     
+    //Overall average temperature for the mt card
     Real temperature, cell_volume;
-    _reactor->_thermal_solver->getAverageCellTemperature(1, 1, 1, temperature, cell_volume );
+    _reactor->_thermal_solver->getAverageZoneTemperature(1, temperature, cell_volume );
     std::vector<Real> geometry_temperature_data = std::vector<Real>(geometry_data->_geometry.size(), temperature);
    
     std::string material_cards, doppler_cards, mt_cards;
     
     Real enrichment_fraction = _reactor->_input_file_reader->getInputFileParameter("Uranium Enrichment Fraction", static_cast<Real>(0.2) );
+    //Temperature needed only for mt card
     geometry_data->getHomogenizedMcnpMaterialCard(1, geometry_temperature_data, enrichment_fraction, material_cards, doppler_cards, mt_cards);
       
     
@@ -111,8 +113,10 @@ std::string FuelPinMonteCarlo::getCellCards()
         
         
         if( ! _reactor->_dimensionality == FuelPinReactor::HomogenousNeutronicsAndHeatTransfer )
-        {
-            _reactor->_thermal_solver->_micro_scale_solvers[cell_number-1]->getAverageZoneTemperature(1, temperature, cell_volume );
+        {   
+            Real microcell_volume, macrocell_temperature;
+            _reactor->_thermal_solver->_micro_scale_solvers[cell_number-1]->getAverageZoneTemperature(1, temperature, microcell_volume );
+            _reactor->_thermal_solver->getAverageCellTemperature(1, _number_macro_cells, cell_number, macrocell_temperature, cell_volume );
         }
         else 
         {

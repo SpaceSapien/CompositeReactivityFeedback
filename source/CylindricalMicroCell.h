@@ -37,7 +37,8 @@ public:
     CylindricalMesh* _mesh;
     MicroCellBoundaryCondition* _inner_boundary_condition;
     FuelPinReactor* _reactor;
-    
+    Real _coolant_channel_radius;
+    Real _eqivalent_outer_radius;
     
     
     CylindricalMicroCell(FuelPinReactor* reactor, const Real &initial_temperature);

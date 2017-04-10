@@ -44,7 +44,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/source/Element.o \
 	${OBJECTDIR}/source/EnumsAndFunctions.o \
 	${OBJECTDIR}/source/FuelPinCompositeMicroCell.o \
-	${OBJECTDIR}/source/FuelPinMicroCell.o \
 	${OBJECTDIR}/source/FuelPinMonteCarlo.o \
 	${OBJECTDIR}/source/FuelPinReactor.o \
 	${OBJECTDIR}/source/HomogenousMesh.o \
@@ -146,11 +145,6 @@ ${OBJECTDIR}/source/FuelPinCompositeMicroCell.o: source/FuelPinCompositeMicroCel
 	${MKDIR} -p ${OBJECTDIR}/source
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DNEAMS -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/FuelPinCompositeMicroCell.o source/FuelPinCompositeMicroCell.cpp
-
-${OBJECTDIR}/source/FuelPinMicroCell.o: source/FuelPinMicroCell.cpp
-	${MKDIR} -p ${OBJECTDIR}/source
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -DNEAMS -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/source/FuelPinMicroCell.o source/FuelPinMicroCell.cpp
 
 ${OBJECTDIR}/source/FuelPinMonteCarlo.o: source/FuelPinMonteCarlo.cpp
 	${MKDIR} -p ${OBJECTDIR}/source

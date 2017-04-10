@@ -98,7 +98,8 @@ std::string InfiniteCompositeMonteCarlo::getMaterialCards()
         
         Real cell_temperature, cell_volume;
         
-        _reactor->_thermal_solver->getAverageZoneTemperature(index, cell_temperature, cell_volume);
+        int zone = index + 1;
+        _reactor->_thermal_solver->getAverageZoneTemperature(zone, cell_temperature, cell_volume);
         
         MaterialLibrary::getMcnpMaterialCard(material,current_zone,cell_temperature,material_card_entry, doppler_card_entry, enrichment_fraction);
         
