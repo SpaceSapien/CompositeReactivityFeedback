@@ -130,7 +130,7 @@ std::string InfiniteCompositeMonteCarlo::getSingleCellCard(const Materials &mate
         Real temperature;
         Real cell_volume;
         
-        _reactor->_thermal_solver->getAverageCellTemperature(current_zone - 1, _cells_per_zone, current_cell_in_zone, temperature, cell_volume );
+        _reactor->_thermal_solver->getAverageCellTemperature(current_zone, _cells_per_zone, current_cell_in_zone, temperature, cell_volume );
            
         cell_volume *= (100 * 100 * 100);
         

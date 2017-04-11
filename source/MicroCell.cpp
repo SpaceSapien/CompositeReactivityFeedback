@@ -107,7 +107,8 @@ Real MicroCell::getUnitVolumeOutwardPower() const
 }
 Real MicroCell::getVolume() const
 {
-    Real boundary_volume = sphere_volume(this->_mesh->_outer_radius.back());
+    std::vector<Real> unity_volume_weight = std::vector<Real>(_mesh->numberOfNodes(),1);
+    Real boundary_volume = _mesh->getVolumeWeightedQuantity(unity_volume_weight);
     return boundary_volume;
 }
 

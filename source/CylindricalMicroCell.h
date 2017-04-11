@@ -54,7 +54,7 @@ public:
     
     virtual void getAverageZoneTemperature(const int &zone, Real &cell_temperature, Real &cell_volume) const;
     virtual void getAverageCellTemperature(const int &zone, const int &zone_divisions, const int &current_division, Real &cell_temperature, Real &cell_volume ) const;
-
+ 
     void initializeMicroScaleCells(const std::vector<Real> &macro_cell_power_density);
     
 protected:

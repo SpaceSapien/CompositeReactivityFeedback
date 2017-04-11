@@ -218,8 +218,8 @@ MicroSolution CylindricalMicroCell::solveHeterogeneous(const Real &simulation_ti
                 
                 //use the boundary condition to determine the outward heat flux
                 inward_heat_flux = this->_inner_boundary_condition->getHeatFlux(this,outward_heat_flux + internal_power);
-                _outward_integrated_power += -outward_heat_flux * _time_step;
-                _outward_current_power = -outward_heat_flux;
+                _outward_integrated_power += -inward_heat_flux * _time_step;
+                _outward_current_power = -inward_heat_flux;
                 
             }  
             // If we are at the last node
@@ -228,7 +228,7 @@ MicroSolution CylindricalMicroCell::solveHeterogeneous(const Real &simulation_ti
                 //use the boundary condition to determine the outward heat flux
                 outward_heat_flux = this->_outer_boundary_condition->getHeatFlux(this,inward_heat_flux + internal_power);
                 _outward_integrated_power += -outward_heat_flux * _time_step;
-                _outward_current_power = -outward_heat_flux;
+               
             }            
             else
             {   
@@ -636,3 +636,4 @@ void CylindricalMicroCell::setMesh(CylindricalMesh* mesh)
     this->_mesh = mesh;
     this->MicroCell::setMesh(mesh);
 }
+
