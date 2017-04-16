@@ -207,13 +207,15 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     #elif NEAMS
 
+    std::string submission_script;
+    
     if(Reactor::_otf_sab)
     {
-        std::string submission_script = "neams-pavlou-submission.sh";
+        submission_script = "neams-pavlou-submission.sh";
     }
     else
     {
-        std::string submission_script = "neams-submission-script.sh";
+        submission_script = "neams-submission-script.sh";
     }
     
     #endif
