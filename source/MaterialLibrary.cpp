@@ -374,7 +374,7 @@ std::pair<Real,Real> MaterialLibrary::getThermalConductivityPair(const Materials
         case Materials::ZrO2 :
         {        
             //relatively flat
-            return std::pair<Real,Real>(2.0,0);
+            return std::pair<Real,Real>(.42,0);
         }
         
         default :

@@ -4,11 +4,11 @@ Run Name: pavlou
 # Materials and radaii mus have the same number of entries
 #Material options include
 # U, UO2, UN, UC, U3Si, SiC, C, Be, BeO, ZrB2, W, B4C, Mo, Nb, Zr, Graphene
-Materials: UO2    C      ZrO2    C      SiC    C
-Radaii:    2.5e-4 3.30e-4 3.5e-4 3.9e-4 4.25e-4 1e-3 #m
+Materials: UO2      ZrO2    C
+Radaii:    2.5e-4   4.25e-4 1e-3 #m
 
 #Starting Power Density 
-Starting Power Density: 20e6 # W/m^3
+Starting Power Density: 30e6 # W/m^3
 Starting K-eff: 1.025
 Kernel Outer Temperature: 775 K
 
@@ -42,13 +42,13 @@ Kinetics Thermal Data Sync: 10e-6               #s
 Calculation End Time: 10                     #s
 Power Record: 0.0001                            #s  Time between recording power and the delayed neutron record
 
-Keff Number of Particles: 150000
-Beff Number of Particles: 250000
-Particles Per Cycle: 2000
+Keff Number of Particles: 33000
+Beff Number of Particles: 33000
+Particles Per Cycle: 1000
 Number CPUs: 120
 
 
-Tally Cells: true                             #tally the cells in the problem
+Tally Cells: false                             #tally the cells in the problem
 Tally Energy Bins: 1000                        #lots of bins
 
 Worth: false
@@ -61,4 +61,4 @@ Reactivity Insertion Method: Ramp    #how is the reactivity inserted
 Ramp Insertion Timing: 0.1           #if it is a ramp function, what is the timeframe for the ramp.~ 
 #
 #
-OTFSAB: true
+Ortensi: true # use the premapped ortensi values

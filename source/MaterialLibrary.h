@@ -93,7 +93,7 @@ namespace MaterialLibrary
     Real getMeltingPoint(const Materials &material);
     Real getLinearExpansionCoeifficient(const Materials &material,const Real &T,const Real &dpa);
     MaterialDataPacket getMaterialProperties(const Materials &material,const Real &T);
-    Real interpolateDataArrays(const std::vector<Real> &x_array,const std::vector<Real> &y_array,const Real &x);
+    //Real interpolateDataArrays(const std::vector<Real> &x_array,const std::vector<Real> &y_array,const Real &x);
     std::pair<Real,Real> interpolateDataAndTemperatureArraysAndDerivative(const std::vector<Real> &x_array,const std::vector<Real> &y_array,const Real &x);
     
     std::string getMaterialName(const Materials &material);

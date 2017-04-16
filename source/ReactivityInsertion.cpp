@@ -12,6 +12,7 @@
  */
 
 #include "ReactivityInsertion.h"
+#include "ReactorKinetics.h"
 
 const std::string ReactivityInsertion::INSTANTANEOUS_REACTIVITY_INSERTION = "Instantaneous";
 const std::string ReactivityInsertion::RAMP_REACTIVITY_INSERTION = "Ramp";
@@ -99,6 +100,7 @@ Real ReactivityInsertion::getCurrentVirtualKeffMultiplier(const Real &current_ti
 
 Real ReactivityInsertion::getCurrentKeff(const Real &current_time)
 {
+    
     Real multiplier = this->getCurrentVirtualKeffMultiplier(current_time);
     Real current_k_eff = _reactor->_monte_carlo_model->_current_k_eff;
     return current_k_eff * multiplier;

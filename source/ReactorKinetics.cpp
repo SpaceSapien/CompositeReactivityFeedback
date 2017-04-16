@@ -14,6 +14,7 @@
 #include "ReactorKinetics.h"
 #include "ReactivityInsertion.h"
 #include "InfiniteCompositeReactor.h"
+#include "MaterialLibrary.h"
 #include <iostream>
 
 ReactorKinetics::ReactorKinetics() { }
@@ -31,6 +32,7 @@ ReactorKinetics::ReactorKinetics(Reactor* reactor, const Real &initial_power,con
     _current_power = _initial_power;
     _current_time  = 0;    
     _kinetics_time_step = _reactor->_input_file_reader->getInputFileParameter("Kinetics Time Iteration", static_cast<Real>(10e-9) );
+    _ortensi = _reactor->_input_file_reader->getInputFileParameter("Ortensi", false);
     
     //default delayed neutron set
     _delayed_neutron_set = DelayedNeutronSet(FissionableIsotope::U235);
@@ -106,9 +108,21 @@ Real ReactorKinetics::solveForPower
     {
         
         Real k_effective = _reactor->_reactivity_insertion_model->getCurrentKeff(_current_time);       
-        Real reactivity = ( k_effective - 1 )/k_effective;
         Real neutron_generation_time = _reactor->_monte_carlo_model->_current_prompt_neutron_lifetime / k_effective;
         
+        
+        if(_ortensi)
+        {
+            neutron_generation_time = 170e-6;
+            
+            std::vector<Real> time   =  {0, 100e-3, 0.6,    1.15,   5 };
+            std::vector<Real> keigen =  {1, 1.025,  0.9975, 1.005,  1 };
+            
+            std::pair<Real,Real> pair = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(time,keigen,_current_time);
+            k_effective = pair.first;
+        }
+        
+        Real reactivity = ( k_effective - 1 )/k_effective;
         
         //Delayed Source Term            
         Real delayed_contributions = 0;

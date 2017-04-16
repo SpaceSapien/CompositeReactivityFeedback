@@ -42,6 +42,7 @@ public:
     const Real _power_per_fission = 3.20435e-11; //Joules per fission
     Real _current_time = 0;
     Real _kinetics_time_step;
+    bool _ortensi;
     
     
     
