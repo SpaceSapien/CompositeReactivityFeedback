@@ -101,6 +101,9 @@ Reactor::Reactor(const std::string old_results_folder, Real new_end_time)
     
 }
 */
+
+bool Reactor::_otf_sab = false;
+
 /**
  * Setup the directory structure of the problem then run the pre transient calculations
  * @param input_file_name the name and path of the input file
@@ -132,6 +135,8 @@ Reactor::Reactor(const std::string &input_file_name)
     //Copy the input file to the run folder
     std::string copy_input_file_command = "cp " + input_file_name + " " + _results_directory + "input_file.inp";
     exec( copy_input_file_command );
+    
+    Reactor::_otf_sab = _input_file_reader->getInputFileParameter("OTFSAB", false);    
     
     //These will be created at the child class level
     _micro_sphere_geometry= nullptr;

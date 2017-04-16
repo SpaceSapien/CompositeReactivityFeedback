@@ -64,7 +64,7 @@ class Reactor
 
     //Simulation start time in real time
     const static std::time_t _simulation_start_time;
-
+    static bool _otf_sab;
     
      //The geometry object
     MaterialLibrary::MicroGeometry* _micro_sphere_geometry;

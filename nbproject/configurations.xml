@@ -109,6 +109,7 @@
     <itemPath>job-submission/acorite-submission-script.sh</itemPath>
     <itemPath>input/default-input-file.inp</itemPath>
     <itemPath>job-submission/mc-submission-script.sh</itemPath>
+    <itemPath>job-submission/neams-pavlou-submission.sh</itemPath>
     <itemPath>job-submission/neams-submission-script.sh</itemPath>
     <itemPath>job-submission/practice-cluster-submission-script.sh</itemPath>
   </logicalFolder>
@@ -139,6 +140,11 @@
             flavor2="0">
       </item>
       <item path="job-submission/mc-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="job-submission/neams-pavlou-submission.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -369,6 +375,11 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="job-submission/neams-pavlou-submission.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="job-submission/neams-submission-script.sh"
             ex="false"
             tool="3"
@@ -587,6 +598,11 @@
             flavor2="0">
       </item>
       <item path="job-submission/mc-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="job-submission/neams-pavlou-submission.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -813,6 +829,11 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="job-submission/neams-pavlou-submission.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="job-submission/neams-submission-script.sh"
             ex="false"
             tool="3"
@@ -1031,6 +1052,11 @@
             flavor2="0">
       </item>
       <item path="job-submission/mc-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="job-submission/neams-pavlou-submission.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -1257,6 +1283,11 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="job-submission/neams-pavlou-submission.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="job-submission/neams-submission-script.sh"
             ex="false"
             tool="3"
@@ -1475,6 +1506,11 @@
             flavor2="0">
       </item>
       <item path="job-submission/mc-submission-script.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="job-submission/neams-pavlou-submission.sh"
             ex="false"
             tool="3"
             flavor2="0">

@@ -1,5 +1,5 @@
 //Try to recreate an Ortensi like experince
-Run Name: Ortensi
+Run Name: pavlou
 
 # Materials and radaii mus have the same number of entries
 #Material options include
@@ -61,3 +61,4 @@ Reactivity Insertion Method: Ramp    #how is the reactivity inserted
 Ramp Insertion Timing: 0.1           #if it is a ramp function, what is the timeframe for the ramp.~ 
 #
 #
+Pavlou: true

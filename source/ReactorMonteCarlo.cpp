@@ -158,9 +158,15 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     exec(clean_mcnp_command);
     
     //create a symbolic link to the Doppler broadened cross sections
-    std::string symbolic_link_command = "cd " + this->_run_directory + "; ln -s ../../../doppler-broadened-cs/otf*txt .";
-    exec(symbolic_link_command);
+    std::string symbolic_link_otf_db_command = "cd " + this->_run_directory + "; ln -s ../../../doppler-broadened-cs/otf*txt .";
+    exec(symbolic_link_otf_db_command);
     
+    if(Reactor::_otf_sab)
+    {
+        //create a symbolic link to the Doppler broadened cross sections
+        std::string symbolic_link_otf_sab_command = "cd " + this->_run_directory + "; ln -s ../../../otfsab/*00t .";
+        exec(symbolic_link_otf_sab_command);
+    }
     
     this->createMCNPOutputFile(run_title, input_file_name, particles_per_cycle, number_cycles, delayed_neutrons);
     std::string command_line_log_file = "mcnp_run_log.txt";
@@ -201,7 +207,14 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     #elif NEAMS
 
-    std::string submission_script = "neams-submission-script.sh";
+    if(Reactor::_otf_sab)
+    {
+        std::string submission_script = "neams-pavlou-submission.sh";
+    }
+    else
+    {
+        std::string submission_script = "neams-submission-script.sh";
+    }
     
     #endif
     
@@ -235,7 +248,7 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     }
     //Remove symbolic links to the Doppler broadened cross sections and the source tape
     //These are the largest files and we don't need them so remove them now
-    std::string rm_symbolic_link_command = "cd " + this->_run_directory + "; rm otf*txt " + runtpe_name;
+    std::string rm_symbolic_link_command = "cd " + this->_run_directory + "; rm otf*txt " + runtpe_name + "; rm *.00t";
     exec(rm_symbolic_link_command);
     
     
@@ -400,6 +413,12 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const
     mcnp_file << "c end surface cards" << std::endl;
     mcnp_file << std::endl;
     mcnp_file << "c ------------------MATERIAL AND DATA CARDS--------------------" << std::endl;
+    
+    if(Reactor::_otf_sab)
+    {
+        mcnp_file << " xs1 grph.00t 11.898000 grph.00t 0 1 1 1409891 0 0 0.000E-00" << std::endl;
+    }
+    
     mcnp_file << material_cards;
     
     if(!delayed_neutrons)

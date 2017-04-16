@@ -61,6 +61,8 @@ public:
     void createMCNPOutputFile(const std::string &run_title, const std::string &file_name,const int &particles_per_cycle,const int &number_cycles, const bool &delated_neutrons = true);
     void updateAdjustedCriticalityParameters();
     
+   
+    
     void updateCurrentValuesFromResults(const BetaSimulationResults &results);
     void updateCurrentValuesFromResults(const SimulationResults &results);
     

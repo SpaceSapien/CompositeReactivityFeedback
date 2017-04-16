@@ -435,15 +435,19 @@ void MaterialLibrary::getMcnpMTCard(const Materials &material, const Real &avg_t
         case Materials::UO2 : case Materials::DUO2 :
         {
             
-            std::vector<std::pair<int,Real>> mt_paired_library_list_o2 = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
-            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_o2,std::string("o2-u."), mt_card_library, library_temperature);
-           
-            mt_cards << "     " << mt_card_library <<  std::setw(7) << " " << "$S(a,b) O2 in UO2 @ " << library_temperature << " K" << std::endl;
+            if(! Reactor::_otf_sab)
+            {
             
-            std::vector<std::pair<int,Real>> mt_paired_library_list_u = { {30,293.6},{31,400},{32,500},{33,600},{34,700},{35,800},{36,1000},{37,1200} };
-            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_u,std::string("u-o2."), mt_card_library, library_temperature);
-           
-            mt_cards << "     " << mt_card_library << std::setw(7) << " " << "$S(a,b) U in UO2 @ " << library_temperature << std::endl;
+                std::vector<std::pair<int,Real>> mt_paired_library_list_o2 = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200} };
+                MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_o2,std::string("o2-u."), mt_card_library, library_temperature);
+
+                mt_cards << "     " << mt_card_library <<  std::setw(7) << " " << "$S(a,b) O2 in UO2 @ " << library_temperature << " K" << std::endl;
+
+                std::vector<std::pair<int,Real>> mt_paired_library_list_u = { {30,293.6},{31,400},{32,500},{33,600},{34,700},{35,800},{36,1000},{37,1200} };
+                MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list_u,std::string("u-o2."), mt_card_library, library_temperature);
+
+                mt_cards << "     " << mt_card_library << std::setw(7) << " " << "$S(a,b) U in UO2 @ " << library_temperature << std::endl;
+            }
             
             break;
                             
@@ -452,10 +456,20 @@ void MaterialLibrary::getMcnpMTCard(const Materials &material, const Real &avg_t
         case Materials::C :
         {
             
-            std::vector<std::pair<int,Real>> mt_paired_library_list = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200},{28,1600},{29,2000} };
-            MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list,std::string("grph."), mt_card_library, library_temperature);
-                        
-            mt_cards << "     " << std::setw(12) << mt_card_library << std::setw(7) << " " << "$Graphite S(a,b) treatment @ " << library_temperature << " K" << std::endl;
+            if(Reactor::_otf_sab)
+            {
+                mt_cards <<  "     " << std::setw(12) << "grph.00t " << std::setw(7) << " " << "$Graphite S(a,b) treatment on the fly temperature" << std::endl;
+            }
+            else
+            {
+                std::vector<std::pair<int,Real>> mt_paired_library_list = { {20,293.6},{21,400},{22,500},{23,600},{24,700},{25,800},{26,1000},{27,1200},{28,1600},{29,2000} };
+                MaterialLibrary::getMcnpMtMaterialCard(avg_temperature,mt_paired_library_list,std::string("grph."), mt_card_library, library_temperature);
+
+                mt_cards << "     " << std::setw(12) << mt_card_library << std::setw(7) << " " << "$Graphite S(a,b) treatment @ " << library_temperature << " K" << std::endl;
+            }
+            
+            
+            
             
             break;
         }
