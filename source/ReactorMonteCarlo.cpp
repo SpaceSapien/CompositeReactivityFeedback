@@ -197,7 +197,14 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     #elif ANTAL
     
-    submission_script = "antal-submission-script.sh";
+    if(Reactor::_otf_sab)
+    {
+        submission_script = "antal-pavlou-submission.sh";
+    }
+    else
+    {
+        submission_script = "antal-submission-script.sh";
+    }
     
     #elif MC_CLUSTER
     
