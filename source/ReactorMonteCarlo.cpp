@@ -189,17 +189,19 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     std::string remove_command = "cd " + this->_run_directory + "; echo \"\" > " + command_line_log_file;
     exec(remove_command);
 
+    std::string submission_script;
+    
     #ifdef PRACTICE_CLUSTER
     
-    std::string submission_script = "practice-cluster-submission-script.sh";
+    submission_script = "practice-cluster-submission-script.sh";
     
     #elif ANTAL
     
-    std::string submission_script = "antal-submission-script.sh";
+    submission_script = "antal-submission-script.sh";
     
     #elif MC_CLUSTER
     
-    std::string submission_script = "mc-submission-script.sh";
+    submission_script = "mc-submission-script.sh";
     
     #elif ACORITE_CLUSTER
     
@@ -209,11 +211,10 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     }
     else
     {
-        std::string submission_script = "acorite-submission-script.sh";
+        submission_script = "acorite-submission-script.sh";
     }
     #elif NEAMS
 
-    std::string submission_script;
     
     if(Reactor::_otf_sab)
     {
