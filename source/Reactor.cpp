@@ -293,8 +293,10 @@ void Reactor::temperatureIterationInnerLoop()
 
     }
 
-    
-    _monte_carlo_model->updateAdjustedCriticalityParameters();
+    if(! this->_kinetics_model->_ortensi)
+    {
+        _monte_carlo_model->updateAdjustedCriticalityParameters();
+    }
     _monte_carlo_time_iteration = _inner_time_step;   
     _monte_carlo_number_iterations++;
 }
@@ -445,7 +447,7 @@ void Reactor::createOutputFile()
     output_file << "Iteration,Time [s],Timestep [s],Power [W/m^3],k_eff,k_eff sigma,neutron lifetime [s],Neutron Lifetime sigma [s],"
                 << "Beta_eff,Beta_eff sigma,Run Time [s],Edge Temp [K],Gamma,Power Peaking,Current Power Out [W/m^3],"
                 << "Integrated Outward Power [W*s/m^3],Integrated Power [W*s/m^3],MC Execution Time [s],Time Per Particle [ms],"
-                << "Time Per Particle CPU [ms/cpu]";
+                << "Time Per Particle CPU [ms/cpu],k-fixed,Fuel Temp [K],Moderator Temp [K]";
     
     for(size_t index = 1; index <= 6; index++ )
     {
@@ -469,7 +471,7 @@ void Reactor::createOutputFile()
  * @param beta_eff_sigma
  * @param hot_temperature
  */
-void Reactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature, const Real &gamma, const Real &integrated_power_out, const Real &integrated_power, const Real &current_power_out)
+void Reactor::saveCurrentData(const Real &time, const Real &power, const Real &k_eff, const Real &k_eff_sigma, const Real &neutron_lifetime, const Real &neutron_lifetime_sigma, const Real &beta_eff, const Real &beta_eff_sigma, const Real &hot_temperature, const Real &gamma, const Real &integrated_power_out, const Real &integrated_power, const Real &current_power_out, const Real &k_model, const Real &fuel_temp, const Real &moderator_temp)
 {
     std::ofstream output_file;
     std::string file_path = this->_results_directory + this->_data_file;
@@ -501,7 +503,7 @@ void Reactor::saveCurrentData(const Real &time, const Real &power, const Real &k
     output_file << _monte_carlo_number_iterations << "," << time << "," << _monte_carlo_time_iteration << "," << power << "," <<  k_eff << "," << k_eff_sigma
                 << "," << neutron_lifetime << "," << neutron_lifetime_sigma << "," << beta_eff << "," << beta_eff_sigma << "," << elapsed_time_since_start 
                 << "," << hot_temperature << "," << gamma << "," << power_peaking << "," << current_power_out<< "," << integrated_power_out << "," << integrated_power 
-                << "," << mc_execution_time << "," << time_per_particle << "," << time_per_particle_cpu;
+                << "," << mc_execution_time << "," << time_per_particle << "," << time_per_particle_cpu << "," << k_model << "," << fuel_temp << "," << moderator_temp;
     
     auto delayed_precursors = _kinetics_model->_delayed_precursors;
     
@@ -523,7 +525,8 @@ void Reactor::monteCarloTimeStepSimulationDataProcessing()
     //Gather the parameters from the monte carlo model 
     //The Monte Carlo model is run on the outer loop
     Real prompt_removal_lifetime = _monte_carlo_model->_current_prompt_neutron_lifetime;
-    Real k_eff = _reactivity_insertion_model->getCurrentKeff(_transient_time); 
+    Real k_eff =  _reactivity_insertion_model->getCurrentKeff(_transient_time); 
+    Real k_fake = _kinetics_model->getFixedEigenValue(_transient_time);
     Real k_eff_sigma = _reactivity_insertion_model->getCurrentKeffSigma(_transient_time);
     Real beta_eff = _monte_carlo_model->_current_beta_eff;
     Real beta_eff_sigma = _monte_carlo_model->_current_beta_eff_sigma;        
@@ -561,8 +564,12 @@ void Reactor::monteCarloTimeStepSimulationDataProcessing()
     Real integrated_power = _thermal_solver->getUnitVolumeIntegratedPower(); 
     Real current_power_out = _thermal_solver ->getUnitVolumeOutwardPower(); 
     
+    Real fuel_temp, fuel_volume, moderator_temp,moderator_volume;
     
-    this->saveCurrentData(_transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma, hottest_temperature, gamma, outward_energy_flux, integrated_power, current_power_out);
+    _thermal_solver->getAverageZoneTemperature(1,fuel_temp,fuel_volume);
+    _thermal_solver->getAverageZoneTemperature(_micro_sphere_geometry->_geometry.size(),moderator_temp,moderator_volume);
+    
+    this->saveCurrentData(_transient_time, current_power, k_eff, k_eff_sigma, lambda, lambda_sigma, beta_eff, beta_eff_sigma, hottest_temperature, gamma, outward_energy_flux, integrated_power, current_power_out, k_fake, fuel_temp, moderator_temp);
     
     MicroSolution solution = this->_thermal_solver->getCurrentMicrosolution();
     std::vector<MicroSolution> current_solution = { solution };

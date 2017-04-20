@@ -203,8 +203,14 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     #elif ACORITE_CLUSTER
     
-    std::string submission_script = "acorite-submission-script.sh";
-    
+    if(Reactor::_otf_sab)
+    {
+        submission_script = "acorite-pavlou-submission.sh";
+    }
+    else
+    {
+        std::string submission_script = "acorite-submission-script.sh";
+    }
     #elif NEAMS
 
     std::string submission_script;

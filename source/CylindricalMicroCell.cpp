@@ -77,7 +77,7 @@ void CylindricalMicroCell::initializeMicroScaleCells(const std::vector<Real> &ma
                 delete _micro_scale_solvers[macro_cell_index];
                 
                 this->getAverageCellTemperature( 1, _reactor->_number_macro_cells, (macro_cell_index + 1), temperature, volume);  
-                Real macro_scale_radius = _coolant_channel_radius + ( _coolant_channel_radius - _eqivalent_outer_radius ) * ( macro_cell_index + 0.5 );
+                Real macro_scale_radius = _coolant_channel_radius + ( _eqivalent_outer_radius - _coolant_channel_radius  ) * ( macro_cell_index + 0.5 ) / _reactor->_number_macro_cells;
                 
                 
                 

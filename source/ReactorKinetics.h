@@ -50,7 +50,7 @@ public:
     ReactorKinetics(Reactor* reactor,const Real &initial_power, const DelayedPrecursorInitialState &state, const Real &beta_eff = 0.00679  );
     Real solveForPower( const Real &simulation_time);    
    
-    
+    Real getFixedEigenValue(const Real &current_time);
     
 private:
     DelayedNeutronSet getDelayedNeutronInfo(const std::vector< std::pair<FissionableIsotope,Real> > &fission_listing);

@@ -55,7 +55,17 @@ ReactorKinetics::ReactorKinetics(Reactor* reactor, const Real &initial_power,con
             //The calculated b_eff is going to be a little different than the real b_eff so update the 
             //delayed yields from the 6 groups but use them proportionally   
             Real natural_b_eff = _delayed_neutron_set._delayed_neutrons_per_fission / _delayed_neutron_set._neutrons_per_fission;
-            Real delayed_neutron_group_proportionality_constant = starting_beta_eff / natural_b_eff;
+            
+            Real delayed_neutron_group_proportionality_constant;
+            
+            if(_ortensi)
+            {
+                delayed_neutron_group_proportionality_constant = 1;
+            }
+            else
+            {
+                delayed_neutron_group_proportionality_constant = starting_beta_eff / natural_b_eff;
+            }
             
             //initialize the delated precoursors
             for(int index = 0; index < _delayed_precursors.size(); index++)
@@ -77,7 +87,24 @@ ReactorKinetics::ReactorKinetics(Reactor* reactor, const Real &initial_power,con
 }
 
 
+Real ReactorKinetics::getFixedEigenValue(const Real &current_time)
+{
+    Real k_effective;
+    
+    if(_ortensi)
+    {
+        std::vector<Real> time   =  {0, 0.1,   0.25,   0.45,    5 };
+        std::vector<Real> keigen =  {1, 1.025, 1.0225, 1.002,  .975 };
 
+        std::pair<Real,Real> pair = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(time,keigen,current_time);
+        k_effective = pair.first;
+    }
+    else
+    {
+         k_effective = _reactor->_reactivity_insertion_model->getCurrentKeff(current_time);   
+    }
+    return k_effective;
+}
 
 /**
  * Solve the reactor kinetics equations over a given time period
@@ -99,7 +126,7 @@ Real ReactorKinetics::solveForPower
 {
     
     
-    Real beta_effective = _reactor->_monte_carlo_model->_current_beta_eff;
+     Real beta_effective = _reactor->_monte_carlo_model->_current_beta_eff;
     Real total_neutrons_per_fission = _delayed_neutron_set._neutrons_per_fission;    
     Real simulation_time_step = 10e-9;
     //Loop over a simulation coupled time step
@@ -113,13 +140,10 @@ Real ReactorKinetics::solveForPower
         
         if(_ortensi)
         {
-            neutron_generation_time = 170e-6;
+            neutron_generation_time = 1600e-6;
+            k_effective = getFixedEigenValue(_current_time);
+            beta_effective = 0.0065;
             
-            std::vector<Real> time   =  {0, 100e-3, 0.6,    1.15,   5 };
-            std::vector<Real> keigen =  {1, 1.025,  0.9975, 1.005,  1 };
-            
-            std::pair<Real,Real> pair = MaterialLibrary::interpolateDataAndTemperatureArraysAndDerivative(time,keigen,_current_time);
-            k_effective = pair.first;
         }
         
         Real reactivity = ( k_effective - 1 )/k_effective;

@@ -325,7 +325,7 @@ void FuelPinReactor::saveMicroScaleDataToFile()
         
         
         output_file.open( output_file_path, std::ios::app);
-        output_file << "Time [s],Cell,";
+        output_file << "Time [s],Cell";
         
         for( int index = 0; index < _thermal_solver->_micro_scale_solvers[0]->_mesh->_position.size(); ++index )
         {
@@ -342,9 +342,12 @@ void FuelPinReactor::saveMicroScaleDataToFile()
     
     
     
-    for( auto cell : _thermal_solver->_micro_scale_solvers )
+    for(  int cell_index = 0; cell_index <  _thermal_solver->_micro_scale_solvers.size(); ++cell_index )
     {
-        output_file << _transient_time;
+        FuelPinCompositeMicroCell* cell = _thermal_solver->_micro_scale_solvers[cell_index];
+        
+        output_file << _transient_time << ",";
+        output_file << cell->_macro_scale_position;
         
         for(int index = 0; index < cell->_mesh->_position.size(); ++index)
         {

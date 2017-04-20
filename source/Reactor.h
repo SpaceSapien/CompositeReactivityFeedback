@@ -141,7 +141,10 @@ class Reactor
         const Real &gamma, 
         const Real &integrated_power_out, 
         const Real &integrated_power, 
-        const Real &current_power_out
+        const Real &current_power_out,
+        const Real &k_fake,
+        const Real &fuel_temp, 
+        const Real &moderator_temp
     );
     virtual void createOutputFile();
     

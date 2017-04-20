@@ -1,19 +1,19 @@
 //Try to recreate an Ortensi like experince
-Run Name: pavlou
+Run Name: Heterogeneous
 
 # Materials and radaii mus have the same number of entries
 #Material options include
 # U, UO2, UN, UC, U3Si, SiC, C, Be, BeO, ZrB2, W, B4C, Mo, Nb, Zr, Graphene
-Materials: UO2      ZrO2    C
-Radaii:    2.5e-4   4.25e-4 1e-3 #m
+Materials: UO2      C      ZrO2    C
+Radaii:    2.5e-4   3.5e-4 4.25e-4 1e-3 #m
 
 #Starting Power Density 
-Starting Power Density: 30e6 # W/m^3
+Starting Power Density: 32e6 # W/m^3
 Starting K-eff: 1.025
-Kernel Outer Temperature: 775 K
+Kernel Outer Temperature: 800 K
 
 #Generally 100 is a good size
-Thermal Mesh Size: 200
+Thermal Mesh Size: 100
 
 # Thermal Solver Order: Second | Fourth
 Thermal Solver Order: Second 
@@ -25,7 +25,7 @@ Thermal Solver Order: Second
 #Steady State Transient
 Steady State Temperature Solution Max Residual: 0.0001
 
-Uranium Enrichment Fraction: 0.15 
+Uranium Enrichment Fraction: 0.09
 Cells Per Zone: 2
 
 #Timer iteration data
@@ -33,18 +33,18 @@ Keff Calculation Per Beta Eff Calculation: 50   # calculating the beta is expens
 
 #Options: Time and Temperature
 Monte Carlo Recalculation Type: Temperature
-MC Recalc Delta T: 7.5  # K
+MC Recalc Delta T: 3.5  # K
 #Monte Carlo Recalculation Timestep: 0.005      #s
 
 Kinetics Time Iteration: 1e-9                  #s
-Thermal Time Iteration: 200e-9                 #s
+Thermal Time Iteration: 1000e-9                 #s
 Kinetics Thermal Data Sync: 10e-6               #s
 Calculation End Time: 10                     #s
 Power Record: 0.0001                            #s  Time between recording power and the delayed neutron record
 
-Keff Number of Particles: 33000
-Beff Number of Particles: 33000
-Particles Per Cycle: 1000
+Keff Number of Particles: 3300
+Beff Number of Particles: 3300
+Particles Per Cycle: 100
 Number CPUs: 120
 
 
@@ -57,8 +57,15 @@ Worth Temperature Divisions: 9
 #Worth Temperature Range
 Worth Range: 300 3000 #appearently we need comments  
 
-Reactivity Insertion Method: Ramp    #how is the reactivity inserted
-Ramp Insertion Timing: 0.1           #if it is a ramp function, what is the timeframe for the ramp.~ 
+#Reactivity Insertion Method: Ramp    #how is the reactivity inserted
+#Ramp Insertion Timing: 0.1           #if it is a ramp function, what is the timeframe for the ramp.~ 
 #
 #
-Ortensi: true # use the premapped ortensi values
+
+Reactor Type: Fuel Pin             # Homogenous Composite "Fuel Pin"
+Number Macro Cells: 10                # Number of cells at the macro scale
+Fuel Pin Dimensionality: HomogenousNeutronics  # HomogenousNeutronics, FullHeterogeneous, HomogenousNeutronicsAndHeatTransfer
+Macro Thermal Mesh Size: 200 
+
+
+# Ortensi: true # use the premapped ortensi values
