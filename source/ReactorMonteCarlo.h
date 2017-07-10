@@ -79,7 +79,7 @@ public:
     
     
     
-    void createTallyOutputFile(std::string file_name = "tally-data.csv");
+    void createTallyOutputDatabase(std::string file_name = "tally-data.csv");
     void outputTalliesToFile(TallyGroup* tally_group, std::string file_name = "tally-data.csv");
     
     std::vector< std::vector<Real> > getZoneCellRelativePowerDensity();

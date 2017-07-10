@@ -199,5 +199,10 @@ TallyGroup::~TallyGroup()
     {
         delete _absorption_rate_tallies[index];
     }
+    
+    for(std::size_t index=0; index < _capture_rate_tallies.size(); ++index)
+    {
+        delete _capture_rate_tallies[index];
+    }
 }
 

@@ -11,7 +11,7 @@
  * Created on December 17, 2015, 7:09 PM
  */
 
-
+//#include <sqlite3.h> 
 #include "MicroGeometry.h"
 #include <sstream>
 #include <math.h>
@@ -255,12 +255,12 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     std::time_t mc_end_time = std::time(nullptr);    
     std::time_t mc_elapased_time = mc_end_time - mc_start_time;
     
-    //If we have the tally set take the results of the tally
-    if(_tally_cells)
+    //If we have the tally set take the results of the tally (make sure this isn't a no delayed neutron beta run)
+    if(_tally_cells && delayed_neutrons)
     {  
         TallyGroup* tally_group = TallyGroup::MCNPTallyGroupFactory( _run_directory + mctal_name, _number_zones, _cells_per_zone, _reactor->_transient_time);
         _tally_groups.push_back(tally_group);
-        this->outputTalliesToFile(tally_group, _reactor->_results_directory + "tallydata.csv");
+        this->outputTalliesToFile(tally_group, _reactor->_results_directory + "tallydata.db");
     }
     //Remove symbolic links to the Doppler broadened cross sections and the source tape
     //These are the largest files and we don't need them so remove them now
@@ -461,10 +461,45 @@ void ReactorMonteCarlo::createMCNPOutputFile(const std::string &run_title, const
     std::cout<<mcnp_file.str();
 }
 
-void ReactorMonteCarlo::createTallyOutputFile(std::string tally_file_name)
+void ReactorMonteCarlo::createTallyOutputDatabase(std::string tally_file_database)
 {
+    
+    /*sqlite3 *db;
+    char *zErrMsg = 0;
+    int  rc;
+    
+    // Open database 
+    rc = sqlite3_open( tally_file_database.c_str(), &db);
+   
+    if( rc )
+    {
+        std::cerr<< "Can't open database " << tally_file_database << sqlite3_errmsg(db);
+        throw "Error opening database";
+    }
+    
+    std::string sql = "CREATE TABLE IF NOT EXISTS \"Tallies\" ('tally' text, 'zone' integer, 'cell' integer, 'time' text, 'group' integer,  'value' real, 'error' real);";
+    sql += "CREATE INDEX time_index ON \"Tallies\"(time);"; 
+    sql += "CREATE INDEX name_index ON \"Tallies\"(tally);"; 
+    
+    
+    
+    // Execute SQL statement 
+    rc = sqlite3_exec(db, sql.c_str(), nullptr, 0, &zErrMsg);
+
+    if( rc != SQLITE_OK )
+    {
+        std::cerr<< "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+    else
+    {
+       std::cout << "Table created successfully" << std::endl;
+    }
+    sqlite3_close(db);*/
+    
+    
     std::ofstream output_file;
-    output_file.open( tally_file_name, std::ios::out);
+    output_file.open( tally_file_database, std::ios::out);
     
     output_file << "Time [s],Name,Zone,Cell,Value,Sigma";
     
@@ -477,14 +512,14 @@ void ReactorMonteCarlo::createTallyOutputFile(std::string tally_file_name)
     output_file.close();
 }
 
-void ReactorMonteCarlo::outputTalliesToFile(TallyGroup* tally_group, std::string file_path)
+void ReactorMonteCarlo::outputTalliesToFile(TallyGroup* tally_group, std::string database_file_path)
 {
-    if(!file_exists(file_path))
+    if(!file_exists(database_file_path))
     {
-        this->createTallyOutputFile(file_path);
+        this->createTallyOutputDatabase(database_file_path);
     }
     
-    tally_group->outputToFile(file_path);
+    tally_group->outputToFile(database_file_path);
 }
 
 Real ReactorMonteCarlo::getPowerPeaking()

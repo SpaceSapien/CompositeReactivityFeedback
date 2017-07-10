@@ -140,9 +140,17 @@ Tally* Tally::getMCNPTally(const std::string &tally_id, const std::string &mcnp_
                 
         for(int index=0; index < energy_bins.size(); index++)
         {
+            // There is some kind of issue where the first mcnp bin has spurious values
+            if( index == 0 && output_values[2] == 0 )
+            {
+                tally_values.push_back( 0 );
+                tally_uncertainty.push_back( 0 );
+                continue;
+            }
+            
             //  index + 1 because the bins
-            tally_values.push_back( output_values[ (index + 1) * 2 ]);
-            tally_uncertainty.push_back(output_values[ (index + 1) * 2 + 1]);
+            tally_values.push_back( output_values[ (index) * 2 ]);
+            tally_uncertainty.push_back(output_values[ (index) * 2 + 1]);
         }
         
         tally = new Tally(value, uncertainty, energy_bins, tally_values, tally_uncertainty, tally_id);

@@ -13,7 +13,7 @@ DISPLAY=":0.0"
 ulimit -s unlimited
 
 LD_LIBRARY_PATH="/share/apps/gcc/gcc-6.2.0/lib64"
-DATAPATH=/share/apps/mcnp/MCNP/MCNP_DATA
+export DATAPATH=/share/apps/mcnp/MCNP/MCNP_DATA
 EXE=/share/apps/mcnp/MCNP/MCNP_CODE/MCNP611/bin/mcnp6.mpi
 MPI=/opt/openmpi/bin/mpirun
 

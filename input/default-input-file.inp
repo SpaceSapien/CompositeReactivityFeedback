@@ -1,5 +1,5 @@
 //Try to recreate an Ortensi like experince
-Run Name: Heterogeneous
+Run Name: Pavlou-New
 
 # Materials and radaii mus have the same number of entries
 #Material options include
@@ -8,12 +8,12 @@ Materials: UO2      C      ZrO2    C
 Radaii:    2.5e-4   3.5e-4 4.25e-4 1e-3 #m
 
 #Starting Power Density 
-Starting Power Density: 32e6 # W/m^3
+Starting Power Density: 200e6 # W/m^3
 Starting K-eff: 1.025
 Kernel Outer Temperature: 800 K
 
 #Generally 100 is a good size
-Thermal Mesh Size: 100
+Thermal Mesh Size: 75
 
 # Thermal Solver Order: Second | Fourth
 Thermal Solver Order: Second 
@@ -39,17 +39,17 @@ MC Recalc Delta T: 3.5  # K
 Kinetics Time Iteration: 1e-9                  #s
 Thermal Time Iteration: 1000e-9                 #s
 Kinetics Thermal Data Sync: 10e-6               #s
-Calculation End Time: 10                     #s
+Calculation End Time: 5                    #s
 Power Record: 0.0001                            #s  Time between recording power and the delayed neutron record
 
-Keff Number of Particles: 3300
-Beff Number of Particles: 3300
+Keff Number of Particles: 9300
+Beff Number of Particles: 9300
 Particles Per Cycle: 100
 Number CPUs: 120
 
 
-Tally Cells: false                             #tally the cells in the problem
-Tally Energy Bins: 1000                        #lots of bins
+Tally Cells: true                             #tally the cells in the problem
+Tally Energy Bins: 2000                       #lots of bins
 
 Worth: false
 #Worth divisions
@@ -62,10 +62,10 @@ Worth Range: 300 3000 #appearently we need comments
 #
 #
 
-Reactor Type: Fuel Pin             # Homogenous Composite "Fuel Pin"
-Number Macro Cells: 10                # Number of cells at the macro scale
-Fuel Pin Dimensionality: HomogenousNeutronics  # HomogenousNeutronics, FullHeterogeneous, HomogenousNeutronicsAndHeatTransfer
-Macro Thermal Mesh Size: 200 
+#Reactor Type: Fuel Pin             # Homogenous Composite "Fuel Pin"
+#Number Macro Cells: 10                # Number of cells at the macro scale
+#Fuel Pin Dimensionality: HomogenousNeutronics  # HomogenousNeutronics, FullHeterogeneous, HomogenousNeutronicsAndHeatTransfer
+#Macro Thermal Mesh Size: 200 
 
 
-# Ortensi: true # use the premapped ortensi values
+##Ortensi: true # use the premapped ortensi values
