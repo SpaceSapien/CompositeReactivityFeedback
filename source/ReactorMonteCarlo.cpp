@@ -260,7 +260,7 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     {  
         TallyGroup* tally_group = TallyGroup::MCNPTallyGroupFactory( _run_directory + mctal_name, _number_zones, _cells_per_zone, _reactor->_transient_time);
         _tally_groups.push_back(tally_group);
-        this->outputTalliesToFile(tally_group, _reactor->_results_directory + "tallydata.db");
+        this->outputTalliesToFile(tally_group, _reactor->_results_directory + "tallydata.csv");
     }
     //Remove symbolic links to the Doppler broadened cross sections and the source tape
     //These are the largest files and we don't need them so remove them now
