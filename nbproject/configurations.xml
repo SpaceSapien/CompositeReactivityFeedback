@@ -110,6 +110,7 @@
     <itemPath>job-submission/acorite-submission-script.sh</itemPath>
     <itemPath>job-submission/antal-pavlou-submission.sh</itemPath>
     <itemPath>input/default-input-file.inp</itemPath>
+    <itemPath>job-submission/mc-pavlou-submission.sh</itemPath>
     <itemPath>job-submission/mc-submission-script.sh</itemPath>
     <itemPath>job-submission/neams-pavlou-submission.sh</itemPath>
     <itemPath>job-submission/neams-submission-script.sh</itemPath>
@@ -147,6 +148,11 @@
             flavor2="0">
       </item>
       <item path="job-submission/antal-pavlou-submission.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="job-submission/mc-pavlou-submission.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -392,6 +398,11 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="job-submission/mc-pavlou-submission.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="job-submission/mc-submission-script.sh"
             ex="false"
             tool="3"
@@ -625,6 +636,11 @@
             flavor2="0">
       </item>
       <item path="job-submission/antal-pavlou-submission.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="job-submission/mc-pavlou-submission.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -866,6 +882,11 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="job-submission/mc-pavlou-submission.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="job-submission/mc-submission-script.sh"
             ex="false"
             tool="3"
@@ -1099,6 +1120,11 @@
             flavor2="0">
       </item>
       <item path="job-submission/antal-pavlou-submission.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="job-submission/mc-pavlou-submission.sh"
             ex="false"
             tool="3"
             flavor2="0">
@@ -1340,6 +1366,11 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="job-submission/mc-pavlou-submission.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="job-submission/mc-submission-script.sh"
             ex="false"
             tool="3"
@@ -1573,6 +1604,11 @@
             flavor2="0">
       </item>
       <item path="job-submission/antal-pavlou-submission.sh"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="job-submission/mc-pavlou-submission.sh"
             ex="false"
             tool="3"
             flavor2="0">

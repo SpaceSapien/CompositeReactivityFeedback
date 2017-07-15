@@ -208,7 +208,17 @@ SimulationResults ReactorMonteCarlo::getRawCriticalityParameters(const std::stri
     
     #elif MC_CLUSTER
     
-    submission_script = "mc-submission-script.sh";
+    
+    if(Reactor::_otf_sab)
+    {
+        submission_script = "mc-pavlou-submission.sh";
+    }
+    else
+    {
+         submission_script = "mc-submission-script.sh";
+    }
+    
+   
     
     #elif ACORITE_CLUSTER
     
